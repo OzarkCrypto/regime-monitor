@@ -137,14 +137,23 @@ def label_regime(p):
     e_vs_t=p.get('energy_vs_tech',0)
     risk=(eq+credit)/2; real=(energy+metals)/2
     s = {}
-    s['REFLATION'] = risk*2 + real*1.5 + crypto*0.5 + max(0,-rates)*1
-    s['GOLDILOCKS'] = risk*2 + max(0,-energy)*0.5 + max(0,-rates)*1 + breadth*2
+    # REFLATION: broad rally, crypto strong, everything up, breadth high
+    s['REFLATION'] = max(0,eq)*1.5 + max(0,credit)*1 + max(0,real)*1.5 + max(0,crypto)*2 + breadth*2
+    # GOLDILOCKS: credit strong, rates falling, energy contained, defensive ok
+    s['GOLDILOCKS'] = max(0,credit)*2.5 + max(0,-rates)*2 + max(0,-energy)*1 + max(0,eq)*0.5
+    # OVERHEAT: energy + rates both rising, equities still ok
     s['OVERHEAT'] = max(0,eq)*1 + energy*2 + max(0,rates)*2 + e_vs_t*1
-    s['SUPPLY SHOCK'] = energy*2 + max(0,-eq)*2 + max(0,-credit)*1.5 + max(0,rates)*1 + e_vs_t*1
+    # SUPPLY SHOCK: energy spike, E/T extreme, credit down
+    s['SUPPLY SHOCK'] = energy*2 + max(0,-credit)*1.5 + max(0,rates)*1 + e_vs_t*1.5
+    # STAGFLATION: equities + credit down, rates up
     s['STAGFLATION'] = max(0,-eq)*2 + max(0,-credit)*2 + max(0,rates)*2 + max(0,energy)*0.5
+    # RECESSION: everything down including energy, rates falling (Fed easing)
     s['RECESSION'] = max(0,-eq)*2 + max(0,-credit)*1.5 + max(0,-energy)*1.5 + max(0,-rates)*2 + max(0,-cyc_def)*1
+    # CRISIS: extreme sell-off, rates plunge (flight to safety)
     s['CRISIS'] = max(0,-eq)*2 + max(0,-credit)*2 + max(0,-rates)*3 + max(0,-crypto)*1 + max(0,-real)*1
+    # DEFLATION: everything down, real assets crushed
     s['DEFLATION'] = max(0,-eq)*1.5 + max(0,-real)*2 + max(0,-rates)*2.5 + max(0,-crypto)*1
+    # CONTRACTION: defensives lead, narrow breadth
     s['CONTRACTION'] = max(0,-cyc_def)*2 + max(0,0.3-breadth)*3 + max(0,-eq)*1
     return max(s, key=s.get)
 
