@@ -118,15 +118,56 @@ def breadth(idx):
 features['sector_breadth'] = [breadth(i) for i in range(len(weekly))]
 features = features.dropna()
 
-# ── 4. GMM Clustering (k=5) ───────────────────────────────────
+# ── 4. GMM Clustering (k=6) with smoothing ────────────────────
+# Smooth features: 3-week rolling mean (center=True for history, last weeks get fewer points naturally)
+features_smooth = features.rolling(3, min_periods=1, center=True).mean()
 feat_names = list(features.columns)
 scaler = StandardScaler()
-X = scaler.fit_transform(features.values)
-K = 5
+X = scaler.fit_transform(features_smooth.values)
+K = 6
 gmm = GaussianMixture(n_components=K, covariance_type='full', n_init=30, random_state=42, max_iter=500)
 gmm.fit(X)
 labels = gmm.predict(X)
 probs = gmm.predict_proba(X)
+
+# Post-smoothing: absorb short regimes (< 3 weeks) into neighbors
+MIN_DURATION = 3
+def stabilize_regimes(labels, probs, min_dur=MIN_DURATION):
+    labels = labels.copy()
+    changed = True
+    while changed:
+        changed = False
+        # Find runs
+        runs = []
+        i = 0
+        while i < len(labels):
+            j = i
+            while j < len(labels) and labels[j] == labels[i]:
+                j += 1
+            runs.append((i, j, labels[i]))  # start, end, label
+            i = j
+        # Absorb short runs
+        for ri, (start, end, lbl) in enumerate(runs):
+            dur = end - start
+            if dur < min_dur and len(runs) > 1:
+                # Replace with the neighbor that has highest avg probability
+                if ri > 0 and ri < len(runs) - 1:
+                    prev_lbl = runs[ri-1][2]
+                    next_lbl = runs[ri+1][2]
+                    # Pick the one with higher probability in this segment
+                    p_prev = np.mean([probs[k, prev_lbl] for k in range(start, end)])
+                    p_next = np.mean([probs[k, next_lbl] for k in range(start, end)])
+                    new_lbl = prev_lbl if p_prev >= p_next else next_lbl
+                elif ri == 0:
+                    new_lbl = runs[ri+1][2]
+                else:
+                    new_lbl = runs[ri-1][2]
+                labels[start:end] = new_lbl
+                changed = True
+                break
+    return labels
+
+labels = stabilize_regimes(labels, probs)
 
 # ── 5. Auto-label ─────────────────────────────────────────────
 def label_regime(p):
@@ -137,19 +178,21 @@ def label_regime(p):
     e_vs_t=p.get('energy_vs_tech',0)
     risk=(eq+credit)/2; real=(energy+metals)/2
     s = {}
-    # REFLATION: broad rally, crypto strong, everything up, breadth high
-    s['REFLATION'] = max(0,eq)*1.5 + max(0,credit)*1 + max(0,real)*1.5 + max(0,crypto)*2 + breadth*2
-    # GOLDILOCKS: credit strong, rates falling, energy contained, defensive ok
-    s['GOLDILOCKS'] = max(0,credit)*2.5 + max(0,-rates)*2 + max(0,-energy)*1 + max(0,eq)*0.5
+    # REFLATION: broad rally, HIGH breadth, crypto strong, everything up
+    s['REFLATION'] = max(0,eq)*1.5 + max(0,credit)*1.5 + max(0,real)*1 + max(0,crypto)*1.5 + breadth*3
+    # RECOVERY: moderate positive but narrow breadth, early-stage
+    s['RECOVERY'] = max(0,eq)*1 + max(0,credit)*1.5 + max(0,crypto)*2 + max(0,0.35-breadth)*3 + max(0,metals)*1
+    # GOLDILOCKS: credit strong, rates falling, defensive stance
+    s['GOLDILOCKS'] = max(0,credit)*2.5 + max(0,-rates)*2 + max(0,-energy)*1 + max(0,eq)*0.5 + max(0,-cyc_def)*1
     # OVERHEAT: energy + rates both rising, equities still ok
     s['OVERHEAT'] = max(0,eq)*1 + energy*2 + max(0,rates)*2 + e_vs_t*1
     # SUPPLY SHOCK: energy spike, E/T extreme, credit down
     s['SUPPLY SHOCK'] = energy*2 + max(0,-credit)*1.5 + max(0,rates)*1 + e_vs_t*1.5
     # STAGFLATION: equities + credit down, rates up
     s['STAGFLATION'] = max(0,-eq)*2 + max(0,-credit)*2 + max(0,rates)*2 + max(0,energy)*0.5
-    # RECESSION: everything down including energy, rates falling (Fed easing)
-    s['RECESSION'] = max(0,-eq)*2 + max(0,-credit)*1.5 + max(0,-energy)*1.5 + max(0,-rates)*2 + max(0,-cyc_def)*1
-    # CRISIS: extreme sell-off, rates plunge (flight to safety)
+    # RECESSION: everything down INCLUDING credit, rates falling
+    s['RECESSION'] = max(0,-eq)*2 + max(0,-credit)*2 + max(0,-energy)*1.5 + max(0,-rates)*1.5 + max(0,-cyc_def)*1
+    # CRISIS: extreme sell-off, rates plunge
     s['CRISIS'] = max(0,-eq)*2 + max(0,-credit)*2 + max(0,-rates)*3 + max(0,-crypto)*1 + max(0,-real)*1
     # DEFLATION: everything down, real assets crushed
     s['DEFLATION'] = max(0,-eq)*1.5 + max(0,-real)*2 + max(0,-rates)*2.5 + max(0,-crypto)*1
@@ -265,6 +308,7 @@ header .m{{font-size:11px;color:var(--t3);font-family:var(--m)}}
 .regime-hero.OVERHEAT{{background:linear-gradient(135deg,#fffbeb,#fef3c7);color:#92400e;border:2px solid #fcd34d}}
 .regime-hero.CONTRACTION{{background:linear-gradient(135deg,#faf5ff,#f3e8ff);color:#6b21a8;border:2px solid #c4b5fd}}
 .regime-hero.RECESSION{{background:linear-gradient(135deg,#fef2f2,#fee2e2);color:#991b1b;border:2px solid #fca5a5}}
+.regime-hero.RECOVERY{{background:linear-gradient(135deg,#ecfeff,#cffafe);color:#0e7490;border:2px solid #67e8f9}}
 .feat-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin-bottom:20px}}
 .feat-card{{padding:8px 10px;border-radius:6px;background:var(--s);border:1px solid var(--b)}}
 .feat-card .fn{{font-family:var(--m);font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:2px}}
@@ -325,7 +369,7 @@ footer{{margin-top:20px;padding-top:10px;border-top:1px solid var(--b);font-size
 <script>
 const D={data_str};
 const CO=D.cat_order;
-const RC={{'SUPPLY SHOCK':'#ea580c','STAGFLATION':'#9333ea','GOLDILOCKS':'#16a34a','REFLATION':'#2563eb','CRISIS':'#1c1917','DEFLATION':'#6b7280','OVERHEAT':'#eab308','CONTRACTION':'#be185d','RECESSION':'#dc2626','TRANSITION':'#78716c'}};
+const RC={{'SUPPLY SHOCK':'#ea580c','STAGFLATION':'#9333ea','GOLDILOCKS':'#16a34a','REFLATION':'#2563eb','RECOVERY':'#06b6d4','CRISIS':'#1c1917','DEFLATION':'#6b7280','OVERHEAT':'#eab308','CONTRACTION':'#be185d','RECESSION':'#dc2626','TRANSITION':'#78716c'}};
 const ib=r=>r==='bull'||r==='falling'||r==='steepening';
 const ie=r=>r==='bear'||r==='rising'||r==='flattening';
 const rc=r=>ib(r)?'bu':ie(r)?'be':'si';
