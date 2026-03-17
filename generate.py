@@ -1,7 +1,7 @@
 """
-Regime Monitor — Dual Model (MACRO + TACTICAL)
-MACRO: 4w lookback, 26w vol, 3w smooth, min 3w duration, k=6
-TACTICAL: 2w lookback, 13w vol, no smooth, min 1w duration, k=6
+Regime Monitor — Dual Model (MACRO + TACTICAL) — Daily
+MACRO: 20d lookback, 130d vol, 15d smooth, min 15d duration, k=6
+TACTICAL: 10d lookback, 65d vol, no smooth, min 5d duration, k=6
 """
 import pandas as pd
 import numpy as np
@@ -73,40 +73,41 @@ for ticker, name in all_tickers.items():
 print(f"✅ {len(success)} assets")
 df.index = pd.to_datetime(df.index).tz_localize(None)
 df = df.sort_index().ffill()
-weekly = df.resample('W').last().dropna(how='all')
+# Daily data — no resampling, just drop weekends/holidays
+daily = df[df.index.dayofweek < 5].dropna(how='all')
 
 # Derived
 for a, b, name in [('US_10Y','US_3M','YC_10Y3M'),('US_30Y','US_10Y','YC_30Y10Y'),('US_10Y','US_5Y','YC_10Y5Y')]:
-    if a in weekly.columns and b in weekly.columns: weekly[name] = weekly[a] - weekly[b]
-if 'ETH' in weekly.columns and 'BTC' in weekly.columns: weekly['ETH_BTC'] = weekly['ETH'] / weekly['BTC']
-if 'IG_Bond' in weekly.columns and 'HY_Bond' in weekly.columns: weekly['CreditSpread'] = weekly['IG_Bond'] / weekly['HY_Bond']
+    if a in daily.columns and b in daily.columns: daily[name] = daily[a] - daily[b]
+if 'ETH' in daily.columns and 'BTC' in daily.columns: daily['ETH_BTC'] = daily['ETH'] / daily['BTC']
+if 'IG_Bond' in daily.columns and 'HY_Bond' in daily.columns: daily['CreditSpread'] = daily['IG_Bond'] / daily['HY_Bond']
 
 CAT_ASSETS = {}
 for cat, tickers in UNIVERSE.items():
-    assets = [n for n in tickers.values() if n in weekly.columns]
-    if cat == 'Crypto' and 'ETH_BTC' in weekly.columns: assets.append('ETH_BTC')
+    assets = [n for n in tickers.values() if n in daily.columns]
+    if cat == 'Crypto' and 'ETH_BTC' in daily.columns: assets.append('ETH_BTC')
     if assets: CAT_ASSETS[cat] = assets
-curves = [c for c in ['YC_10Y3M','YC_10Y5Y','YC_30Y10Y'] if c in weekly.columns]
+curves = [c for c in ['YC_10Y3M','YC_10Y5Y','YC_30Y10Y'] if c in daily.columns]
 if curves: CAT_ASSETS['Curves'] = curves
-if 'Credit' in CAT_ASSETS and 'CreditSpread' in weekly.columns: CAT_ASSETS['Credit'].append('CreditSpread')
+if 'Credit' in CAT_ASSETS and 'CreditSpread' in daily.columns: CAT_ASSETS['Credit'].append('CreditSpread')
 
 # ── 2. Reusable pipeline functions ───────────────────────────
 
-def compute_zscores(weekly, lookback, vol_window):
+def compute_zscores(daily, lookback, vol_window):
     """Compute z-scores with given lookback and vol window"""
-    zscores = pd.DataFrame(index=weekly.index)
-    for col in weekly.columns:
+    zscores = pd.DataFrame(index=daily.index)
+    for col in daily.columns:
         is_rate = col in RATE_ASSETS or col in CURVE_ASSETS
         if is_rate:
-            zscores[col] = weekly[col].diff(lookback) / (weekly[col].diff(1).rolling(vol_window).std() * np.sqrt(lookback))
+            zscores[col] = daily[col].diff(lookback) / (daily[col].diff(1).rolling(vol_window).std() * np.sqrt(lookback))
         else:
-            zscores[col] = weekly[col].pct_change(lookback) / (weekly[col].pct_change(1).rolling(vol_window).std() * np.sqrt(lookback))
+            zscores[col] = daily[col].pct_change(lookback) / (daily[col].pct_change(1).rolling(vol_window).std() * np.sqrt(lookback))
     return zscores
 
-def build_features(zscores, weekly):
+def build_features(zscores, daily):
     """Build 14-dim feature vector from z-scores"""
     scols = [c for c in SECTOR_TICKERS if c in zscores.columns]
-    features = pd.DataFrame(index=weekly.index)
+    features = pd.DataFrame(index=daily.index)
     for cat in CAT_ORDER:
         fn = f"cat_{cat.replace(' ','_')}"
         if cat not in CAT_ASSETS: features[fn] = 0.0; continue
@@ -120,7 +121,7 @@ def build_features(zscores, weekly):
     features['sector_dispersion'] = zscores[scols].std(axis=1) if scols else 0.0
     def breadth(idx):
         return sum(1 for c in scols if pd.notna(zscores[c].iloc[idx]) and zscores[c].iloc[idx] > 0.8) / max(1,len(scols))
-    features['sector_breadth'] = [breadth(i) for i in range(len(weekly))]
+    features['sector_breadth'] = [breadth(i) for i in range(len(daily))]
     return features.dropna()
 
 def score_regime(p):
@@ -173,10 +174,10 @@ def stabilize_regimes(labels, probs, min_dur):
                 labels[start:end] = new_lbl; changed = True; break
     return labels
 
-def run_pipeline(weekly, lookback, vol_window, smooth_window, min_dur, k):
+def run_pipeline(daily, lookback, vol_window, smooth_window, min_dur, k):
     """Full pipeline: z-scores → features → GMM → labels → output dict"""
-    zscores = compute_zscores(weekly, lookback, vol_window)
-    features = build_features(zscores, weekly)
+    zscores = compute_zscores(daily, lookback, vol_window)
+    features = build_features(zscores, daily)
     feat_names = list(features.columns)
 
     # Optional smoothing
@@ -231,11 +232,11 @@ def run_pipeline(weekly, lookback, vol_window, smooth_window, min_dur, k):
         if len(dates) > 0:
             sd = dates[0]
             for i in range(1, len(dates)):
-                if (dates[i]-dates[i-1]).days > 14:
+                if (dates[i]-dates[i-1]).days > 5:
                     periods.append(f"{sd.strftime('%Y-%m')}->{dates[i-1].strftime('%Y-%m')}")
                     sd = dates[i]
             periods.append(f"{sd.strftime('%Y-%m')}->{dates[-1].strftime('%Y-%m')}")
-        regime_profiles[r] = {'label':labels_map[r],'n_weeks':int(mask.sum()),'pct':round(mask.sum()/len(features)*100,1),
+        regime_profiles[r] = {'label':labels_map[r],'n_days':int(mask.sum()),'pct':round(mask.sum()/len(features)*100,1),
                               'profile':{k2:round(v,3) for k2,v in profile.items()},'periods':periods[:8]}
 
     # Timeline
@@ -268,8 +269,8 @@ def run_pipeline(weekly, lookback, vol_window, smooth_window, min_dur, k):
         if cat not in CAT_ASSETS: continue
         cd = {}
         for asset in CAT_ASSETS[cat]:
-            if asset not in weekly.columns: continue
-            price = float(weekly[asset].iloc[-1]) if pd.notna(weekly[asset].iloc[-1]) else None
+            if asset not in daily.columns: continue
+            price = float(daily[asset].iloc[-1]) if pd.notna(daily[asset].iloc[-1]) else None
             z = float(zscores[asset].iloc[-1]) if asset in zscores.columns and pd.notna(zscores[asset].iloc[-1]) else None
             ir = asset in RATE_ASSETS; ic = asset in CURVE_ASSETS
             if z is not None:
@@ -282,7 +283,7 @@ def run_pipeline(weekly, lookback, vol_window, smooth_window, min_dur, k):
 
     return {
         'date': features.index[-1].strftime('%Y-%m-%d'),
-        'total_assets': len(success), 'weeks': len(features), 'n_regimes': k,
+        'total_assets': len(success), 'days': len(features), 'n_regimes': k,
         'params': {'lookback': lookback, 'vol_window': vol_window, 'smooth': smooth_window, 'min_dur': min_dur},
         'current': {
             'regime_id':cur_r,'label':cur_label,'confidence':round(float(conf),3),
@@ -296,12 +297,12 @@ def run_pipeline(weekly, lookback, vol_window, smooth_window, min_dur, k):
     }
 
 # ── 3. Run both models ───────────────────────────────────────
-print("Running MACRO model (4w/26w/smooth/k=6)...")
-macro = run_pipeline(weekly, lookback=4, vol_window=26, smooth_window=3, min_dur=3, k=6)
+print("Running MACRO model (20d/130d/smooth/k=6)...")
+macro = run_pipeline(daily, lookback=20, vol_window=130, smooth_window=15, min_dur=15, k=6)
 print(f"  → {macro['current']['label']} ({macro['current']['confidence']:.0%})")
 
-print("Running TACTICAL model (2w/13w/raw/k=6)...")
-tactical = run_pipeline(weekly, lookback=2, vol_window=13, smooth_window=1, min_dur=2, k=6)
+print("Running TACTICAL model (10d/65d/raw/k=6)...")
+tactical = run_pipeline(daily, lookback=10, vol_window=65, smooth_window=1, min_dur=5, k=6)
 print(f"  → {tactical['current']['label']} ({tactical['current']['confidence']:.0%})")
 
 output = {'macro': macro, 'tactical': tactical}
@@ -421,11 +422,11 @@ let S={{model:'macro',view:'regime',sort:'default'}};
 function MD(){{return DATA[S.model]}}
 function render(){{
 const app=document.getElementById('app');const D=MD();const CO=D.cat_order;
-let h='<header><h1>Regime Monitor</h1><div class="m">'+D.total_assets+' assets \\u00b7 '+D.weeks+'w \\u00b7 '+D.date+'</div></header>';
+let h='<header><h1>Regime Monitor</h1><div class="m">'+D.total_assets+' assets \\u00b7 '+D.days+'d \\u00b7 '+D.date+'</div></header>';
 h+='<div class="model-sw">';['macro','tactical'].forEach(m=>{{h+='<button class="'+(S.model===m?'on':'')+'" onclick="U(\\'model\\',\\''+m+'\\')">'+m+'</button>'}});h+='</div>';
 const p=D.params;
-if(S.model==='macro')h+='<div class="model-desc">MACRO \\u2014 4w lookback \\u00b7 26w vol \\u00b7 3w smooth \\u00b7 Monthly regime shifts. Best for strategic allocation.</div>';
-else h+='<div class="model-desc">TACTICAL \\u2014 2w lookback \\u00b7 13w vol \\u00b7 No smooth \\u00b7 Weekly regime shifts. Best for timing & hedging.</div>';
+if(S.model==='macro')h+='<div class="model-desc">MACRO \\u2014 20d lookback \\u00b7 130d vol \\u00b7 15d smooth \\u00b7 Monthly regime shifts. Best for strategic allocation.</div>';
+else h+='<div class="model-desc">TACTICAL \\u2014 10d lookback \\u00b7 65d vol \\u00b7 No smooth \\u00b7 Daily regime shifts. Best for timing & hedging.</div>';
 const cur=D.current;const heroClass=cur.label.replace(/ /g,'_');
 h+='<div class="regime-hero '+heroClass+'"><div class="label">Current '+S.model.toUpperCase()+' Regime</div><div class="name">'+cur.label+'</div><div class="conf">'+Math.round(cur.confidence*100)+'% confidence</div><div class="runner">Runner-up: '+cur.runner_up.label+' ('+Math.round(cur.runner_up.confidence*100)+'%)</div></div>';
 const feats=cur.features;const fo=['cat_Energy','cat_Global_Equities','cat_Credit','cat_Rates','cat_Crypto','cat_Metals','cat_Currencies','cyclical_vs_defensive','energy_vs_tech','financials','sector_breadth','sector_dispersion'];
@@ -433,14 +434,14 @@ h+='<div class="feat-grid">';fo.forEach(fn=>{{const v=feats[fn];if(v==null)retur
 h+=rTimeline(D);
 h+='<div class="mtabs">';['regime','assets','method'].forEach(v=>{{h+='<button class="'+(S.view===v?'on':'')+'" onclick="U(\\'view\\',\\''+v+'\\')">'+v+'</button>'}});h+='</div>';
 if(S.view==='regime')h+=rRegimes(D);else if(S.view==='assets')h+=rAssets(D);else h+=rMethod(D);
-h+='<footer>14-dim feature vector \\u00b7 GMM (k='+D.n_regimes+') \\u00b7 Dual model (MACRO+TACTICAL) \\u00b7 Auto-updated daily</footer>';
+h+='<footer>14-dim feature vector \\u00b7 GMM (k='+D.n_regimes+') \\u00b7 Dual model (MACRO+TACTICAL) \\u00b7 Daily \\u00b7 Auto-updated</footer>';
 app.innerHTML=h}}
 function showTip(el){{const tip=document.getElementById('tl-tip');if(!tip)return;const r=el.getBoundingClientRect();const p=el.parentElement.getBoundingClientRect();tip.innerHTML='<div class="tt-label">'+el.dataset.label+'</div><div class="tt-dates">'+el.dataset.start+' \\u2192 '+el.dataset.end+'</div>';tip.style.display='block';tip.style.left=(r.left+r.width/2-p.left)+'px';tip.style.top='-48px'}}
 function hideTip(){{const tip=document.getElementById('tl-tip');if(tip)tip.style.display='none'}}
 function rTimeline(D){{const tl=D.timeline;if(!tl||!tl.length)return'';const t0=new Date(tl[0].start).getTime();const t1=new Date(tl[tl.length-1].end).getTime()+86400000*7;const span=t1-t0||1;let h='<div class="tl-wrap" style="position:relative"><div id="tl-tip" class="tl-tip"></div><div class="tl-bar">';tl.forEach((seg,i)=>{{const s=new Date(seg.start).getTime();const e=new Date(seg.end).getTime()+86400000*7;const w=Math.max(0.5,((e-s)/span)*100);const col=RC[seg.l]||'#a8a29e';const ic=i===tl.length-1;h+='<div class="tl-seg" style="width:'+w+'%;background:'+col+(ic?';box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)':'')+'" data-label="'+seg.l+'" data-start="'+seg.start+'" data-end="'+seg.end+'" onmouseenter="showTip(this)" onmouseleave="hideTip()"></div>'}});h+='</div></div>';h+='<div class="tl-dates"><span>'+tl[0].start.substring(0,7)+'</span><span>'+tl[tl.length-1].end.substring(0,7)+'</span></div>';const seen=new Set();h+='<div class="tl-legend">';tl.forEach(seg=>{{if(!seen.has(seg.l)){{seen.add(seg.l);h+='<span><span class="dot" style="background:'+(RC[seg.l]||'#a8a29e')+'"></span>'+seg.l+'</span>'}}}});h+='</div>';return h}}
-function rRegimes(D){{let h='';for(let r=0;r<D.n_regimes;r++){{const info=D.regimes[r];if(!info)continue;const col=RC[info.label]||'#a8a29e';const ic=r===D.current.regime_id;h+='<div class="rp" style="'+(ic?'border:2px solid '+col:'')+'"><h3 style="color:'+col+'">'+(ic?'\\u25b6 ':'')+info.label+' \\u2014 '+info.n_weeks+'w ('+info.pct+'%)</h3>';h+='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">'+info.periods.slice(0,5).join(', ')+'</div>';const p=info.profile;['cat_Energy','cat_Global_Equities','cat_Credit','cat_Rates','cat_Crypto','cat_Metals','cyclical_vs_defensive','energy_vs_tech'].forEach(fn=>{{const v=p[fn]||0;const pct=Math.min(100,Math.abs(v)*30);const col2=v>0.2?'var(--g)':v<-0.2?'var(--r)':'var(--x)';const left=v>=0?'50%':(50-pct)+'%';h+='<div class="bar-row"><span class="bar-label">'+catLabel(fn)+'</span><div class="bar-track"><div class="bar-fill" style="left:'+left+'%;width:'+pct+'%;background:'+col2+'"></div><div style="position:absolute;left:50%;top:0;width:1px;height:6px;background:var(--b)"></div></div><span class="bar-val" style="color:'+col2+'">'+(v>0?'+':'')+v.toFixed(2)+'</span></div>'}});h+='</div>'}}return h}}
+function rRegimes(D){{let h='';for(let r=0;r<D.n_regimes;r++){{const info=D.regimes[r];if(!info)continue;const col=RC[info.label]||'#a8a29e';const ic=r===D.current.regime_id;h+='<div class="rp" style="'+(ic?'border:2px solid '+col:'')+'"><h3 style="color:'+col+'">'+(ic?'\\u25b6 ':'')+info.label+' \\u2014 '+info.n_days+'d ('+info.pct+'%)</h3>';h+='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">'+info.periods.slice(0,5).join(', ')+'</div>';const p=info.profile;['cat_Energy','cat_Global_Equities','cat_Credit','cat_Rates','cat_Crypto','cat_Metals','cyclical_vs_defensive','energy_vs_tech'].forEach(fn=>{{const v=p[fn]||0;const pct=Math.min(100,Math.abs(v)*30);const col2=v>0.2?'var(--g)':v<-0.2?'var(--r)':'var(--x)';const left=v>=0?'50%':(50-pct)+'%';h+='<div class="bar-row"><span class="bar-label">'+catLabel(fn)+'</span><div class="bar-track"><div class="bar-fill" style="left:'+left+'%;width:'+pct+'%;background:'+col2+'"></div><div style="position:absolute;left:50%;top:0;width:1px;height:6px;background:var(--b)"></div></div><span class="bar-val" style="color:'+col2+'">'+(v>0?'+':'')+v.toFixed(2)+'</span></div>'}});h+='</div>'}}return h}}
 function rAssets(D){{const cats=D.assets;const CO=D.cat_order;let h='<div class="sort-ctrl">Sort: '+['default','z-desc','z-asc','alpha','regime'].map(s=>'<button class="'+(S.sort===s?'on':'')+'" onclick="U(\\'sort\\',\\''+s+'\\')">'+({{'z-desc':'z\\u2193','z-asc':'z\\u2191'}}[s]||s)+'</button>').join('')+'</div>';CO.forEach(k=>{{const assets=cats[k];if(!assets)return;let entries=Object.entries(assets);if(S.sort==='z-asc')entries.sort((a,b)=>(a[1].score||0)-(b[1].score||0));else if(S.sort==='z-desc')entries.sort((a,b)=>(b[1].score||0)-(a[1].score||0));else if(S.sort==='alpha')entries.sort((a,b)=>a[0].localeCompare(b[0]));else if(S.sort==='regime'){{const ro=r=>ib(r)?0:ie(r)?2:1;entries.sort((a,b)=>ro(a[1].regime)-ro(b[1].regime))}}const nb=entries.filter(([,a])=>ib(a.regime)).length,nr=entries.filter(([,a])=>ie(a.regime)).length,ns=entries.length-nb-nr;h+='<div class="cb"><div class="ch"><h2>'+k+'</h2><div class="st">';if(nb)h+='<span><span class="d" style="background:var(--g)"></span>'+nb+'</span>';if(ns)h+='<span><span class="d" style="background:var(--x)"></span>'+ns+'</span>';if(nr)h+='<span><span class="d" style="background:var(--r)"></span>'+nr+'</span>';h+='</div></div><div class="cg">';entries.forEach(([n,d])=>{{const c=rc(d.regime),z=d.score,zc=tc(d.regime);h+='<div class="a '+c+'"><div class="ai"><div style="display:flex;justify-content:space-between;align-items:center"><span class="an">'+n+'</span><span class="al '+c+'">'+rl(d.regime)+'</span></div><div class="ar"><span class="ap">'+fP(d.price,n)+'</span><span class="az" style="color:'+zc+'">'+(z!=null?(z>0?'+':'')+z.toFixed(2):'\\u2014')+'</span></div><div class="zb"><div class="md"></div>'+(z!=null?'<div class="dt" style="left:'+zP(z)+'%;background:'+zc+'"></div>':'')+'</div></div></div>'}});h+='</div></div>'}});return h}}
-function rMethod(D){{const p=D.params;return'<div class="meth"><h3>'+S.model.toUpperCase()+' Model Configuration</h3><p><b>Lookback:</b> '+p.lookback+'w returns<br><b>Vol Window:</b> '+p.vol_window+'w rolling std<br><b>Smoothing:</b> '+(p.smooth>1?p.smooth+'w rolling mean':'None (raw)')+'<br><b>Min Duration:</b> '+(p.min_dur>1?p.min_dur+'w':'None')+'<br><b>Clusters:</b> GMM k='+D.n_regimes+'<br><br><b>Feature Vector (14-dim):</b> 9 asset class z-scores + 5 sectoral internals (cyclical vs defensive, energy vs tech, financials, dispersion, breadth).<br><br>'+(S.model==='macro'?'<b>Use Case:</b> Strategic allocation, portfolio construction, risk budgeting. Identifies multi-month macro environments.':'<b>Use Case:</b> Tactical hedging, timing entries/exits, event response. Captures weekly regime shifts and V-shaped reversals.')+'</p></div>'}}
+function rMethod(D){{const p=D.params;return'<div class="meth"><h3>'+S.model.toUpperCase()+' Model Configuration</h3><p><b>Lookback:</b> '+p.lookback+'d returns<br><b>Vol Window:</b> '+p.vol_window+'d rolling std<br><b>Smoothing:</b> '+(p.smooth>1?p.smooth+'d rolling mean':'None (raw)')+'<br><b>Min Duration:</b> '+(p.min_dur>1?p.min_dur+'d':'None')+'<br><b>Clusters:</b> GMM k='+D.n_regimes+'<br><br><b>Feature Vector (14-dim):</b> 9 asset class z-scores + 5 sectoral internals (cyclical vs defensive, energy vs tech, financials, dispersion, breadth).<br><br>'+(S.model==='macro'?'<b>Use Case:</b> Strategic allocation, portfolio construction, risk budgeting. Identifies multi-month macro environments.':'<b>Use Case:</b> Tactical hedging, timing entries/exits, event response. Captures daily regime shifts and V-shaped reversals.')+'</p></div>'}}
 function U(k,v){{S[k]=v;render()}}
 render();
 </script>
