@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Regime Monitor</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#fafaf9;--s:#fff;--b:#e7e5e4;--bl:#f5f5f4;--t:#1c1917;--t2:#57534e;--t3:#a8a29e;--g:#16a34a;--gb:#f0fdf4;--gd:#bbf7d0;--r:#dc2626;--rb:#fef2f2;--rd:#fecaca;--x:#78716c;--xb:#f5f5f4;--a:#2563eb;--ab:#eff6ff;--f:'DM Sans',sans-serif;--m:'JetBrains Mono',monospace}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -13,15 +13,34 @@ body{font-family:var(--f);background:var(--bg);color:var(--t);font-size:13px;lin
 header{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:12px;border-bottom:2px solid var(--t);margin-bottom:16px;flex-wrap:wrap;gap:8px}
 header h1{font-family:var(--m);font-size:15px;font-weight:700;letter-spacing:-0.03em;text-transform:uppercase}
 header .m{font-size:11px;color:var(--t3);font-family:var(--m)}
-.mtabs{display:flex;gap:2px;margin-bottom:10px;background:var(--bl);border-radius:6px;padding:2px;width:fit-content}
+.regime-hero{padding:28px 32px;border-radius:12px;margin-bottom:20px;text-align:center;position:relative;overflow:hidden}
+.regime-hero .label{font-family:var(--m);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;opacity:.7;margin-bottom:6px}
+.regime-hero .name{font-family:var(--f);font-size:52px;font-weight:900;letter-spacing:-0.03em;line-height:1.1;margin-bottom:8px}
+.regime-hero .conf{font-family:var(--m);font-size:14px;font-weight:500;opacity:.8}
+.regime-hero .runner{font-family:var(--m);font-size:11px;opacity:.5;margin-top:4px}
+.regime-hero.SUPPLY_SHOCK{background:linear-gradient(135deg,#fef2f2,#fee2e2);color:#991b1b;border:2px solid #fca5a5}
+.regime-hero.STAGFLATION{background:linear-gradient(135deg,#fef2f2,#fce7f3);color:#9f1239;border:2px solid #fda4af}
+.regime-hero.GOLDILOCKS{background:linear-gradient(135deg,#f0fdf4,#ecfdf5);color:#166534;border:2px solid #86efac}
+.regime-hero.REFLATION{background:linear-gradient(135deg,#eff6ff,#f0f9ff);color:#1e40af;border:2px solid #93c5fd}
+.regime-hero.CRISIS{background:linear-gradient(135deg,#1c1917,#292524);color:#fef2f2;border:2px solid #57534e}
+.regime-hero.DEFLATION{background:linear-gradient(135deg,#f5f5f4,#e7e5e4);color:#44403c;border:2px solid #a8a29e}
+.regime-hero.OVERHEAT{background:linear-gradient(135deg,#fffbeb,#fef3c7);color:#92400e;border:2px solid #fcd34d}
+.regime-hero.CONTRACTION{background:linear-gradient(135deg,#faf5ff,#f3e8ff);color:#6b21a8;border:2px solid #c4b5fd}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin-bottom:20px}
+.feat-card{padding:8px 10px;border-radius:6px;background:var(--s);border:1px solid var(--b)}
+.feat-card .fn{font-family:var(--m);font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:2px}
+.feat-card .fv{font-family:var(--m);font-size:18px;font-weight:700}
+.feat-card .fv.pos{color:var(--g)}.feat-card .fv.neg{color:var(--r)}.feat-card .fv.neu{color:var(--x)}
+.tl-bar{display:flex;height:32px;border-radius:6px;overflow:hidden;margin-bottom:4px;border:1px solid var(--b)}
+.tl-seg{position:relative;min-width:2px;display:flex;align-items:center;justify-content:center;font-family:var(--m);font-size:7px;font-weight:700;color:rgba(0,0,0,.4);overflow:hidden;cursor:default}
+.tl-seg:hover{opacity:.85}
+.tl-legend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;font-family:var(--m);font-size:9px;color:var(--t2)}
+.tl-legend span{display:flex;align-items:center;gap:3px}
+.tl-legend .dot{width:10px;height:10px;border-radius:2px}
+.tl-dates{display:flex;justify-content:space-between;font-family:var(--m);font-size:9px;color:var(--t3);margin-bottom:12px}
+.mtabs{display:flex;gap:2px;margin-bottom:12px;background:var(--bl);border-radius:6px;padding:2px;width:fit-content}
 .mtabs button{font-family:var(--m);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:5px 12px;border:none;border-radius:4px;background:0;color:var(--t3);cursor:pointer}
 .mtabs button.on{background:var(--s);color:var(--t);box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.strip{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
-.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:16px;font-size:10px;font-weight:500;border:1px solid;cursor:default}
-.chip .sc{font-family:var(--m);font-weight:700}
-.sort-ctrl{display:flex;gap:3px;align-items:center;font-family:var(--m);font-size:9px;color:var(--t3);margin-bottom:8px}
-.sort-ctrl button{font-family:var(--m);font-size:9px;padding:2px 8px;border:1px solid var(--b);border-radius:3px;background:var(--s);color:var(--t2);cursor:pointer}
-.sort-ctrl button.on{background:var(--t);color:var(--s);border-color:var(--t)}
 .cb{margin-bottom:6px;border:1px solid var(--b);border-radius:6px;background:var(--s);overflow:hidden}
 .ch{display:flex;justify-content:space-between;align-items:center;padding:6px 12px;cursor:pointer}
 .ch:hover{background:var(--bl)}
@@ -30,7 +49,7 @@ header .m{font-size:11px;color:var(--t3);font-family:var(--m)}
 .ch .d{width:6px;height:6px;border-radius:50%;display:inline-block}
 .cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:3px;padding:3px 8px 6px}
 .a{display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:4px;border-left:3px solid transparent}
-.a.bu{border-left-color:var(--g);background:var(--gb)}.a.be{border-left-color:var(--r);background:var(--rb)}.a.si{border-left-color:var(--b)}
+.a.bu{border-left-color:var(--g);background:var(--gb)}.a.be{border-left-color:var(--r);background:var(--rb)}
 .ai{flex:1;min-width:0}
 .an{font-family:var(--m);font-size:10px;font-weight:600}
 .ar{display:flex;justify-content:space-between;margin-top:1px}
@@ -40,37 +59,29 @@ header .m{font-size:11px;color:var(--t3);font-family:var(--m)}
 .zb{position:relative;width:100%;height:3px;background:var(--bl);border-radius:2px;margin-top:2px}
 .zb .md{position:absolute;left:50%;top:0;width:1px;height:3px;background:var(--b)}
 .zb .dt{position:absolute;top:-2px;width:7px;height:7px;border-radius:50%;transform:translateX(-3.5px)}
-.hr{display:flex;align-items:center;gap:5px;padding:2px 6px;border-radius:3px;margin-bottom:1px}
-.hr .nm{font-family:var(--m);font-size:10px;color:var(--t2);width:95px;flex-shrink:0}
-.hr .bw{flex:1;height:3px;background:var(--bl);border-radius:2px;position:relative}
-.hr .hz{font-family:var(--m);font-size:10px;font-weight:600;width:44px;text-align:right}
-.hr .hl{font-family:var(--m);font-size:8px;width:36px;text-align:right}
-.cons-row{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:4px;margin-bottom:2px;border-left:3px solid transparent}
-.cons-row.sp{border-left-color:var(--g);background:var(--gb)}.cons-row.sn{border-left-color:var(--r);background:var(--rb)}
-.cons-row.lp{border-left-color:#86efac}.cons-row.ln{border-left-color:#fca5a5}
-.cons-row.mx{border-left-color:var(--b);background:var(--bl)}
-.cons-dots{display:flex;gap:3px}
-.cons-dots span{width:10px;height:10px;border-radius:50%;font-size:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:var(--m)}
-.ec{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;margin-bottom:4px;border:1px solid}
-.ec.be{background:var(--rb);border-color:var(--rd)}.ec.bu{background:var(--gb);border-color:var(--gd)}
-.ei{font-size:16px;width:24px;text-align:center}
-.ef{flex:1}.ef .n{font-weight:700;font-size:12px}.ef .s{font-size:10px;color:var(--t3)}
-.ez{text-align:right}.ez .v{font-family:var(--m);font-size:16px;font-weight:700}.ez .l{font-family:var(--m);font-size:9px}
+.rp{margin-bottom:16px;padding:16px;border-radius:8px;background:var(--s);border:1px solid var(--b)}
+.rp h3{font-family:var(--m);font-size:11px;font-weight:700;margin-bottom:8px}
+.rp .bar-row{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.rp .bar-label{font-family:var(--m);font-size:9px;width:70px;text-align:right;color:var(--t2)}
+.rp .bar-track{flex:1;height:6px;background:var(--bl);border-radius:3px;position:relative}
+.rp .bar-fill{height:6px;border-radius:3px;position:absolute;top:0}
+.rp .bar-val{font-family:var(--m);font-size:9px;width:35px;font-weight:600}
 .meth{margin-top:16px;padding:12px;border-radius:6px;background:var(--bl);border:1px solid var(--b)}
 .meth h3{font-family:var(--m);font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;margin-bottom:4px}
 .meth p{font-size:11px;color:var(--t2);line-height:1.6}
-.meth code{font-family:var(--m);font-size:10px;background:var(--s);padding:1px 4px;border-radius:2px;border:1px solid var(--b)}
 footer{margin-top:20px;padding-top:10px;border-top:1px solid var(--b);font-size:9px;color:var(--t3);text-align:center;font-family:var(--m)}
-@media(max-width:640px){.cg{grid-template-columns:1fr 1fr}}
+.sort-ctrl{display:flex;gap:3px;align-items:center;font-family:var(--m);font-size:9px;color:var(--t3);margin-bottom:8px}
+.sort-ctrl button{font-family:var(--m);font-size:9px;padding:2px 8px;border:1px solid var(--b);border-radius:3px;background:var(--s);color:var(--t2);cursor:pointer}
+.sort-ctrl button.on{background:var(--t);color:var(--s);border-color:var(--t)}
+@media(max-width:640px){.cg{grid-template-columns:1fr 1fr}.regime-hero .name{font-size:36px}.feat-grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
 <div class="c" id="app"></div>
 <script>
-const D={"date":"2026-03-22","total_assets":70,"weeks":158,"methods":{"threshold":{"Crypto":{"BTC":{"regime":"sideways","score":0.678,"price":72789.9141},"ETH":{"regime":"sideways","score":0.745,"price":2177.4763},"SOL":{"regime":"sideways","score":0.728,"price":92.2518},"ETH_BTC":{"regime":"sideways","score":0.549,"price":0.0299}},"Metals":{"Gold":{"regime":"sideways","score":-0.203,"price":4994.0},"Silver":{"regime":"sideways","score":-0.144,"price":80.263},"Copper":{"regime":"sideways","score":-0.119,"price":5.7905},"Palladium":{"regime":"sideways","score":-0.65,"price":1584.5},"Platinum":{"regime":"sideways","score":-0.194,"price":2089.5},"Aluminum":{"regime":"bull","score":1.658,"price":3289.5}},"Energy":{"WTI":{"regime":"bull","score":2.571,"price":93.5},"Brent":{"regime":"bull","score":2.912,"price":100.21},"NatGas":{"regime":"sideways","score":-0.022,"price":3.023},"Gasoline":{"regime":"bull","score":3.374,"price":3.0003},"HeatingOil":{"regime":"bull","score":2.674,"price":3.8375}},"US Sectors":{"Tech":{"regime":"sideways","score":-0.332,"price":138.78},"Financials":{"regime":"bear","score":-1.547,"price":49.3},"Energy_Eq":{"regime":"bull","score":1.182,"price":57.9},"Healthcare":{"regime":"bear","score":-0.819,"price":151.01},"Industrials":{"regime":"bear","score":-1.578,"price":166.06},"Staples":{"regime":"sideways","score":-0.798,"price":84.98},"Discretionary":{"regime":"bear","score":-0.979,"price":112.2},"Utilities":{"regime":"sideways","score":0.437,"price":47.26},"RealEstate":{"regime":"sideways","score":-0.565,"price":42.58},"Materials":{"regime":"bear","score":-1.302,"price":49.4},"CommSvc":{"regime":"sideways","score":-0.352,"price":115.33}},"Global Equities":{"US_SP500":{"regime":"bear","score":-1.056,"price":6699.3799},"US_Nasdaq":{"regime":"sideways","score":-0.584,"price":22374.1777},"EU_Stoxx50":{"regime":"bear","score":-1.523,"price":5739.0098},"Japan":{"regime":"bear","score":-1.225,"price":85.07},"Korea":{"regime":"sideways","score":-0.557,"price":133.1},"Taiwan":{"regime":"sideways","score":-0.487,"price":72.03},"China":{"regime":"bear","score":-0.982,"price":36.88},"Germany":{"regime":"bear","score":-1.86,"price":40.52},"UK":{"regime":"bear","score":-1.169,"price":46.11},"Brazil":{"regime":"bear","score":-1.024,"price":36.53},"India":{"regime":"bear","score":-2.288,"price":48.56},"EM_Broad":{"regime":"bear","score":-1.211,"price":58.38},"Australia":{"regime":"sideways","score":-0.76,"price":28.68},"Canada":{"regime":"sideways","score":-0.627,"price":55.85},"Singapore":{"regime":"bear","score":-1.288,"price":27.86},"Thailand":{"regime":"bear","score":-1.147,"price":66.37},"Mexico":{"regime":"bear","score":-1.628,"price":73.16},"Indonesia":{"regime":"bear","score":-2.6,"price":15.41},"Vietnam":{"regime":"bear","score":-1.27,"price":17.3},"SouthAfrica":{"regime":"bear","score":-1.29,"price":69.08},"Qatar":{"regime":"bear","score":-1.796,"price":18.74},"SaudiArabia":{"regime":"sideways","score":-0.201,"price":38.31},"Turkey":{"regime":"bear","score":-0.992,"price":38.87}},"Rates":{"US_3M":{"regime":"stable","score":0.14,"price":3.605},"US_5Y":{"regime":"rising","score":0.877,"price":3.803},"US_10Y":{"regime":"rising","score":0.838,"price":4.22},"US_30Y":{"regime":"rising","score":0.943,"price":4.859}},"Curves":{"YC_10Y3M":{"regime":"stable","score":0.695,"price":0.615},"YC_10Y5Y":{"regime":"stable","score":-0.474,"price":0.417},"YC_30Y10Y":{"regime":"stable","score":0.0,"price":0.639}},"Currencies":{"EURUSD":{"regime":"bear","score":-1.159,"price":1.1522},"JPYUSD":{"regime":"bear","score":-0.816,"price":0.0063},"GBPUSD":{"regime":"sideways","score":-0.408,"price":1.3353},"CNYUSD":{"regime":"bull","score":0.876,"price":0.1456},"AUDUSD":{"regime":"sideways","score":0.109,"price":0.7075},"CHFUSD":{"regime":"sideways","score":-0.543,"price":1.2733},"KRWUSD":{"regime":"sideways","score":-0.564,"price":0.0007},"SGDUSD":{"regime":"sideways","score":-0.629,"price":0.7822}},"Credit":{"HY_Bond":{"regime":"bear","score":-1.626,"price":79.45},"IG_Bond":{"regime":"bear","score":-1.664,"price":108.69},"HY_Junk":{"regime":"bear","score":-1.566,"price":95.65},"BankLoans":{"regime":"sideways","score":-0.352,"price":20.47},"EM_Bond":{"regime":"bear","score":-2.126,"price":94.75},"CreditSpread":{"regime":"bear","score":-0.858,"price":1.368}}},"hmm":{"Crypto":{"BTC":{"regime":"sideways","score":0.987,"price":72789.9141},"ETH":{"regime":"sideways","score":0.999,"price":2177.4763},"SOL":{"regime":"sideways","score":0.697,"price":92.2518},"ETH_BTC":{"regime":"sideways","score":1.0,"price":0.0299}},"Metals":{"Gold":{"regime":"bull","score":0.438,"price":4994.0},"Silver":{"regime":"bull","score":1.0,"price":80.263},"Copper":{"regime":"sideways","score":0.876,"price":5.7905},"Palladium":{"regime":"bear","score":0.991,"price":1584.5},"Platinum":{"regime":"sideways","score":0.999,"price":2089.5},"Aluminum":{"regime":"bull","score":0.997,"price":3289.5}},"Energy":{"WTI":{"regime":"bull","score":1.0,"price":93.5},"Brent":{"regime":"bull","score":1.0,"price":100.21},"NatGas":{"regime":"sideways","score":0.998,"price":3.023},"Gasoline":{"regime":"bull","score":1.0,"price":3.0003},"HeatingOil":{"regime":"bull","score":1.0,"price":3.8375}},"US Sectors":{"Tech":{"regime":"sideways","score":1.0,"price":138.78},"Financials":{"regime":"bear","score":1.0,"price":49.3},"Energy_Eq":{"regime":"bull","score":0.996,"price":57.9},"Healthcare":{"regime":"bear","score":1.0,"price":151.01},"Industrials":{"regime":"bear","score":1.0,"price":166.06},"Staples":{"regime":"bear","score":1.0,"price":84.98},"Discretionary":{"regime":"bear","score":0.998,"price":112.2},"Utilities":{"regime":"bull","score":0.843,"price":47.26},"RealEstate":{"regime":"sideways","score":1.0,"price":42.58},"Materials":{"regime":"bear","score":1.0,"price":49.4},"CommSvc":{"regime":"sideways","score":0.986,"price":115.33}},"Global Equities":{"US_SP500":{"regime":"bear","score":0.999,"price":6699.3799},"US_Nasdaq":{"regime":"bear","score":1.0,"price":22374.1777},"EU_Stoxx50":{"regime":"bear","score":1.0,"price":5739.0098},"Japan":{"regime":"sideways","score":1.0,"price":85.07},"Korea":{"regime":"bull","score":1.0,"price":133.1},"Taiwan":{"regime":"bear","score":1.0,"price":72.03},"China":{"regime":"bear","score":1.0,"price":36.88},"Germany":{"regime":"bull","score":1.0,"price":40.52},"UK":{"regime":"bear","score":1.0,"price":46.11},"Brazil":{"regime":"bear","score":1.0,"price":36.53},"India":{"regime":"bear","score":1.0,"price":48.56},"EM_Broad":{"regime":"bull","score":1.0,"price":58.38},"Australia":{"regime":"bear","score":0.997,"price":28.68},"Canada":{"regime":"bear","score":0.997,"price":55.85},"Singapore":{"regime":"bear","score":1.0,"price":27.86},"Thailand":{"regime":"bull","score":1.0,"price":66.37},"Mexico":{"regime":"bear","score":1.0,"price":73.16},"Indonesia":{"regime":"bear","score":1.0,"price":15.41},"Vietnam":{"regime":"bear","score":0.999,"price":17.3},"SouthAfrica":{"regime":"sideways","score":1.0,"price":69.08},"Qatar":{"regime":"bear","score":0.999,"price":18.74},"SaudiArabia":{"regime":"bear","score":0.791,"price":38.31},"Turkey":{"regime":"sideways","score":1.0,"price":38.87}},"Rates":{"US_3M":{"regime":"rising","score":0.999,"price":3.605},"US_5Y":{"regime":"rising","score":1.0,"price":3.803},"US_10Y":{"regime":"rising","score":1.0,"price":4.22},"US_30Y":{"regime":"rising","score":0.978,"price":4.859}},"Curves":{"YC_10Y3M":{"regime":"sideways","score":1.0,"price":0.615},"YC_10Y5Y":{"regime":"bull","score":1.0,"price":0.417},"YC_30Y10Y":{"regime":"sideways","score":1.0,"price":0.639}},"Currencies":{"EURUSD":{"regime":"bear","score":0.999,"price":1.1522},"JPYUSD":{"regime":"bear","score":0.999,"price":0.0063},"GBPUSD":{"regime":"sideways","score":0.669,"price":1.3353},"CNYUSD":{"regime":"bull","score":1.0,"price":0.1456},"AUDUSD":{"regime":"bear","score":0.756,"price":0.7075},"CHFUSD":{"regime":"bear","score":0.989,"price":1.2733},"KRWUSD":{"regime":"bull","score":1.0,"price":0.0007},"SGDUSD":{"regime":"bear","score":0.996,"price":0.7822}},"Credit":{"HY_Bond":{"regime":"bear","score":0.998,"price":79.45},"IG_Bond":{"regime":"bear","score":0.997,"price":108.69},"HY_Junk":{"regime":"bear","score":0.997,"price":95.65},"BankLoans":{"regime":"bear","score":1.0,"price":20.47},"EM_Bond":{"regime":"bear","score":1.0,"price":94.75},"CreditSpread":{"regime":"bear","score":0.938,"price":1.368}}},"jump":{"Crypto":{"BTC":{"regime":"sideways","score":0.723,"price":72789.9141},"ETH":{"regime":"bear","score":0.499,"price":2177.4763},"SOL":{"regime":"bear","score":1.0,"price":92.2518},"ETH_BTC":{"regime":"sideways","score":1.0,"price":0.0299}},"Metals":{"Gold":{"regime":"bear","score":1.0,"price":4994.0},"Silver":{"regime":"bear","score":0.948,"price":80.263},"Copper":{"regime":"sideways","score":0.712,"price":5.7905},"Palladium":{"regime":"bear","score":0.877,"price":1584.5},"Platinum":{"regime":"bull","score":0.988,"price":2089.5},"Aluminum":{"regime":"bull","score":0.729,"price":3289.5}},"Energy":{"WTI":{"regime":"bull","score":1.0,"price":93.5},"Brent":{"regime":"bull","score":1.0,"price":100.21},"NatGas":{"regime":"bear","score":0.333,"price":3.023},"Gasoline":{"regime":"bull","score":1.0,"price":3.0003},"HeatingOil":{"regime":"bull","score":1.0,"price":3.8375}},"US Sectors":{"Tech":{"regime":"sideways","score":0.947,"price":138.78},"Financials":{"regime":"bear","score":1.0,"price":49.3},"Energy_Eq":{"regime":"bull","score":0.991,"price":57.9},"Healthcare":{"regime":"bear","score":0.92,"price":151.01},"Industrials":{"regime":"bull","score":0.032,"price":166.06},"Staples":{"regime":"sideways","score":0.996,"price":84.98},"Discretionary":{"regime":"bear","score":0.954,"price":112.2},"Utilities":{"regime":"sideways","score":1.0,"price":47.26},"RealEstate":{"regime":"bull","score":0.084,"price":42.58},"Materials":{"regime":"bear","score":0.992,"price":49.4},"CommSvc":{"regime":"bull","score":0.305,"price":115.33}},"Global Equities":{"US_SP500":{"regime":"bull","score":0.82,"price":6699.3799},"US_Nasdaq":{"regime":"bear","score":0.893,"price":22374.1777},"EU_Stoxx50":{"regime":"bear","score":0.99,"price":5739.0098},"Japan":{"regime":"bear","score":0.997,"price":85.07},"Korea":{"regime":"bear","score":1.0,"price":133.1},"Taiwan":{"regime":"sideways","score":0.97,"price":72.03},"China":{"regime":"sideways","score":0.068,"price":36.88},"Germany":{"regime":"bear","score":0.997,"price":40.52},"UK":{"regime":"sideways","score":1.0,"price":46.11},"Brazil":{"regime":"sideways","score":0.998,"price":36.53},"India":{"regime":"bear","score":1.0,"price":48.56},"EM_Broad":{"regime":"bear","score":1.0,"price":58.38},"Australia":{"regime":"bull","score":0.971,"price":28.68},"Canada":{"regime":"bull","score":0.029,"price":55.85},"Singapore":{"regime":"bear","score":0.891,"price":27.86},"Thailand":{"regime":"sideways","score":1.0,"price":66.37},"Mexico":{"regime":"bear","score":0.995,"price":73.16},"Indonesia":{"regime":"sideways","score":1.0,"price":15.41},"Vietnam":{"regime":"bear","score":0.895,"price":17.3},"SouthAfrica":{"regime":"bear","score":1.0,"price":69.08},"Qatar":{"regime":"bear","score":0.998,"price":18.74},"SaudiArabia":{"regime":"bear","score":0.377,"price":38.31},"Turkey":{"regime":"sideways","score":1.0,"price":38.87}},"Rates":{"US_3M":{"regime":"rising","score":0.992,"price":3.605},"US_5Y":{"regime":"rising","score":0.997,"price":3.803},"US_10Y":{"regime":"stable","score":0.075,"price":4.22},"US_30Y":{"regime":"stable","score":0.935,"price":4.859}},"Curves":{"YC_10Y3M":{"regime":"sideways","score":1.0,"price":0.615},"YC_10Y5Y":{"regime":"bull","score":0.996,"price":0.417},"YC_30Y10Y":{"regime":"sideways","score":0.945,"price":0.639}},"Currencies":{"EURUSD":{"regime":"bear","score":0.96,"price":1.1522},"JPYUSD":{"regime":"bear","score":0.997,"price":0.0063},"GBPUSD":{"regime":"bear","score":0.005,"price":1.3353},"CNYUSD":{"regime":"bull","score":0.997,"price":0.1456},"AUDUSD":{"regime":"bull","score":0.006,"price":0.7075},"CHFUSD":{"regime":"bear","score":0.938,"price":1.2733},"KRWUSD":{"regime":"sideways","score":0.987,"price":0.0007},"SGDUSD":{"regime":"bear","score":0.917,"price":0.7822}},"Credit":{"HY_Bond":{"regime":"bear","score":0.997,"price":79.45},"IG_Bond":{"regime":"bear","score":0.959,"price":108.69},"HY_Junk":{"regime":"bear","score":0.999,"price":95.65},"BankLoans":{"regime":"bear","score":1.0,"price":20.47},"EM_Bond":{"regime":"bear","score":1.0,"price":94.75},"CreditSpread":{"regime":"bear","score":0.53,"price":1.368}}},"gmm":{"Crypto":{"BTC":{"regime":"sideways","score":0.871,"price":72789.9141},"ETH":{"regime":"bear","score":0.734,"price":2177.4763},"SOL":{"regime":"bear","score":1.0,"price":92.2518},"ETH_BTC":{"regime":"sideways","score":1.0,"price":0.0299}},"Metals":{"Gold":{"regime":"bear","score":1.0,"price":4994.0},"Silver":{"regime":"bear","score":0.869,"price":80.263},"Copper":{"regime":"sideways","score":0.757,"price":5.7905},"Palladium":{"regime":"sideways","score":0.548,"price":1584.5},"Platinum":{"regime":"bull","score":0.982,"price":2089.5},"Aluminum":{"regime":"bull","score":0.506,"price":3289.5}},"Energy":{"WTI":{"regime":"bull","score":1.0,"price":93.5},"Brent":{"regime":"bull","score":1.0,"price":100.21},"NatGas":{"regime":"sideways","score":0.709,"price":3.023},"Gasoline":{"regime":"bull","score":1.0,"price":3.0003},"HeatingOil":{"regime":"bull","score":1.0,"price":3.8375}},"US Sectors":{"Tech":{"regime":"bull","score":0.986,"price":138.78},"Financials":{"regime":"bear","score":0.997,"price":49.3},"Energy_Eq":{"regime":"bull","score":0.968,"price":57.9},"Healthcare":{"regime":"bear","score":0.765,"price":151.01},"Industrials":{"regime":"sideways","score":0.959,"price":166.06},"Staples":{"regime":"bear","score":0.999,"price":84.98},"Discretionary":{"regime":"bear","score":0.933,"price":112.2},"Utilities":{"regime":"sideways","score":1.0,"price":47.26},"RealEstate":{"regime":"sideways","score":0.935,"price":42.58},"Materials":{"regime":"sideways","score":0.982,"price":49.4},"CommSvc":{"regime":"sideways","score":0.709,"price":115.33}},"Global Equities":{"US_SP500":{"regime":"sideways","score":0.811,"price":6699.3799},"US_Nasdaq":{"regime":"bull","score":0.688,"price":22374.1777},"EU_Stoxx50":{"regime":"bear","score":0.898,"price":5739.0098},"Japan":{"regime":"bear","score":0.966,"price":85.07},"Korea":{"regime":"bear","score":1.0,"price":133.1},"Taiwan":{"regime":"bear","score":0.986,"price":72.03},"China":{"regime":"bear","score":0.894,"price":36.88},"Germany":{"regime":"bear","score":0.967,"price":40.52},"UK":{"regime":"sideways","score":0.999,"price":46.11},"Brazil":{"regime":"bear","score":0.99,"price":36.53},"India":{"regime":"bear","score":1.0,"price":48.56},"EM_Broad":{"regime":"bear","score":1.0,"price":58.38},"Australia":{"regime":"bear","score":0.92,"price":28.68},"Canada":{"regime":"bear","score":0.884,"price":55.85},"Singapore":{"regime":"bear","score":0.53,"price":27.86},"Thailand":{"regime":"sideways","score":1.0,"price":66.37},"Mexico":{"regime":"bear","score":0.978,"price":73.16},"Indonesia":{"regime":"sideways","score":1.0,"price":15.41},"Vietnam":{"regime":"bear","score":0.922,"price":17.3},"SouthAfrica":{"regime":"bear","score":1.0,"price":69.08},"Qatar":{"regime":"bear","score":0.998,"price":18.74},"SaudiArabia":{"regime":"bear","score":0.629,"price":38.31},"Turkey":{"regime":"sideways","score":1.0,"price":38.87}},"Rates":{"US_3M":{"regime":"rising","score":0.997,"price":3.605},"US_5Y":{"regime":"rising","score":0.996,"price":3.803},"US_10Y":{"regime":"rising","score":0.727,"price":4.22},"US_30Y":{"regime":"stable","score":1.0,"price":4.859}},"Curves":{"YC_10Y3M":{"regime":"sideways","score":1.0,"price":0.615},"YC_10Y5Y":{"regime":"bull","score":0.998,"price":0.417},"YC_30Y10Y":{"regime":"sideways","score":0.982,"price":0.639}},"Currencies":{"EURUSD":{"regime":"sideways","score":0.889,"price":1.1522},"JPYUSD":{"regime":"bear","score":1.0,"price":0.0063},"GBPUSD":{"regime":"sideways","score":0.988,"price":1.3353},"CNYUSD":{"regime":"bull","score":0.996,"price":0.1456},"AUDUSD":{"regime":"bull","score":0.711,"price":0.7075},"CHFUSD":{"regime":"bear","score":0.939,"price":1.2733},"KRWUSD":{"regime":"sideways","score":0.97,"price":0.0007},"SGDUSD":{"regime":"bear","score":0.971,"price":0.7822}},"Credit":{"HY_Bond":{"regime":"bear","score":0.987,"price":79.45},"IG_Bond":{"regime":"bear","score":0.954,"price":108.69},"HY_Junk":{"regime":"bear","score":0.999,"price":95.65},"BankLoans":{"regime":"bear","score":1.0,"price":20.47},"EM_Bond":{"regime":"bear","score":1.0,"price":94.75},"CreditSpread":{"regime":"bear","score":0.792,"price":1.368}}}},"consensus":{"Crypto":{"BTC":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"neutral","jump":"neutral","gmm":"neutral"},"agreement":1.0,"price":72789.9141},"ETH":{"consensus":"lean_negative","votes":{"threshold":"neutral","hmm":"neutral","jump":"negative","gmm":"negative"},"agreement":0.5,"price":2177.4763},"SOL":{"consensus":"lean_negative","votes":{"threshold":"neutral","hmm":"neutral","jump":"negative","gmm":"negative"},"agreement":0.5,"price":92.2518},"ETH_BTC":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"neutral","jump":"neutral","gmm":"neutral"},"agreement":1.0,"price":0.0299}},"Metals":{"Gold":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"positive","jump":"negative","gmm":"negative"},"agreement":0.5,"price":4994.0},"Silver":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"positive","jump":"negative","gmm":"negative"},"agreement":0.5,"price":80.263},"Copper":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"neutral","jump":"neutral","gmm":"neutral"},"agreement":1.0,"price":5.7905},"Palladium":{"consensus":"lean_negative","votes":{"threshold":"neutral","hmm":"negative","jump":"negative","gmm":"neutral"},"agreement":0.5,"price":1584.5},"Platinum":{"consensus":"lean_positive","votes":{"threshold":"neutral","hmm":"neutral","jump":"positive","gmm":"positive"},"agreement":0.5,"price":2089.5},"Aluminum":{"consensus":"strong_positive","votes":{"threshold":"positive","hmm":"positive","jump":"positive","gmm":"positive"},"agreement":1.0,"price":3289.5}},"Energy":{"WTI":{"consensus":"strong_positive","votes":{"threshold":"positive","hmm":"positive","jump":"positive","gmm":"positive"},"agreement":1.0,"price":93.5},"Brent":{"consensus":"strong_positive","votes":{"threshold":"positive","hmm":"positive","jump":"positive","gmm":"positive"},"agreement":1.0,"price":100.21},"NatGas":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"neutral","jump":"negative","gmm":"neutral"},"agreement":0.75,"price":3.023},"Gasoline":{"consensus":"strong_positive","votes":{"threshold":"positive","hmm":"positive","jump":"positive","gmm":"positive"},"agreement":1.0,"price":3.0003},"HeatingOil":{"consensus":"strong_positive","votes":{"threshold":"positive","hmm":"positive","jump":"positive","gmm":"positive"},"agreement":1.0,"price":3.8375}},"US Sectors":{"Tech":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"neutral","jump":"neutral","gmm":"positive"},"agreement":0.75,"price":138.78},"Financials":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":49.3},"Energy_Eq":{"consensus":"strong_positive","votes":{"threshold":"positive","hmm":"positive","jump":"positive","gmm":"positive"},"agreement":1.0,"price":57.9},"Healthcare":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":151.01},"Industrials":{"consensus":"mixed","votes":{"threshold":"negative","hmm":"negative","jump":"positive","gmm":"neutral"},"agreement":0.5,"price":166.06},"Staples":{"consensus":"lean_negative","votes":{"threshold":"neutral","hmm":"negative","jump":"neutral","gmm":"negative"},"agreement":0.5,"price":84.98},"Discretionary":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":112.2},"Utilities":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"positive","jump":"neutral","gmm":"neutral"},"agreement":0.75,"price":47.26},"RealEstate":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"neutral","jump":"positive","gmm":"neutral"},"agreement":0.75,"price":42.58},"Materials":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"neutral"},"agreement":0.75,"price":49.4},"CommSvc":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"neutral","jump":"positive","gmm":"neutral"},"agreement":0.75,"price":115.33}},"Global Equities":{"US_SP500":{"consensus":"mixed","votes":{"threshold":"negative","hmm":"negative","jump":"positive","gmm":"neutral"},"agreement":0.5,"price":6699.3799},"US_Nasdaq":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"negative","jump":"negative","gmm":"positive"},"agreement":0.5,"price":22374.1777},"EU_Stoxx50":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":5739.0098},"Japan":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"neutral","jump":"negative","gmm":"negative"},"agreement":0.75,"price":85.07},"Korea":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"positive","jump":"negative","gmm":"negative"},"agreement":0.5,"price":133.1},"Taiwan":{"consensus":"lean_negative","votes":{"threshold":"neutral","hmm":"negative","jump":"neutral","gmm":"negative"},"agreement":0.5,"price":72.03},"China":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"neutral","gmm":"negative"},"agreement":0.75,"price":36.88},"Germany":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"positive","jump":"negative","gmm":"negative"},"agreement":0.75,"price":40.52},"UK":{"consensus":"lean_negative","votes":{"threshold":"negative","hmm":"negative","jump":"neutral","gmm":"neutral"},"agreement":0.5,"price":46.11},"Brazil":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"neutral","gmm":"negative"},"agreement":0.75,"price":36.53},"India":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":48.56},"EM_Broad":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"positive","jump":"negative","gmm":"negative"},"agreement":0.75,"price":58.38},"Australia":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"negative","jump":"positive","gmm":"negative"},"agreement":0.5,"price":28.68},"Canada":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"negative","jump":"positive","gmm":"negative"},"agreement":0.5,"price":55.85},"Singapore":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":27.86},"Thailand":{"consensus":"mixed","votes":{"threshold":"negative","hmm":"positive","jump":"neutral","gmm":"neutral"},"agreement":0.5,"price":66.37},"Mexico":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":73.16},"Indonesia":{"consensus":"lean_negative","votes":{"threshold":"negative","hmm":"negative","jump":"neutral","gmm":"neutral"},"agreement":0.5,"price":15.41},"Vietnam":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":17.3},"SouthAfrica":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"neutral","jump":"negative","gmm":"negative"},"agreement":0.75,"price":69.08},"Qatar":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":18.74},"SaudiArabia":{"consensus":"strong_negative","votes":{"threshold":"neutral","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":0.75,"price":38.31},"Turkey":{"consensus":"mixed","votes":{"threshold":"negative","hmm":"neutral","jump":"neutral","gmm":"neutral"},"agreement":0.75,"price":38.87}},"Rates":{"US_3M":{"consensus":"strong_negative","votes":{"threshold":"neutral","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":0.75,"price":3.605},"US_5Y":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":3.803},"US_10Y":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"neutral","gmm":"negative"},"agreement":0.75,"price":4.22},"US_30Y":{"consensus":"lean_negative","votes":{"threshold":"negative","hmm":"negative","jump":"neutral","gmm":"neutral"},"agreement":0.5,"price":4.859}},"Curves":{"YC_10Y3M":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"neutral","jump":"neutral","gmm":"neutral"},"agreement":1.0,"price":0.615},"YC_10Y5Y":{"consensus":"strong_positive","votes":{"threshold":"neutral","hmm":"positive","jump":"positive","gmm":"positive"},"agreement":0.75,"price":0.417},"YC_30Y10Y":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"neutral","jump":"neutral","gmm":"neutral"},"agreement":1.0,"price":0.639}},"Currencies":{"EURUSD":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"neutral"},"agreement":0.75,"price":1.1522},"JPYUSD":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":0.0063},"GBPUSD":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"neutral","jump":"negative","gmm":"neutral"},"agreement":0.75,"price":1.3353},"CNYUSD":{"consensus":"strong_positive","votes":{"threshold":"positive","hmm":"positive","jump":"positive","gmm":"positive"},"agreement":1.0,"price":0.1456},"AUDUSD":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"negative","jump":"positive","gmm":"positive"},"agreement":0.5,"price":0.7075},"CHFUSD":{"consensus":"strong_negative","votes":{"threshold":"neutral","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":0.75,"price":1.2733},"KRWUSD":{"consensus":"mixed","votes":{"threshold":"neutral","hmm":"positive","jump":"neutral","gmm":"neutral"},"agreement":0.75,"price":0.0007},"SGDUSD":{"consensus":"strong_negative","votes":{"threshold":"neutral","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":0.75,"price":0.7822}},"Credit":{"HY_Bond":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":79.45},"IG_Bond":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":108.69},"HY_Junk":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":95.65},"BankLoans":{"consensus":"strong_negative","votes":{"threshold":"neutral","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":0.75,"price":20.47},"EM_Bond":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":94.75},"CreditSpread":{"consensus":"strong_negative","votes":{"threshold":"negative","hmm":"negative","jump":"negative","gmm":"negative"},"agreement":1.0,"price":1.368}}},"categories":{},"cat_order":["Crypto","Metals","Energy","US Sectors","Global Equities","Rates","Curves","Currencies","Credit"]};
+const D={"date":"2026-03-22","total_assets":65,"weeks":314,"n_regimes":5,"current":{"regime_id":2,"label":"SUPPLY SHOCK","confidence":1.0,"runner_up":{"label":"GOLDILOCKS","confidence":0.0},"features":{"cat_Crypto":0.675,"cat_Metals":0.058,"cat_Energy":2.302,"cat_US_Sectors":-0.605,"cat_Global_Equities":-1.202,"cat_Rates":0.7,"cat_Curves":0.074,"cat_Currencies":-0.392,"cat_Credit":-1.365,"cyclical_vs_defensive":-0.916,"energy_vs_tech":1.514,"financials":-1.547,"sector_dispersion":0.834,"sector_breadth":0.091}},"regimes":{"0":{"label":"GOLDILOCKS","n_weeks":36,"pct":12.5,"profile":{"cat_Crypto":-0.242,"cat_Metals":0.204,"cat_Energy":-0.292,"cat_US_Sectors":0.305,"cat_Global_Equities":0.13,"cat_Rates":-0.752,"cat_Curves":-0.061,"cat_Currencies":0.183,"cat_Credit":0.668,"cyclical_vs_defensive":-0.827,"energy_vs_tech":-0.698,"financials":-0.168,"sector_dispersion":0.875,"sector_breadth":0.285},"periods":["2021-06->2021-07","2021-11->2021-11","2021-12->2021-12","2023-03->2023-04","2024-05->2024-05","2024-06->2024-06","2024-07->2024-09","2025-02->2025-03"]},"1":{"label":"REFLATION","n_weeks":95,"pct":33.0,"profile":{"cat_Crypto":0.443,"cat_Metals":0.106,"cat_Energy":0.212,"cat_US_Sectors":0.288,"cat_Global_Equities":0.33,"cat_Rates":0.023,"cat_Curves":0.146,"cat_Currencies":0.083,"cat_Credit":0.343,"cyclical_vs_defensive":0.185,"energy_vs_tech":-0.461,"financials":0.393,"sector_dispersion":0.571,"sector_breadth":0.2},"periods":["2020-10->2020-10","2020-11->2020-11","2020-12->2021-02","2021-05->2021-06","2021-07->2021-09","2022-06->2022-06","2022-07->2022-07","2022-11->2022-11"]},"2":{"label":"SUPPLY SHOCK","n_weeks":32,"pct":11.1,"profile":{"cat_Crypto":-0.463,"cat_Metals":0.386,"cat_Energy":1.101,"cat_US_Sectors":-0.051,"cat_Global_Equities":-0.071,"cat_Rates":1.085,"cat_Curves":0.002,"cat_Currencies":-0.247,"cat_Credit":-0.756,"cyclical_vs_defensive":0.087,"energy_vs_tech":2.114,"financials":-0.055,"sector_dispersion":0.954,"sector_breadth":0.219},"periods":["2021-03->2021-03","2021-10->2021-10","2022-01->2022-03","2022-04->2022-04","2022-05->2022-06","2022-10->2022-10","2024-04->2024-04","2024-10->2024-10"]},"3":{"label":"GOLDILOCKS","n_weeks":71,"pct":24.7,"profile":{"cat_Crypto":0.827,"cat_Metals":0.559,"cat_Energy":0.14,"cat_US_Sectors":0.907,"cat_Global_Equities":0.71,"cat_Rates":0.174,"cat_Curves":-0.132,"cat_Currencies":0.301,"cat_Credit":0.613,"cyclical_vs_defensive":0.276,"energy_vs_tech":-0.136,"financials":1.143,"sector_dispersion":0.668,"sector_breadth":0.586},"periods":["2020-10->2020-10","2020-11->2020-12","2021-02->2021-02","2021-03->2021-05","2021-09->2021-09","2021-10->2021-11","2022-01->2022-01","2022-03->2022-04"]},"4":{"label":"STAGFLATION","n_weeks":54,"pct":18.8,"profile":{"cat_Crypto":-0.474,"cat_Metals":-0.275,"cat_Energy":-0.147,"cat_US_Sectors":-0.735,"cat_Global_Equities":-0.666,"cat_Rates":0.753,"cat_Curves":0.235,"cat_Currencies":-0.577,"cat_Credit":-0.655,"cyclical_vs_defensive":-0.128,"energy_vs_tech":0.465,"financials":-0.788,"sector_dispersion":0.579,"sector_breadth":0.017},"periods":["2020-09->2020-10","2020-11->2020-11","2021-11->2021-12","2022-04->2022-05","2022-06->2022-07","2022-08->2022-10","2022-12->2023-01","2023-02->2023-03"]}},"timeline":[{"start":"2020-09-20","end":"2020-10-04","r":4,"l":"STAGFLATION"},{"start":"2020-10-11","end":"2020-10-18","r":1,"l":"REFLATION"},{"start":"2020-10-25","end":"2020-10-25","r":3,"l":"GOLDILOCKS"},{"start":"2020-11-01","end":"2020-11-01","r":4,"l":"STAGFLATION"},{"start":"2020-11-08","end":"2020-11-22","r":1,"l":"REFLATION"},{"start":"2020-11-29","end":"2020-12-06","r":3,"l":"GOLDILOCKS"},{"start":"2020-12-13","end":"2021-02-21","r":1,"l":"REFLATION"},{"start":"2021-02-28","end":"2021-02-28","r":3,"l":"GOLDILOCKS"},{"start":"2021-03-07","end":"2021-03-21","r":2,"l":"SUPPLY SHOCK"},{"start":"2021-03-28","end":"2021-05-23","r":3,"l":"GOLDILOCKS"},{"start":"2021-05-30","end":"2021-06-06","r":1,"l":"REFLATION"},{"start":"2021-06-13","end":"2021-07-11","r":0,"l":"GOLDILOCKS"},{"start":"2021-07-18","end":"2021-07-18","r":1,"l":"REFLATION"},{"start":"2021-07-25","end":"2021-07-25","r":0,"l":"GOLDILOCKS"},{"start":"2021-08-01","end":"2021-08-29","r":1,"l":"REFLATION"},{"start":"2021-09-05","end":"2021-09-05","r":3,"l":"GOLDILOCKS"},{"start":"2021-09-12","end":"2021-09-26","r":1,"l":"REFLATION"},{"start":"2021-10-03","end":"2021-10-17","r":2,"l":"SUPPLY SHOCK"},{"start":"2021-10-24","end":"2021-11-14","r":3,"l":"GOLDILOCKS"},{"start":"2021-11-21","end":"2021-11-21","r":0,"l":"GOLDILOCKS"},{"start":"2021-11-28","end":"2021-12-05","r":4,"l":"STAGFLATION"},{"start":"2021-12-12","end":"2021-12-26","r":0,"l":"GOLDILOCKS"},{"start":"2022-01-02","end":"2022-01-02","r":3,"l":"GOLDILOCKS"},{"start":"2022-01-09","end":"2022-03-13","r":2,"l":"SUPPLY SHOCK"},{"start":"2022-03-20","end":"2022-04-10","r":3,"l":"GOLDILOCKS"},{"start":"2022-04-17","end":"2022-04-17","r":2,"l":"SUPPLY SHOCK"},{"start":"2022-04-24","end":"2022-05-22","r":4,"l":"STAGFLATION"},{"start":"2022-05-29","end":"2022-05-29","r":2,"l":"SUPPLY SHOCK"},{"start":"2022-06-05","end":"2022-06-05","r":1,"l":"REFLATION"},{"start":"2022-06-12","end":"2022-06-12","r":2,"l":"SUPPLY SHOCK"},{"start":"2022-06-19","end":"2022-07-03","r":4,"l":"STAGFLATION"},{"start":"2022-07-10","end":"2022-07-10","r":1,"l":"REFLATION"},{"start":"2022-07-17","end":"2022-07-17","r":3,"l":"GOLDILOCKS"},{"start":"2022-07-24","end":"2022-07-24","r":1,"l":"REFLATION"},{"start":"2022-07-31","end":"2022-08-21","r":3,"l":"GOLDILOCKS"},{"start":"2022-08-28","end":"2022-10-16","r":4,"l":"STAGFLATION"},{"start":"2022-10-23","end":"2022-10-23","r":2,"l":"SUPPLY SHOCK"},{"start":"2022-10-30","end":"2022-11-20","r":3,"l":"GOLDILOCKS"},{"start":"2022-11-27","end":"2022-11-27","r":1,"l":"REFLATION"},{"start":"2022-12-04","end":"2022-12-04","r":3,"l":"GOLDILOCKS"},{"start":"2022-12-11","end":"2023-01-01","r":4,"l":"STAGFLATION"},{"start":"2023-01-08","end":"2023-01-22","r":1,"l":"REFLATION"},{"start":"2023-01-29","end":"2023-01-29","r":3,"l":"GOLDILOCKS"},{"start":"2023-02-05","end":"2023-02-19","r":1,"l":"REFLATION"},{"start":"2023-02-26","end":"2023-03-12","r":4,"l":"STAGFLATION"},{"start":"2023-03-19","end":"2023-04-09","r":0,"l":"GOLDILOCKS"},{"start":"2023-04-16","end":"2023-04-23","r":3,"l":"GOLDILOCKS"},{"start":"2023-04-30","end":"2023-07-16","r":1,"l":"REFLATION"},{"start":"2023-07-23","end":"2023-07-23","r":3,"l":"GOLDILOCKS"},{"start":"2023-07-30","end":"2023-08-06","r":1,"l":"REFLATION"},{"start":"2023-08-13","end":"2023-08-27","r":4,"l":"STAGFLATION"},{"start":"2023-09-03","end":"2023-09-17","r":1,"l":"REFLATION"},{"start":"2023-09-24","end":"2023-10-29","r":4,"l":"STAGFLATION"},{"start":"2023-11-05","end":"2023-11-12","r":1,"l":"REFLATION"},{"start":"2023-11-19","end":"2023-12-31","r":3,"l":"GOLDILOCKS"},{"start":"2024-01-07","end":"2024-02-11","r":1,"l":"REFLATION"},{"start":"2024-02-18","end":"2024-02-25","r":3,"l":"GOLDILOCKS"},{"start":"2024-03-03","end":"2024-03-03","r":1,"l":"REFLATION"},{"start":"2024-03-10","end":"2024-04-07","r":3,"l":"GOLDILOCKS"},{"start":"2024-04-14","end":"2024-04-14","r":2,"l":"SUPPLY SHOCK"},{"start":"2024-04-21","end":"2024-04-28","r":4,"l":"STAGFLATION"},{"start":"2024-05-05","end":"2024-05-12","r":0,"l":"GOLDILOCKS"},{"start":"2024-05-19","end":"2024-05-19","r":3,"l":"GOLDILOCKS"},{"start":"2024-05-26","end":"2024-05-26","r":0,"l":"GOLDILOCKS"},{"start":"2024-06-02","end":"2024-06-09","r":1,"l":"REFLATION"},{"start":"2024-06-16","end":"2024-06-16","r":0,"l":"GOLDILOCKS"},{"start":"2024-06-23","end":"2024-07-21","r":1,"l":"REFLATION"},{"start":"2024-07-28","end":"2024-08-25","r":0,"l":"GOLDILOCKS"},{"start":"2024-09-01","end":"2024-09-01","r":3,"l":"GOLDILOCKS"},{"start":"2024-09-08","end":"2024-09-29","r":0,"l":"GOLDILOCKS"},{"start":"2024-10-06","end":"2024-10-13","r":3,"l":"GOLDILOCKS"},{"start":"2024-10-20","end":"2024-10-27","r":2,"l":"SUPPLY SHOCK"},{"start":"2024-11-03","end":"2024-11-03","r":4,"l":"STAGFLATION"},{"start":"2024-11-10","end":"2024-11-10","r":3,"l":"GOLDILOCKS"},{"start":"2024-11-17","end":"2024-11-17","r":2,"l":"SUPPLY SHOCK"},{"start":"2024-11-24","end":"2024-12-01","r":3,"l":"GOLDILOCKS"},{"start":"2024-12-08","end":"2024-12-15","r":1,"l":"REFLATION"},{"start":"2024-12-22","end":"2025-01-12","r":4,"l":"STAGFLATION"},{"start":"2025-01-19","end":"2025-02-09","r":3,"l":"GOLDILOCKS"},{"start":"2025-02-16","end":"2025-03-02","r":0,"l":"GOLDILOCKS"},{"start":"2025-03-09","end":"2025-04-27","r":4,"l":"STAGFLATION"},{"start":"2025-05-04","end":"2025-05-18","r":3,"l":"GOLDILOCKS"},{"start":"2025-05-25","end":"2025-07-13","r":1,"l":"REFLATION"},{"start":"2025-07-20","end":"2025-07-27","r":3,"l":"GOLDILOCKS"},{"start":"2025-08-03","end":"2025-09-28","r":1,"l":"REFLATION"},{"start":"2025-10-05","end":"2025-10-26","r":0,"l":"GOLDILOCKS"},{"start":"2025-11-02","end":"2025-11-16","r":1,"l":"REFLATION"},{"start":"2025-11-23","end":"2025-11-23","r":4,"l":"STAGFLATION"},{"start":"2025-11-30","end":"2025-11-30","r":0,"l":"GOLDILOCKS"},{"start":"2025-12-07","end":"2025-12-07","r":1,"l":"REFLATION"},{"start":"2025-12-14","end":"2025-12-28","r":3,"l":"GOLDILOCKS"},{"start":"2026-01-04","end":"2026-01-11","r":1,"l":"REFLATION"},{"start":"2026-01-18","end":"2026-01-18","r":3,"l":"GOLDILOCKS"},{"start":"2026-01-25","end":"2026-02-22","r":2,"l":"SUPPLY SHOCK"},{"start":"2026-03-01","end":"2026-03-01","r":0,"l":"GOLDILOCKS"},{"start":"2026-03-08","end":"2026-03-22","r":2,"l":"SUPPLY SHOCK"}],"assets":{"Crypto":{"BTC":{"regime":"sideways","score":0.678,"price":72789.9141},"ETH":{"regime":"sideways","score":0.745,"price":2177.4763},"SOL":{"regime":"sideways","score":0.728,"price":92.2518},"ETH_BTC":{"regime":"sideways","score":0.549,"price":0.0299}},"Metals":{"Gold":{"regime":"sideways","score":-0.203,"price":4994.0},"Silver":{"regime":"sideways","score":-0.144,"price":80.263},"Copper":{"regime":"sideways","score":-0.119,"price":5.7905},"Palladium":{"regime":"sideways","score":-0.65,"price":1584.5},"Platinum":{"regime":"sideways","score":-0.194,"price":2089.5},"Aluminum":{"regime":"bull","score":1.658,"price":3289.5}},"Energy":{"WTI":{"regime":"bull","score":2.571,"price":93.5},"Brent":{"regime":"bull","score":2.912,"price":100.21},"NatGas":{"regime":"sideways","score":-0.022,"price":3.023},"Gasoline":{"regime":"bull","score":3.374,"price":3.0003},"HeatingOil":{"regime":"bull","score":2.674,"price":3.8375}},"US Sectors":{"Tech":{"regime":"sideways","score":-0.332,"price":138.78},"Financials":{"regime":"bear","score":-1.547,"price":49.3},"Energy_Eq":{"regime":"bull","score":1.182,"price":57.9},"Healthcare":{"regime":"bear","score":-0.819,"price":151.01},"Industrials":{"regime":"bear","score":-1.578,"price":166.06},"Staples":{"regime":"sideways","score":-0.798,"price":84.98},"Discretionary":{"regime":"bear","score":-0.979,"price":112.2},"Utilities":{"regime":"sideways","score":0.437,"price":47.26},"RealEstate":{"regime":"sideways","score":-0.565,"price":42.58},"Materials":{"regime":"bear","score":-1.302,"price":49.4},"CommSvc":{"regime":"sideways","score":-0.352,"price":115.33}},"Global Equities":{"US_SP500":{"regime":"bear","score":-1.056,"price":6699.3799},"US_Nasdaq":{"regime":"sideways","score":-0.584,"price":22374.1777},"EU_Stoxx50":{"regime":"bear","score":-1.61,"price":5716.6099},"Japan":{"regime":"bear","score":-1.225,"price":85.07},"Korea":{"regime":"sideways","score":-0.557,"price":133.1},"Taiwan":{"regime":"sideways","score":-0.487,"price":72.03},"China":{"regime":"bear","score":-0.982,"price":36.88},"Germany":{"regime":"bear","score":-1.86,"price":40.52},"UK":{"regime":"bear","score":-1.169,"price":46.11},"Brazil":{"regime":"bear","score":-1.024,"price":36.53},"India":{"regime":"bear","score":-2.288,"price":48.56},"EM_Broad":{"regime":"bear","score":-1.211,"price":58.38},"Australia":{"regime":"sideways","score":-0.76,"price":28.68},"Canada":{"regime":"sideways","score":-0.627,"price":55.85},"Singapore":{"regime":"bear","score":-1.288,"price":27.86},"Thailand":{"regime":"bear","score":-1.147,"price":66.37},"Mexico":{"regime":"bear","score":-1.628,"price":73.16},"Indonesia":{"regime":"bear","score":-2.6,"price":15.41},"Vietnam":{"regime":"bear","score":-1.27,"price":17.3},"SouthAfrica":{"regime":"bear","score":-1.29,"price":69.08},"Qatar":{"regime":"bear","score":-1.796,"price":18.74},"SaudiArabia":{"regime":"sideways","score":-0.201,"price":38.31},"Turkey":{"regime":"bear","score":-0.992,"price":38.87}},"Rates":{"US_3M":{"regime":"stable","score":0.14,"price":3.605},"US_5Y":{"regime":"rising","score":0.877,"price":3.803},"US_10Y":{"regime":"rising","score":0.838,"price":4.22},"US_30Y":{"regime":"rising","score":0.943,"price":4.859}},"Curves":{"YC_10Y3M":{"regime":"stable","score":0.695,"price":0.615},"YC_10Y5Y":{"regime":"stable","score":-0.474,"price":0.417},"YC_30Y10Y":{"regime":"stable","score":null,"price":0.639}},"Currencies":{"EURUSD":{"regime":"bear","score":-1.159,"price":1.1522},"JPYUSD":{"regime":"bear","score":-0.816,"price":0.0063},"GBPUSD":{"regime":"sideways","score":-0.408,"price":1.3353},"CNYUSD":{"regime":"bull","score":0.876,"price":0.1456},"AUDUSD":{"regime":"sideways","score":0.109,"price":0.7075},"CHFUSD":{"regime":"sideways","score":-0.543,"price":1.2733},"KRWUSD":{"regime":"sideways","score":-0.564,"price":0.0007},"SGDUSD":{"regime":"sideways","score":-0.629,"price":0.7822}},"Credit":{"HY_Bond":{"regime":"bear","score":-1.626,"price":79.45},"IG_Bond":{"regime":"bear","score":-1.664,"price":108.69},"HY_Junk":{"regime":"bear","score":-1.566,"price":95.65},"BankLoans":{"regime":"sideways","score":-0.352,"price":20.47},"EM_Bond":{"regime":"bear","score":-2.126,"price":94.75},"CreditSpread":{"regime":"bear","score":-0.858,"price":1.368}}},"cat_order":["Crypto","Metals","Energy","US Sectors","Global Equities","Rates","Curves","Currencies","Credit"]};
 const CO=D.cat_order;
-const MS=['threshold','hmm','jump','gmm'];
-const ML={'threshold':'Threshold (z-score)','hmm':'Hidden Markov Model','jump':'Jump Model','gmm':'Gaussian Mixture'};
+const RC={'SUPPLY SHOCK':'#ef4444','STAGFLATION':'#e11d48','GOLDILOCKS':'#22c55e','REFLATION':'#3b82f6','CRISIS':'#1c1917','DEFLATION':'#a8a29e','OVERHEAT':'#f59e0b','CONTRACTION':'#8b5cf6','TRANSITION':'#78716c'};
 const ib=r=>r==='bull'||r==='falling'||r==='steepening';
 const ie=r=>r==='bear'||r==='rising'||r==='flattening';
 const rc=r=>ib(r)?'bu':ie(r)?'be':'si';
@@ -78,145 +89,129 @@ const rl=r=>({bull:'BULL',bear:'BEAR',sideways:'SIDE',rising:'RISING',falling:'F
 const tc=r=>ib(r)?'var(--g)':ie(r)?'var(--r)':'var(--x)';
 const fP=(p,n)=>{if(p==null)return'—';if(['ETH_BTC','JPYUSD','CreditSpread','CNYUSD','KRWUSD'].includes(n))return p.toFixed(4);if(p>10000)return p.toLocaleString('en',{maximumFractionDigits:0});if(p>100)return p.toLocaleString('en',{maximumFractionDigits:1});return p<1?p.toFixed(4):p.toFixed(2)};
 const zP=z=>{if(z==null)return 50;return((Math.max(-3,Math.min(3,z))+3)/6)*100};
-function cs(assets){const v=Object.values(assets),s=v.map(x=>ib(x.regime)?1:ie(x.regime)?-1:0);return s.reduce((a,b)=>a+b,0)/s.length}
-let S={method:'consensus',sort:'default',view:'overview'};
+const catLabel=n=>n.replace('cat_','').replace(/_/g,' ');
 
-function sa(entries){const s=S.sort;
-if(s==='z-asc')return[...entries].sort((a,b)=>(a[1].score||0)-(b[1].score||0));
-if(s==='z-desc')return[...entries].sort((a,b)=>(b[1].score||0)-(a[1].score||0));
-if(s==='alpha')return[...entries].sort((a,b)=>a[0].localeCompare(b[0]));
-if(s==='regime'){const ro=r=>ib(r)?0:ie(r)?2:1;return[...entries].sort((a,b)=>ro(a[1].regime)-ro(b[1].regime))}
-return entries}
-function sb(){return'<div class="sort-ctrl">Sort: '+['default','z-desc','z-asc','alpha','regime'].map(s=>'<button class="'+(S.sort===s?'on':'')+'" onclick="U(\'sort\',\''+s+'\')">'+({'z-desc':'z↓','z-asc':'z↑'}[s]||s)+'</button>').join('')+'</div>'}
+let S={view:'regime',sort:'default'};
 
 function render(){
 const app=document.getElementById('app');
 let h='<header><h1>Regime Monitor</h1><div class="m">'+D.total_assets+' assets · '+D.weeks+'w · '+D.date+'</div></header>';
 
-// Method tabs
-h+='<div class="mtabs">';
-['consensus',...MS,'method'].forEach(m=>{
-  const label=m==='consensus'?'CONSENSUS':m==='method'?'METHOD':ML[m]||m;
-  h+='<button class="'+(S.method===m?'on':'')+'" onclick="U(\'method\',\''+m+'\')">'+label+'</button>';
+// HERO — Current Regime
+const cur=D.current;
+const heroClass=cur.label.replace(/ /g,'_');
+h+='<div class="regime-hero '+heroClass+'">';
+h+='<div class="label">Current Market Regime</div>';
+h+='<div class="name">'+cur.label+'</div>';
+h+='<div class="conf">'+Math.round(cur.confidence*100)+'% confidence</div>';
+h+='<div class="runner">Runner-up: '+cur.runner_up.label+' ('+Math.round(cur.runner_up.confidence*100)+'%)</div>';
+h+='</div>';
+
+// Feature cards
+const feats=cur.features;
+const featOrder=['cat_Energy','cat_Global_Equities','cat_Credit','cat_Rates','cat_Crypto','cat_Metals','cat_Currencies','cyclical_vs_defensive','energy_vs_tech','financials','sector_breadth','sector_dispersion'];
+h+='<div class="feat-grid">';
+featOrder.forEach(fn=>{
+  const v=feats[fn];if(v==null)return;
+  const cls=v>0.3?'pos':v<-0.3?'neg':'neu';
+  const label=fn.startsWith('cat_')?catLabel(fn):fn.replace(/_/g,' ');
+  h+='<div class="feat-card"><div class="fn">'+label+'</div><div class="fv '+cls+'">'+(v>0?'+':'')+v.toFixed(2)+'</div></div>';
 });
 h+='</div>';
 
-// View tabs for non-consensus
-if(S.method!=='consensus'&&S.method!=='method'){
-  h+='<div class="mtabs" style="margin-bottom:10px">';
-  ['overview','heatmap','extremes'].forEach(v=>{
-    h+='<button class="'+(S.view===v?'on':'')+'" onclick="U(\'view\',\''+v+'\')">'+v+'</button>';
+// Timeline bar
+h+=rTimeline();
+
+// Tabs
+h+='<div class="mtabs">';
+['regime','assets','method'].forEach(v=>{
+  h+='<button class="'+(S.view===v?'on':'')+'" onclick="U(\'view\',\''+v+'\')">'+v+'</button>';
+});
+h+='</div>';
+
+if(S.view==='regime') h+=rRegimes();
+else if(S.view==='assets') h+=rAssets();
+else h+=rMethod();
+
+h+='<footer>14-dim feature vector · GMM clustering (k='+D.n_regimes+') · 6Y weekly data · Sectoral internals included</footer>';
+app.innerHTML=h}
+
+function rTimeline(){
+const tl=D.timeline;if(!tl||!tl.length)return'';
+const t0=new Date(tl[0].start).getTime();
+const t1=new Date(tl[tl.length-1].end).getTime();
+const span=t1-t0;
+let h='<div class="tl-bar">';
+tl.forEach(seg=>{
+  const s=new Date(seg.start).getTime();
+  const e=new Date(seg.end).getTime();
+  const w=Math.max(0.3,((e-s)/span)*100);
+  const col=RC[seg.l]||'#a8a29e';
+  const isCur=seg===tl[tl.length-1];
+  h+='<div class="tl-seg" style="width:'+w+'%;background:'+col+(isCur?';box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)':'')+'" title="'+seg.l+' ('+seg.start+' → '+seg.end+')">'+
+    (w>3?seg.l.split(' ')[0].substring(0,3):'')+'</div>';
+});
+h+='</div>';
+h+='<div class="tl-dates"><span>'+tl[0].start.substring(0,7)+'</span><span>'+tl[tl.length-1].end.substring(0,7)+'</span></div>';
+
+// Legend
+const seen=new Set();
+h+='<div class="tl-legend">';
+tl.forEach(seg=>{if(!seen.has(seg.l)){seen.add(seg.l);
+  h+='<span><span class="dot" style="background:'+(RC[seg.l]||'#a8a29e')+'"></span>'+seg.l+'</span>';}});
+h+='</div>';
+return h}
+
+function rRegimes(){
+let h='';
+for(let r=0;r<D.n_regimes;r++){
+  const info=D.regimes[r];if(!info)continue;
+  const col=RC[info.label]||'#a8a29e';
+  const isCurrent=r===D.current.regime_id;
+  h+='<div class="rp" style="'+(isCurrent?'border:2px solid '+col+';box-shadow:0 0 0 1px '+col+'22':'')+'"><h3 style="color:'+col+'">'+(isCurrent?'▶ ':'')+info.label+' — '+info.n_weeks+'w ('+info.pct+'%)</h3>';
+  h+='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">'+info.periods.slice(0,5).join(', ')+'</div>';
+  const p=info.profile;
+  const bars=['cat_Energy','cat_Global_Equities','cat_Credit','cat_Rates','cat_Crypto','cat_Metals','cyclical_vs_defensive','energy_vs_tech'];
+  bars.forEach(fn=>{
+    const v=p[fn]||0;
+    const pct=Math.min(100,Math.abs(v)*30);
+    const col2=v>0.2?'var(--g)':v<-0.2?'var(--r)':'var(--x)';
+    const left=v>=0?'50%':50-pct+'%';
+    const w=v>=0?pct:pct;
+    h+='<div class="bar-row"><span class="bar-label">'+catLabel(fn)+'</span><div class="bar-track"><div class="bar-fill" style="left:'+left+'%;width:'+w+'%;background:'+col2+'"></div><div style="position:absolute;left:50%;top:0;width:1px;height:6px;background:var(--b)"></div></div><span class="bar-val" style="color:'+col2+'">'+(v>0?'+':'')+v.toFixed(2)+'</span></div>';
   });
   h+='</div>';
 }
+return h}
 
-if(S.method==='consensus') h+=rCons();
-else if(S.method==='method') h+=rMe();
-else if(S.view==='overview') h+=rOv();
-else if(S.view==='heatmap') h+=rHm();
-else h+=rEx();
-
-h+='<footer>4 methods: Threshold (z-score) · HMM (3-state Gaussian) · Jump Model (DP+GMM) · GMM Clustering · Weekly, 3Y</footer>';
-app.innerHTML=h}
-
-function rOv(){
-const m=S.method;const cats=D.methods[m]||{};
-let h=sb();
+function rAssets(){
+const cats=D.assets;
+let h='<div class="sort-ctrl">Sort: '+['default','z-desc','z-asc','alpha','regime'].map(s=>'<button class="'+(S.sort===s?'on':'')+'" onclick="U(\'sort\',\''+s+'\')">'+({['z-desc']:'z↓',['z-asc']:'z↑'}[s]||s)+'</button>').join('')+'</div>';
 CO.forEach(k=>{const assets=cats[k];if(!assets)return;
-const entries=sa(Object.entries(assets));
+let entries=Object.entries(assets);
+if(S.sort==='z-asc')entries.sort((a,b)=>(a[1].score||0)-(b[1].score||0));
+else if(S.sort==='z-desc')entries.sort((a,b)=>(b[1].score||0)-(a[1].score||0));
+else if(S.sort==='alpha')entries.sort((a,b)=>a[0].localeCompare(b[0]));
+else if(S.sort==='regime'){const ro=r=>ib(r)?0:ie(r)?2:1;entries.sort((a,b)=>ro(a[1].regime)-ro(b[1].regime))}
 const nb=entries.filter(([,a])=>ib(a.regime)).length,nr=entries.filter(([,a])=>ie(a.regime)).length,ns=entries.length-nb-nr;
 h+='<div class="cb"><div class="ch"><h2>'+k+'</h2><div class="st">';
 if(nb)h+='<span><span class="d" style="background:var(--g)"></span>'+nb+'</span>';
 if(ns)h+='<span><span class="d" style="background:var(--x)"></span>'+ns+'</span>';
 if(nr)h+='<span><span class="d" style="background:var(--r)"></span>'+nr+'</span>';
 h+='</div></div><div class="cg">';
-entries.forEach(([n,d])=>{const c=rc(d.regime),zc=tc(d.regime),z=d.score;
-h+='<div class="a '+c+'"><div class="ai"><div style="display:flex;justify-content:space-between;align-items:center"><span class="an">'+n+'</span><span class="al '+c+'">'+rl(d.regime)+'</span></div><div class="ar"><span class="ap">'+fP(d.price,n)+'</span><span class="az" style="color:'+zc+'">'+(z!=null?(m==='threshold'?(z>0?'+':'')+z.toFixed(2):(z*100).toFixed(0)+'%'):'—')+'</span></div><div class="zb"><div class="md"></div>'+(z!=null?'<div class="dt" style="left:'+(m==='threshold'?zP(z):z*100)+'%;background:'+zc+'"></div>':'')+'</div></div></div>'});
+entries.forEach(([n,d])=>{const c=rc(d.regime),z=d.score,zc=tc(d.regime);
+h+='<div class="a '+c+'"><div class="ai"><div style="display:flex;justify-content:space-between;align-items:center"><span class="an">'+n+'</span><span class="al '+c+'">'+rl(d.regime)+'</span></div><div class="ar"><span class="ap">'+fP(d.price,n)+'</span><span class="az" style="color:'+zc+'">'+(z!=null?(z>0?'+':'')+z.toFixed(2):'—')+'</span></div><div class="zb"><div class="md"></div>'+(z!=null?'<div class="dt" style="left:'+zP(z)+'%;background:'+zc+'"></div>':'')+'</div></div></div>'});
 h+='</div></div>'});return h}
 
-function rHm(){
-const m=S.method;const cats=D.methods[m]||{};
-const all=[];Object.entries(cats).forEach(([cat,a])=>{Object.entries(a).forEach(([n,d])=>all.push({n,cat,...d}))});
-let sorted;
-if(S.sort==='alpha')sorted=all.sort((a,b)=>a.n.localeCompare(b.n));
-else if(S.sort==='regime'){const ro=r=>ib(r)?0:ie(r)?2:1;sorted=all.sort((a,b)=>ro(a.regime)-ro(b.regime))}
-else if(S.sort==='z-desc')sorted=all.sort((a,b)=>(b.score||0)-(a.score||0));
-else sorted=all.sort((a,b)=>(a.score||0)-(b.score||0));
-let h=sb()+'<div style="font-size:10px;color:var(--t3);margin-bottom:6px">'+all.length+' assets · '+ML[m]+'</div>';
-sorted.forEach(a=>{const z=a.score||0,zc=tc(a.regime);
-const it=m==='threshold'?Math.min(1,Math.abs(z)/3):z;
-const bg=ib(a.regime)?'rgba(22,163,106,'+it*.15+')':ie(a.regime)?'rgba(220,38,38,'+it*.15+')':'transparent';
-h+='<div class="hr" style="background:'+bg+'"><span class="nm">'+a.n+'</span><div class="bw"><div style="position:absolute;left:50%;top:0;width:1px;height:3px;background:var(--b)"></div><div style="position:absolute;top:-2px;left:'+(m==='threshold'?zP(z):z*100)+'%;width:7px;height:7px;border-radius:50%;background:'+zc+';transform:translateX(-3.5px)"></div></div><span class="hz" style="color:'+zc+'">'+(m==='threshold'?(z>0?'+':'')+z.toFixed(2):(z*100).toFixed(0)+'%')+'</span><span class="hl" style="color:'+zc+'">'+rl(a.regime)+'</span></div>'});
-return h}
-
-function rEx(){
-const m=S.method;const cats=D.methods[m]||{};
-const all=[];Object.entries(cats).forEach(([cat,a])=>{Object.entries(a).forEach(([n,d])=>all.push({n,cat,...d}))});
-let ext;
-if(m==='threshold')ext=all.filter(a=>a.score!=null&&Math.abs(a.score)>1.5).sort((a,b)=>a.score-b.score);
-else ext=all.filter(a=>a.score!=null&&a.score>0.7).sort((a,b)=>b.score-a.score);
-let h='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">'+(m==='threshold'?'|z| > 1.5':'Confidence > 70%')+' · '+ML[m]+'</div>';
-ext.forEach(a=>{const bear=ie(a.regime),c=bear?'be':'bu';
-h+='<div class="ec '+c+'"><div class="ei">'+(bear?'▼':'▲')+'</div><div class="ef"><div class="n">'+a.n+'</div><div class="s">'+a.cat+' · '+fP(a.price,a.n)+'</div></div><div class="ez"><div class="v" style="color:'+tc(a.regime)+'">'+(m==='threshold'?(a.score>0?'+':'')+a.score.toFixed(2):(a.score*100).toFixed(0)+'%')+'</div><div class="l" style="color:'+tc(a.regime)+'">'+rl(a.regime)+'</div></div></div>'});
-return h}
-
-function rCons(){
-const cons=D.consensus;
-const consColor={'strong_positive':'var(--g)','strong_negative':'var(--r)','lean_positive':'#86efac','lean_negative':'#fca5a5','mixed':'var(--x)'};
-const consCls={'strong_positive':'sp','strong_negative':'sn','lean_positive':'lp','lean_negative':'ln','mixed':'mx'};
-const consLabel={'strong_positive':'STRONG ▲','strong_negative':'STRONG ▼','lean_positive':'LEAN ▲','lean_negative':'LEAN ▼','mixed':'MIXED'};
-const dotColor={'positive':'var(--g)','negative':'var(--r)','neutral':'var(--x)'};
-const dotLetter={'positive':'B','negative':'R','neutral':'S'};
-const methodShort={'threshold':'T','hmm':'H','jump':'J','gmm':'G'};
-
-let h='<div style="font-size:11px;color:var(--t2);margin-bottom:10px">4-method consensus: <b>Strong</b> = 3-4 agree, <b>Lean</b> = 2 agree (no opposing), <b>Mixed</b> = disagreement</div>';
-h+=sb();
-
-CO.forEach(k=>{const catCons=cons[k];if(!catCons)return;
-let entries=Object.entries(catCons);
-if(S.sort==='alpha')entries.sort((a,b)=>a[0].localeCompare(b[0]));
-else if(S.sort==='z-desc')entries.sort((a,b)=>b[1].agreement-a[1].agreement);
-else if(S.sort==='z-asc')entries.sort((a,b)=>a[1].agreement-b[1].agreement);
-else if(S.sort==='regime'){const ro=c=>c.startsWith('strong_p')?0:c.startsWith('lean_p')?1:c==='mixed'?2:c.startsWith('lean_n')?3:4;entries.sort((a,b)=>ro(a[1].consensus)-ro(b[1].consensus))}
-
-const sp=entries.filter(([,c])=>c.consensus.includes('positive')).length;
-const sn=entries.filter(([,c])=>c.consensus.includes('negative')).length;
-const mx=entries.filter(([,c])=>c.consensus==='mixed').length;
-
-h+='<div class="cb"><div class="ch"><h2>'+k+'</h2><div class="st">';
-if(sp)h+='<span><span class="d" style="background:var(--g)"></span>'+sp+'</span>';
-if(mx)h+='<span><span class="d" style="background:var(--x)"></span>'+mx+'</span>';
-if(sn)h+='<span><span class="d" style="background:var(--r)"></span>'+sn+'</span>';
-h+='</div></div><div style="padding:3px 8px 6px">';
-
-entries.forEach(([name,c])=>{
-const cls=consCls[c.consensus]||'mx';
-const label=consLabel[c.consensus]||'—';
-h+='<div class="cons-row '+cls+'"><span class="an" style="width:90px">'+name+'</span>';
-h+='<span class="al '+(['sp','lp'].includes(cls)?'bu':['sn','ln'].includes(cls)?'be':'si')+'">'+label+'</span>';
-h+='<div class="cons-dots" style="margin-left:8px">';
-['threshold','hmm','jump','gmm'].forEach(m=>{
-  const v=c.votes[m];
-  if(v){
-    const bg=dotColor[v]||'var(--x)';
-    const lt=dotLetter[v]||'?';
-    h+='<span style="background:'+bg+';color:#fff" title="'+m+': '+v+'">'+methodShort[m]+'</span>';
-  }
-});
-h+='</div>';
-h+='<span class="ap" style="margin-left:auto">'+fP(c.price,name)+'</span>';
-h+='</div>'});
-h+='</div></div>'});
-return h}
-
-function rMe(){return'<div class="meth"><h3>Methodology</h3><p>'+
-'<b>1. Threshold (z-score)</b><br>4-week return ÷ 26-week rolling volatility. z > +0.8 = bull, z < -0.8 = bear. Simple, interpretable, no training required.<br><br>'+
-'<b>2. Hidden Markov Model</b><br>3-state Gaussian HMM on [4w return, 4w volatility]. States mapped to bull/bear/sideways by mean return. Learns transition probabilities automatically. Score = posterior probability of current state.<br><br>'+
-'<b>3. Statistical Jump Model</b><br>GMM emission model + Viterbi DP with jump penalty (λ=10). Penalizes frequent regime switches → more persistent states. Based on Nystrup et al. 2020.<br><br>'+
-'<b>4. GMM Clustering</b><br>3-component Gaussian Mixture on [4w return, 4w volatility]. No temporal structure — purely cross-sectional clustering. Score = posterior probability.<br><br>'+
-'<b>Consensus</b><br>Normalizes all regimes to positive/negative/neutral. Strong = 3+ methods agree. Lean = 2 agree, none opposing. Mixed = disagreement.<br><br>'+
-'<b>Rate assets</b> use level changes (diff) instead of returns. Rising = yields up = bonds down.<br>'+
-'<b>Curve assets</b> use spread changes. Steepening = long rates rising faster than short.'+
+function rMethod(){return'<div class="meth"><h3>Data-Driven Regime Classification</h3><p>'+
+'<b>Approach:</b> Rather than using predefined rules, regimes are discovered from price data using unsupervised learning.<br><br>'+
+'<b>Feature Vector (14 dimensions):</b><br>'+
+'9 asset class z-scores (4w return / 26w vol): Crypto, Metals, Energy, US Sectors, Global Equities, Rates, Curves, Currencies, Credit<br>'+
+'5 sectoral internals: Cyclical vs Defensive spread, Energy vs Tech spread, Financials standalone, Sector dispersion, Sector breadth<br><br>'+
+'<b>Clustering:</b> Gaussian Mixture Model (GMM) with k='+D.n_regimes+' components, fit on 6 years ('+D.weeks+' weeks) of weekly data. k selected via BIC with economic interpretability override.<br><br>'+
+'<b>Labeling:</b> Each cluster is automatically labeled by matching its average feature profile against known macro regime signatures (Reflation, Goldilocks, Supply Shock, Stagflation, Crisis, etc.)<br><br>'+
+'<b>Druckenmiller Principle:</b> "Market internals are the best leading indicator." Sectoral relative strength (cyclicals vs defensives, energy vs tech), sector breadth, and dispersion are included as core features — not just aggregate indices.<br><br>'+
+'<b>Sources:</b> Bridgewater All Weather / Pure Alpha framework, ML Investment Clock (Greetham 2004), Verdad Regime Classification (2024), Nystrup Statistical Jump Models (2020).'+
 '</p></div>'}
 
 function U(k,v){S[k]=v;render()}
