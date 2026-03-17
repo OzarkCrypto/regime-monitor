@@ -14,7 +14,7 @@ from sklearn.preprocessing import StandardScaler
 warnings.filterwarnings('ignore')
 
 END = datetime.now().strftime('%Y-%m-%d')
-START = (datetime.now() - timedelta(days=365*6+60)).strftime('%Y-%m-%d')
+START = '2019-01-01'
 
 # ── Universe ──────────────────────────────────────────────────
 UNIVERSE = {
@@ -141,9 +141,10 @@ def label_regime(p):
     s['GOLDILOCKS'] = risk*2 + max(0,-energy)*0.5 + max(0,-rates)*1 + breadth*2
     s['OVERHEAT'] = max(0,eq)*1 + energy*2 + max(0,rates)*2 + e_vs_t*1
     s['SUPPLY SHOCK'] = energy*2 + max(0,-eq)*2 + max(0,-credit)*1.5 + max(0,rates)*1 + e_vs_t*1
-    s['STAGFLATION'] = energy*1.5 + max(0,-eq)*2 + max(0,-credit)*2.5 + max(0,rates)*1
-    s['CRISIS'] = max(0,-eq)*2 + max(0,-credit)*2 + max(0,-rates)*2 + max(0,-crypto)*1
-    s['DEFLATION'] = max(0,-eq)*1.5 + max(0,-real)*2 + max(0,-rates)*2 + max(0,-crypto)*1
+    s['STAGFLATION'] = max(0,-eq)*2 + max(0,-credit)*2 + max(0,rates)*2 + max(0,energy)*0.5
+    s['RECESSION'] = max(0,-eq)*2 + max(0,-credit)*1.5 + max(0,-energy)*1.5 + max(0,-rates)*2 + max(0,-cyc_def)*1
+    s['CRISIS'] = max(0,-eq)*2 + max(0,-credit)*2 + max(0,-rates)*3 + max(0,-crypto)*1 + max(0,-real)*1
+    s['DEFLATION'] = max(0,-eq)*1.5 + max(0,-real)*2 + max(0,-rates)*2.5 + max(0,-crypto)*1
     s['CONTRACTION'] = max(0,-cyc_def)*2 + max(0,0.3-breadth)*3 + max(0,-eq)*1
     return max(s, key=s.get)
 
@@ -246,14 +247,15 @@ header .m{{font-size:11px;color:var(--t3);font-family:var(--m)}}
 .regime-hero .name{{font-family:var(--f);font-size:52px;font-weight:900;letter-spacing:-0.03em;line-height:1.1;margin-bottom:8px}}
 .regime-hero .conf{{font-family:var(--m);font-size:14px;font-weight:500;opacity:.8}}
 .regime-hero .runner{{font-family:var(--m);font-size:11px;opacity:.5;margin-top:4px}}
-.regime-hero.SUPPLY_SHOCK{{background:linear-gradient(135deg,#fef2f2,#fee2e2);color:#991b1b;border:2px solid #fca5a5}}
-.regime-hero.STAGFLATION{{background:linear-gradient(135deg,#fef2f2,#fce7f3);color:#9f1239;border:2px solid #fda4af}}
+.regime-hero.SUPPLY_SHOCK{{background:linear-gradient(135deg,#fff7ed,#ffedd5);color:#9a3412;border:2px solid #fb923c}}
+.regime-hero.STAGFLATION{{background:linear-gradient(135deg,#faf5ff,#f3e8ff);color:#6b21a8;border:2px solid #c084fc}}
 .regime-hero.GOLDILOCKS{{background:linear-gradient(135deg,#f0fdf4,#ecfdf5);color:#166534;border:2px solid #86efac}}
 .regime-hero.REFLATION{{background:linear-gradient(135deg,#eff6ff,#f0f9ff);color:#1e40af;border:2px solid #93c5fd}}
 .regime-hero.CRISIS{{background:linear-gradient(135deg,#1c1917,#292524);color:#fef2f2;border:2px solid #57534e}}
 .regime-hero.DEFLATION{{background:linear-gradient(135deg,#f5f5f4,#e7e5e4);color:#44403c;border:2px solid #a8a29e}}
 .regime-hero.OVERHEAT{{background:linear-gradient(135deg,#fffbeb,#fef3c7);color:#92400e;border:2px solid #fcd34d}}
 .regime-hero.CONTRACTION{{background:linear-gradient(135deg,#faf5ff,#f3e8ff);color:#6b21a8;border:2px solid #c4b5fd}}
+.regime-hero.RECESSION{{background:linear-gradient(135deg,#fef2f2,#fee2e2);color:#991b1b;border:2px solid #fca5a5}}
 .feat-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin-bottom:20px}}
 .feat-card{{padding:8px 10px;border-radius:6px;background:var(--s);border:1px solid var(--b)}}
 .feat-card .fn{{font-family:var(--m);font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:2px}}
@@ -314,7 +316,7 @@ footer{{margin-top:20px;padding-top:10px;border-top:1px solid var(--b);font-size
 <script>
 const D={data_str};
 const CO=D.cat_order;
-const RC={{'SUPPLY SHOCK':'#ef4444','STAGFLATION':'#e11d48','GOLDILOCKS':'#22c55e','REFLATION':'#3b82f6','CRISIS':'#1c1917','DEFLATION':'#a8a29e','OVERHEAT':'#f59e0b','CONTRACTION':'#8b5cf6','TRANSITION':'#78716c'}};
+const RC={{'SUPPLY SHOCK':'#ea580c','STAGFLATION':'#9333ea','GOLDILOCKS':'#16a34a','REFLATION':'#2563eb','CRISIS':'#1c1917','DEFLATION':'#6b7280','OVERHEAT':'#eab308','CONTRACTION':'#be185d','RECESSION':'#dc2626','TRANSITION':'#78716c'}};
 const ib=r=>r==='bull'||r==='falling'||r==='steepening';
 const ie=r=>r==='bear'||r==='rising'||r==='flattening';
 const rc=r=>ib(r)?'bu':ie(r)?'be':'si';
