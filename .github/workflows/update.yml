@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        fetch-depth: 0
+        ref: main
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -29,7 +29,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "Regime Bot"
+        git pull origin main --no-edit
         git add index.html
         git diff --cached --quiet || git commit -m "update: $(date -u +%Y-%m-%d)"
-        git pull --rebase origin main
-        git push
+        git push origin main
