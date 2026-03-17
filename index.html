@@ -3,303 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Regime Monitor — Multi-Asset Regime Detection</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Regime Monitor</title>
+<link rel="icon" href="data:image/x-icon;base64,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">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #fafaf9;
-  --surface: #ffffff;
-  --border: #e7e5e4;
-  --border-light: #f5f5f4;
-  --text: #1c1917;
-  --text-2: #57534e;
-  --text-3: #a8a29e;
-  --bull: #16a34a;
-  --bull-bg: #f0fdf4;
-  --bull-border: #bbf7d0;
-  --bear: #dc2626;
-  --bear-bg: #fef2f2;
-  --bear-border: #fecaca;
-  --side: #78716c;
-  --side-bg: #f5f5f4;
-  --side-border: #e7e5e4;
-  --accent: #2563eb;
-  --accent-bg: #eff6ff;
-  --radius: 6px;
-  --font: 'DM Sans', -apple-system, sans-serif;
-  --mono: 'JetBrains Mono', 'SF Mono', monospace;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 13px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
-
-.container { max-width: 1120px; margin: 0 auto; padding: 20px 16px; }
-
-header { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 16px; border-bottom: 2px solid var(--text); margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
-header h1 { font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: -0.03em; text-transform: uppercase; }
-header .meta { font-size: 11px; color: var(--text-3); font-family: var(--mono); }
-
-.tabs { display: flex; gap: 2px; margin-bottom: 16px; background: var(--border-light); border-radius: var(--radius); padding: 2px; width: fit-content; }
-.tabs button { font-family: var(--mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 5px 14px; border: none; border-radius: 4px; background: transparent; color: var(--text-3); cursor: pointer; transition: all 0.15s; }
-.tabs button.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.tabs button:hover:not(.active) { color: var(--text-2); }
-
-/* Summary strip */
-.summary-strip { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
-.summary-chip { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; border: 1px solid; cursor: pointer; transition: all 0.15s; }
-.summary-chip:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
-.summary-chip .score { font-family: var(--mono); font-weight: 700; font-size: 11px; }
-
-/* Category block */
-.cat-block { margin-bottom: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
-.cat-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; cursor: pointer; user-select: none; transition: background 0.1s; }
-.cat-header:hover { background: var(--border-light); }
-.cat-header h2 { font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-.cat-header .stats { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; }
-.cat-header .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-
-.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 4px; padding: 4px 8px 8px; }
-
-/* Asset card */
-.asset { display: flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 4px; border-left: 3px solid transparent; transition: background 0.1s; }
-.asset:hover { background: var(--border-light); }
-.asset.bull { border-left-color: var(--bull); background: var(--bull-bg); }
-.asset.bear { border-left-color: var(--bear); background: var(--bear-bg); }
-.asset.side { border-left-color: var(--side-border); }
-.asset-info { flex: 1; min-width: 0; }
-.asset-name { font-family: var(--mono); font-size: 11px; font-weight: 600; }
-.asset-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1px; }
-.asset-price { font-size: 10px; color: var(--text-3); }
-.asset-z { font-family: var(--mono); font-size: 10px; font-weight: 600; }
-.asset-regime { font-family: var(--mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 1px 5px; border-radius: 3px; }
-.regime-bull { color: var(--bull); background: var(--bull-bg); }
-.regime-bear { color: var(--bear); background: var(--bear-bg); }
-.regime-side { color: var(--side); background: var(--side-bg); }
-
-/* Z-bar */
-.z-bar { position: relative; width: 100%; height: 4px; background: var(--border-light); border-radius: 2px; margin-top: 3px; }
-.z-bar .mid { position: absolute; left: 50%; top: 0; width: 1px; height: 4px; background: var(--border); }
-.z-bar .dot { position: absolute; top: -2px; width: 8px; height: 8px; border-radius: 50%; transform: translateX(-4px); }
-
-/* Expanded timeline */
-.cat-expanded { padding: 8px 14px 12px; border-top: 1px solid var(--border-light); }
-.timeline-row { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
-.timeline-row .label { font-family: var(--mono); font-size: 10px; color: var(--text-3); width: 80px; flex-shrink: 0; }
-.spark-container { width: 80px; height: 20px; flex-shrink: 0; }
-.tl-blocks { display: flex; gap: 1px; }
-.tl-block { width: 8px; height: 12px; border-radius: 2px; }
-
-/* Heatmap */
-.hm-row { display: flex; align-items: center; gap: 6px; padding: 3px 8px; border-radius: 3px; margin-bottom: 1px; }
-.hm-row .name { font-family: var(--mono); font-size: 10px; color: var(--text-2); width: 100px; flex-shrink: 0; }
-.hm-bar-wrap { flex: 1; height: 4px; background: var(--border-light); border-radius: 2px; position: relative; }
-.hm-bar-wrap .mid { position: absolute; left: 50%; top: 0; width: 1px; height: 4px; background: var(--border); }
-.hm-bar-wrap .dot { position: absolute; top: -2px; width: 8px; height: 8px; border-radius: 50%; transform: translateX(-4px); }
-.hm-z { font-family: var(--mono); font-size: 10px; font-weight: 600; width: 48px; text-align: right; }
-.hm-regime { font-family: var(--mono); font-size: 9px; width: 40px; text-align: right; }
-
-/* Extremes */
-.extreme-card { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: var(--radius); margin-bottom: 6px; border: 1px solid; }
-.extreme-card.bear-card { background: var(--bear-bg); border-color: var(--bear-border); }
-.extreme-card.bull-card { background: var(--bull-bg); border-color: var(--bull-border); }
-.extreme-icon { font-size: 20px; width: 28px; text-align: center; }
-.extreme-info { flex: 1; }
-.extreme-info .name { font-weight: 700; font-size: 13px; }
-.extreme-info .sub { font-size: 10px; color: var(--text-3); }
-.extreme-z { text-align: right; }
-.extreme-z .val { font-family: var(--mono); font-size: 18px; font-weight: 700; }
-.extreme-z .lbl { font-family: var(--mono); font-size: 9px; text-transform: uppercase; }
-
-.reading-box { margin-top: 20px; padding: 14px; border-radius: var(--radius); background: var(--accent-bg); border: 1px solid #bfdbfe; }
-.reading-box h3 { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-.reading-box p { font-size: 12px; color: var(--text-2); line-height: 1.6; }
-.reading-box strong { color: var(--text); }
-
-footer { margin-top: 32px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 10px; color: var(--text-3); text-align: center; font-family: var(--mono); }
-
-@media (max-width: 640px) {
-  .cat-grid { grid-template-columns: 1fr 1fr; }
-  header { flex-direction: column; }
-}
+:root{--bg:#fafaf9;--s:#fff;--b:#e7e5e4;--bl:#f5f5f4;--t:#1c1917;--t2:#57534e;--t3:#a8a29e;--g:#16a34a;--gb:#f0fdf4;--gd:#bbf7d0;--r:#dc2626;--rb:#fef2f2;--rd:#fecaca;--x:#78716c;--xb:#f5f5f4;--a:#2563eb;--ab:#eff6ff;--f:'DM Sans',sans-serif;--m:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--t);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.c{max-width:1140px;margin:0 auto;padding:16px 14px}
+header{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:12px;border-bottom:2px solid var(--t);margin-bottom:16px;flex-wrap:wrap;gap:8px}
+header h1{font-family:var(--m);font-size:15px;font-weight:700;letter-spacing:-0.03em;text-transform:uppercase}
+header .m{font-size:11px;color:var(--t3);font-family:var(--m)}
+.tabs{display:flex;gap:2px;margin-bottom:14px;background:var(--bl);border-radius:6px;padding:2px;width:fit-content}
+.tabs button{font-family:var(--m);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:5px 14px;border:none;border-radius:4px;background:0;color:var(--t3);cursor:pointer}
+.tabs button.on{background:var(--s);color:var(--t);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.strip{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px}
+.chip{display:flex;align-items:center;gap:4px;padding:3px 8px;border-radius:16px;font-size:10px;font-weight:500;border:1px solid;cursor:pointer;transition:.15s}
+.chip:hover{transform:translateY(-1px);box-shadow:0 2px 4px rgba(0,0,0,.05)}
+.chip .sc{font-family:var(--m);font-weight:700}
+.cb{margin-bottom:8px;border:1px solid var(--b);border-radius:6px;background:var(--s);overflow:hidden}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;cursor:pointer;user-select:none}
+.ch:hover{background:var(--bl)}
+.ch h2{font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px}
+.ch .st{display:flex;align-items:center;gap:6px;font-family:var(--m);font-size:10px}
+.ch .d{width:6px;height:6px;border-radius:50%;display:inline-block}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:3px;padding:3px 8px 8px}
+.a{display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:4px;border-left:3px solid transparent;font-size:11px;cursor:default}
+.a:hover{background:var(--bl)}
+.a.bu{border-left-color:var(--g);background:var(--gb)}
+.a.be{border-left-color:var(--r);background:var(--rb)}
+.ai{flex:1;min-width:0}
+.an{font-family:var(--m);font-size:10px;font-weight:600}
+.ar{display:flex;justify-content:space-between;margin-top:1px}
+.ap{font-size:9px;color:var(--t3)}
+.az{font-family:var(--m);font-size:10px;font-weight:600}
+.al{font-family:var(--m);font-size:8px;font-weight:700;text-transform:uppercase;padding:1px 4px;border-radius:2px}
+.al.bu{color:var(--g);background:var(--gb)}.al.be{color:var(--r);background:var(--rb)}.al.si{color:var(--x);background:var(--xb)}
+.zb{position:relative;width:100%;height:3px;background:var(--bl);border-radius:2px;margin-top:2px}
+.zb .md{position:absolute;left:50%;top:0;width:1px;height:3px;background:var(--b)}
+.zb .dt{position:absolute;top:-2px;width:7px;height:7px;border-radius:50%;transform:translateX(-3.5px)}
+.ce{padding:6px 12px 10px;border-top:1px solid var(--bl)}
+.tr{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.tr .lb{font-family:var(--m);font-size:9px;color:var(--t3);width:75px;flex-shrink:0}
+.tb{display:flex;gap:1px}
+.tb div{width:7px;height:11px;border-radius:1.5px}
+.hr{display:flex;align-items:center;gap:5px;padding:2px 6px;border-radius:3px;margin-bottom:1px}
+.hr .nm{font-family:var(--m);font-size:10px;color:var(--t2);width:95px;flex-shrink:0}
+.hr .bw{flex:1;height:3px;background:var(--bl);border-radius:2px;position:relative}
+.hr .hz{font-family:var(--m);font-size:10px;font-weight:600;width:44px;text-align:right}
+.hr .hl{font-family:var(--m);font-size:8px;width:36px;text-align:right}
+.sort-ctrl{display:flex;gap:3px;align-items:center;font-family:var(--m);font-size:9px;color:var(--t3);margin-bottom:10px}
+.sort-ctrl button{font-family:var(--m);font-size:9px;padding:2px 8px;border:1px solid var(--b);border-radius:3px;background:var(--s);color:var(--t2);cursor:pointer}
+.sort-ctrl button.on{background:var(--t);color:var(--s);border-color:var(--t)}
+.ec{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;margin-bottom:4px;border:1px solid}
+.ec.be{background:var(--rb);border-color:var(--rd)}.ec.bu{background:var(--gb);border-color:var(--gd)}
+.ei{font-size:16px;width:24px;text-align:center}
+.ef{flex:1}.ef .n{font-weight:700;font-size:12px}.ef .s{font-size:10px;color:var(--t3)}
+.ez{text-align:right}.ez .v{font-family:var(--m);font-size:16px;font-weight:700}.ez .l{font-family:var(--m);font-size:9px}
+.rb{margin-top:16px;padding:12px;border-radius:6px;background:var(--ab);border:1px solid #bfdbfe}
+.rb h3{font-family:var(--m);font-size:10px;font-weight:700;color:var(--a);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.rb p{font-size:11px;color:var(--t2);line-height:1.6}
+.rb strong{color:var(--t)}
+.meth{margin-top:16px;padding:12px;border-radius:6px;background:var(--bl);border:1px solid var(--b)}
+.meth h3{font-family:var(--m);font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;margin-bottom:4px}
+.meth p{font-size:11px;color:var(--t2);line-height:1.6}
+.meth code{font-family:var(--m);font-size:10px;background:var(--s);padding:1px 4px;border-radius:2px;border:1px solid var(--b)}
+footer{margin-top:24px;padding-top:10px;border-top:1px solid var(--b);font-size:9px;color:var(--t3);text-align:center;font-family:var(--m)}
+@media(max-width:640px){.cg{grid-template-columns:1fr 1fr}header{flex-direction:column}}
 </style>
 </head>
 <body>
-<div class="container" id="app"></div>
-
+<div class="c" id="app"></div>
 <script>
-const D = {"s":{"date":"2026-03-22","total_assets":52,"weeks":158,"categories":{"crypto":{"BTC":{"regime":"sideways","zscore":0.678,"price":72789.91},"ETH":{"regime":"sideways","zscore":0.745,"price":2177.48},"ETH_BTC":{"regime":"sideways","zscore":0.549,"price":0.0299}},"commodity_precious":{"Gold":{"regime":"sideways","zscore":-0.021,"price":5052.5},"Silver":{"regime":"sideways","zscore":-0.098,"price":80.91}},"commodity_industrial":{"Copper":{"regime":"sideways","zscore":-0.341,"price":5.71}},"commodity_energy":{"WTI_Oil":{"regime":"bull","zscore":3.113,"price":98.71},"NatGas":{"regime":"sideways","zscore":0.076,"price":3.13},"Brent":{"regime":"bull","zscore":3.238,"price":103.14}},"equity_sector":{"Tech":{"regime":"sideways","zscore":-0.332,"price":138.78},"Financials":{"regime":"bear","zscore":-1.547,"price":49.3},"Energy":{"regime":"bull","zscore":1.182,"price":57.9},"Healthcare":{"regime":"bear","zscore":-0.819,"price":151.01},"Industrials":{"regime":"bear","zscore":-1.578,"price":166.06},"Staples":{"regime":"sideways","zscore":-0.798,"price":84.98},"Discretionary":{"regime":"bear","zscore":-0.979,"price":112.2},"Utilities":{"regime":"sideways","zscore":0.437,"price":47.26},"RealEstate":{"regime":"sideways","zscore":-0.565,"price":42.58},"Materials":{"regime":"bear","zscore":-1.302,"price":49.4},"CommSvc":{"regime":"sideways","zscore":-0.352,"price":115.33}},"equity_country":{"US_SP500":{"regime":"bear","zscore":-1.056,"price":6699.38},"US_Nasdaq":{"regime":"sideways","zscore":-0.584,"price":22374.18},"EU_Stoxx50":{"regime":"bear","zscore":-1.523,"price":5739.01},"Japan":{"regime":"bear","zscore":-1.225,"price":85.07},"Korea":{"regime":"sideways","zscore":-0.557,"price":133.1},"Taiwan":{"regime":"sideways","zscore":-0.487,"price":72.03},"China":{"regime":"bear","zscore":-0.982,"price":36.88},"Germany":{"regime":"bear","zscore":-1.86,"price":40.52},"UK":{"regime":"bear","zscore":-1.169,"price":46.11},"Brazil":{"regime":"bear","zscore":-1.024,"price":36.53},"India":{"regime":"bear","zscore":-2.288,"price":48.56},"EM_Broad":{"regime":"bear","zscore":-1.211,"price":58.38}},"rates":{"US_3M":{"regime":"rates_stable","zscore":0.14,"price":3.605},"US_5Y":{"regime":"rates_rising","zscore":0.877,"price":3.803},"US_10Y":{"regime":"rates_rising","zscore":0.838,"price":4.22},"US_30Y":{"regime":"rates_rising","zscore":0.943,"price":4.859}},"curves":{"YC_10Y3M":{"regime":"stable","zscore":0.695,"price":0.615},"YC_10Y5Y":{"regime":"stable","zscore":-0.474,"price":0.417},"YC_30Y10Y":{"regime":"stable","zscore":0.0,"price":0.639}},"fx":{"EURUSD":{"regime":"bear","zscore":-1.159,"price":1.1522},"JPYUSD":{"regime":"bear","zscore":-0.816,"price":0.0063},"GBPUSD":{"regime":"sideways","zscore":-0.408,"price":1.3353},"CNYUSD":{"regime":"bull","zscore":0.876,"price":0.1456},"AUDUSD":{"regime":"sideways","zscore":0.109,"price":0.7075}},"credit":{"HY_Bond":{"regime":"bear","zscore":-1.626,"price":79.45},"IG_Bond":{"regime":"bear","zscore":-1.664,"price":108.69},"HY_Junk":{"regime":"bear","zscore":-1.566,"price":95.65},"BankLoans":{"regime":"sideways","zscore":-0.352,"price":20.47},"EM_Bond":{"regime":"bear","zscore":-2.126,"price":94.75},"CreditSpread":{"regime":"bear","zscore":-0.858,"price":1.368}}}},"t":{"BTC":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"ETH":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"WTI_Oil":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bull"},{"d":"03/15","r":"bull"},{"d":"03/22","r":"bull"}],"Energy":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bull"},{"d":"03/15","r":"bull"},{"d":"03/22","r":"bull"}],"Financials":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"bear"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"US_SP500":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"EU_Stoxx50":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Japan":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Germany":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"India":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"bear"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"EM_Broad":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"US_10Y":[{"d":"01/04","r":"rates_stable"},{"d":"01/11","r":"rates_stable"},{"d":"01/18","r":"rates_stable"},{"d":"01/25","r":"rates_stable"},{"d":"02/01","r":"rates_stable"},{"d":"02/08","r":"rates_stable"},{"d":"02/15","r":"rates_falling"},{"d":"02/22","r":"rates_falling"},{"d":"03/01","r":"rates_falling"},{"d":"03/08","r":"rates_stable"},{"d":"03/15","r":"rates_rising"},{"d":"03/22","r":"rates_rising"}],"HY_Bond":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"IG_Bond":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"EM_Bond":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}]},"z":{"BTC":[0.11,0.32,0.6,-0.15,-1.52,-2.15,-2.52,-2.08,-1.4,-0.59,0.52,0.68],"ETH":[0.13,0.1,0.6,-0.27,-1.57,-2.18,-2.69,-2.12,-1.02,-0.51,0.72,0.75],"Gold":[0.5,0.9,1.06,1.76,1.49,1.62,1.55,0.27,1.79,0.64,0.1,-0.02],"WTI_Oil":[-0.72,0.45,0.76,1.18,2.0,1.13,0.88,1.25,0.4,2.79,3.64,3.11],"Brent":[-0.73,0.55,0.92,1.3,2.26,1.04,0.79,1.2,0.34,2.79,3.86,3.24],"Tech":[-0.29,0.39,0.18,-0.2,-0.06,-0.74,-0.89,-0.62,-0.75,-0.57,-0.43,-0.33],"Financials":[0.79,0.53,-0.11,-1.29,-0.85,-0.81,-1.36,-0.29,-0.99,-1.8,-1.36,-1.55],"Energy":[0.05,0.69,1.9,2.33,2.41,2.79,2.76,2.31,1.92,1.34,1.32,1.18],"Industrials":[0.87,1.19,2.29,1.37,1.63,2.08,1.31,2.39,2.15,-0.5,-1.37,-1.58],"Materials":[1.18,1.58,1.69,1.79,1.74,1.6,2.2,1.39,1.96,-0.62,-1.49,-1.3],"US_SP500":[-0.06,0.69,0.52,-0.07,0.43,-0.19,-0.55,-0.03,-0.32,-0.96,-1.03,-1.06],"EU_Stoxx50":[0.41,1.49,1.44,1.05,0.8,0.0,-0.23,0.92,1.03,-1.1,-1.06,-1.52],"Japan":[0.17,0.94,1.29,1.01,1.26,1.37,2.23,1.79,1.76,-0.92,-1.97,-1.23],"Germany":[0.69,0.71,0.72,0.48,0.37,0.09,0.45,0.6,0.91,-1.4,-2.06,-1.86],"India":[0.34,0.02,-0.73,-1.4,-1.53,0.05,0.02,1.21,0.3,-1.63,-2.28,-2.29],"EM_Broad":[1.01,1.65,1.87,1.87,1.29,1.32,1.44,1.41,1.54,-0.87,-1.37,-1.21],"US_10Y":[0.33,-0.16,0.56,0.72,0.42,0.28,-1.28,-1.13,-1.96,-0.49,1.43,0.84],"EURUSD":[0.47,-0.35,-0.5,-0.13,1.05,0.62,1.33,0.07,-0.8,-0.79,-1.6,-1.16],"HY_Bond":[0.46,1.28,1.15,0.85,0.71,0.33,0.25,0.42,-0.0,-1.07,-1.76,-1.63],"IG_Bond":[-0.18,0.65,0.31,0.14,0.3,0.24,1.03,0.83,1.11,-0.02,-2.03,-1.66],"EM_Bond":[0.38,0.58,-0.07,0.22,0.34,0.92,1.96,1.62,1.91,-0.53,-2.25,-2.13]}};
-
-const CATS = [
-  ["crypto","Crypto","₿"],["commodity_precious","Precious","Au"],["commodity_industrial","Industrial","Cu"],
-  ["commodity_energy","Energy","⛽"],["equity_sector","US Sectors","S"],["equity_country","Global Eq.","🌍"],
-  ["rates","Rates","📈"],["curves","Curves","↗"],["fx","FX","$"],["credit","Credit","🏦"]
-];
-
-const isBull = r => r==="bull"||r==="rates_falling"||r==="steepening";
-const isBear = r => r==="bear"||r==="rates_rising"||r==="flattening";
-const rCls = r => isBull(r)?"bull":isBear(r)?"bear":"side";
-const rLbl = r => ({bull:"BULL",bear:"BEAR",sideways:"SIDE",rates_rising:"↑RISE",rates_falling:"↓FALL",rates_stable:"STABLE",steepening:"STEEP",flattening:"FLAT",stable:"STABLE"}[r]||r||"—");
-const fP = (p,n) => {if(p==null)return"—";if(n==="ETH_BTC"||n==="JPYUSD"||n==="CreditSpread"||n==="CNYUSD")return p.toFixed(4);if(p>10000)return p.toLocaleString("en",{maximumFractionDigits:0});if(p>100)return p.toLocaleString("en",{maximumFractionDigits:1});return p<1?p.toFixed(4):p.toFixed(2)};
-const zPct = z => ((Math.max(-3,Math.min(3,z||0))+3)/6)*100;
-
-function catScore(assets){
-  const v=Object.values(assets),s=v.map(a=>isBull(a.regime)?1:isBear(a.regime)?-1:0);
-  return s.reduce((a,b)=>a+b,0)/s.length;
-}
-
-let state = { view:"overview", expanded:null };
-
+const D={"s":{"date":"2026-03-22","total_assets":72,"weeks":158,"categories":{"Crypto":{"BTC":{"regime":"sideways","zscore":0.678,"price":72789.9141},"ETH":{"regime":"sideways","zscore":0.745,"price":2177.4763},"SOL":{"regime":"sideways","zscore":0.728,"price":92.2518},"ETH_BTC":{"regime":"sideways","zscore":0.549,"price":0.0299}},"Metals":{"Gold":{"regime":"sideways","zscore":-0.021,"price":5052.5},"Silver":{"regime":"sideways","zscore":-0.098,"price":80.914},"Copper":{"regime":"sideways","zscore":-0.341,"price":5.7145},"Palladium":{"regime":"sideways","zscore":-0.753,"price":1554.1},"Platinum":{"regime":"sideways","zscore":-0.322,"price":2036.6},"Aluminum":{"regime":"bull","zscore":2.329,"price":3383.25},"Zinc":{"regime":"bear","zscore":-1.211,"price":111.5625}},"Energy":{"WTI":{"regime":"bull","zscore":3.113,"price":98.71},"Brent":{"regime":"bull","zscore":3.238,"price":103.14},"NatGas":{"regime":"sideways","zscore":0.076,"price":3.131},"Gasoline":{"regime":"bull","zscore":3.521,"price":3.0414},"HeatingOil":{"regime":"bull","zscore":3.083,"price":4.0147}},"US Sectors":{"Tech":{"regime":"sideways","zscore":-0.332,"price":138.78},"Financials":{"regime":"bear","zscore":-1.547,"price":49.3},"Energy_Eq":{"regime":"bull","zscore":1.182,"price":57.9},"Healthcare":{"regime":"bear","zscore":-0.819,"price":151.01},"Industrials":{"regime":"bear","zscore":-1.578,"price":166.06},"Staples":{"regime":"sideways","zscore":-0.798,"price":84.98},"Discretionary":{"regime":"bear","zscore":-0.979,"price":112.2},"Utilities":{"regime":"sideways","zscore":0.437,"price":47.26},"RealEstate":{"regime":"sideways","zscore":-0.565,"price":42.58},"Materials":{"regime":"bear","zscore":-1.302,"price":49.4},"CommSvc":{"regime":"sideways","zscore":-0.352,"price":115.33}},"Global Equities":{"US_SP500":{"regime":"bear","zscore":-1.056,"price":6699.3799},"US_Nasdaq":{"regime":"sideways","zscore":-0.584,"price":22374.1777},"EU_Stoxx50":{"regime":"bear","zscore":-1.523,"price":5739.0098},"Japan":{"regime":"bear","zscore":-1.225,"price":85.07},"Korea":{"regime":"sideways","zscore":-0.557,"price":133.1},"Taiwan":{"regime":"sideways","zscore":-0.487,"price":72.03},"China":{"regime":"bear","zscore":-0.982,"price":36.88},"Germany":{"regime":"bear","zscore":-1.86,"price":40.52},"UK":{"regime":"bear","zscore":-1.169,"price":46.11},"Brazil":{"regime":"bear","zscore":-1.024,"price":36.53},"India":{"regime":"bear","zscore":-2.288,"price":48.56},"EM_Broad":{"regime":"bear","zscore":-1.211,"price":58.38},"Australia":{"regime":"sideways","zscore":-0.76,"price":28.68},"Canada":{"regime":"sideways","zscore":-0.627,"price":55.85},"Singapore":{"regime":"bear","zscore":-1.288,"price":27.86},"Thailand":{"regime":"bear","zscore":-1.147,"price":66.37},"Mexico":{"regime":"bear","zscore":-1.628,"price":73.16},"Indonesia":{"regime":"bear","zscore":-2.6,"price":15.41},"Vietnam":{"regime":"bear","zscore":-1.27,"price":17.3},"SouthAfrica":{"regime":"bear","zscore":-1.29,"price":69.08},"Qatar":{"regime":"bear","zscore":-1.796,"price":18.74},"SaudiArabia":{"regime":"sideways","zscore":-0.201,"price":38.31},"Turkey":{"regime":"bear","zscore":-0.992,"price":38.87}},"Rates":{"US_3M":{"regime":"stable","zscore":0.14,"price":3.605},"US_5Y":{"regime":"rising","zscore":0.877,"price":3.803},"US_10Y":{"regime":"rising","zscore":0.838,"price":4.22},"US_30Y":{"regime":"rising","zscore":0.943,"price":4.859}},"Currencies":{"EURUSD":{"regime":"bear","zscore":-1.159,"price":1.1522},"JPYUSD":{"regime":"bear","zscore":-0.816,"price":0.0063},"GBPUSD":{"regime":"sideways","zscore":-0.408,"price":1.3353},"CNYUSD":{"regime":"bull","zscore":0.876,"price":0.1456},"AUDUSD":{"regime":"sideways","zscore":0.109,"price":0.7075},"CHFUSD":{"regime":"sideways","zscore":-0.543,"price":1.2733},"KRWUSD":{"regime":"sideways","zscore":-0.564,"price":0.0007},"SGDUSD":{"regime":"sideways","zscore":-0.629,"price":0.7822}},"Credit":{"HY_Bond":{"regime":"bear","zscore":-1.626,"price":79.45},"IG_Bond":{"regime":"bear","zscore":-1.664,"price":108.69},"HY_Junk":{"regime":"bear","zscore":-1.566,"price":95.65},"BankLoans":{"regime":"sideways","zscore":-0.352,"price":20.47},"EM_Bond":{"regime":"bear","zscore":-2.126,"price":94.75},"CreditSpread":{"regime":"bear","zscore":-0.858,"price":1.368}},"Curves":{"YC_10Y3M":{"regime":"stable","zscore":0.695,"price":0.615},"YC_10Y5Y":{"regime":"stable","zscore":-0.474,"price":0.417},"YC_30Y10Y":{"regime":"stable","zscore":0.0,"price":0.639}}}},"t":{"Tech":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"ETH":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"ETH_BTC":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"Gasoline":[{"d":"01/04","r":"bear"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bull"},{"d":"03/15","r":"bull"},{"d":"03/22","r":"bull"}],"Zinc":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bear"},{"d":"01/25","r":"bear"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"HY_Junk":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Energy_Eq":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bull"},{"d":"03/15","r":"bull"},{"d":"03/22","r":"bull"}],"Indonesia":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"India":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"bear"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"SOL":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"Silver":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"US_3M":[{"d":"01/04","r":"falling"},{"d":"01/11","r":"stable"},{"d":"01/18","r":"stable"},{"d":"01/25","r":"stable"},{"d":"02/01","r":"stable"},{"d":"02/08","r":"rising"},{"d":"02/15","r":"stable"},{"d":"02/22","r":"stable"},{"d":"03/01","r":"stable"},{"d":"03/08","r":"stable"},{"d":"03/15","r":"stable"},{"d":"03/22","r":"stable"}],"YC_10Y3M":[{"d":"01/04","r":"stable"},{"d":"01/11","r":"stable"},{"d":"01/18","r":"stable"},{"d":"01/25","r":"stable"},{"d":"02/01","r":"stable"},{"d":"02/08","r":"stable"},{"d":"02/15","r":"flattening"},{"d":"02/22","r":"flattening"},{"d":"03/01","r":"flattening"},{"d":"03/08","r":"stable"},{"d":"03/15","r":"steepening"},{"d":"03/22","r":"stable"}],"Aluminum":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bull"},{"d":"03/15","r":"bull"},{"d":"03/22","r":"bull"}],"CNYUSD":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bull"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"bull"}],"HY_Bond":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Brazil":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Palladium":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"China":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Thailand":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"SouthAfrica":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Japan":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"EM_Broad":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"UK":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Discretionary":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"EURUSD":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Healthcare":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"SaudiArabia":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"sideways"}],"IG_Bond":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"YC_30Y10Y":[{"d":"01/04","r":"stable"},{"d":"01/11","r":"stable"},{"d":"01/18","r":"flattening"},{"d":"01/25","r":"flattening"},{"d":"02/01","r":"stable"},{"d":"02/08","r":"stable"},{"d":"02/15","r":"stable"},{"d":"02/22","r":"stable"},{"d":"03/01","r":"stable"},{"d":"03/08","r":"stable"},{"d":"03/15","r":"stable"},{"d":"03/22","r":"stable"}],"KRWUSD":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"Canada":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"BTC":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"RealEstate":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"HeatingOil":[{"d":"01/04","r":"bear"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bull"},{"d":"03/15","r":"bull"},{"d":"03/22","r":"bull"}],"EM_Bond":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"US_Nasdaq":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"US_5Y":[{"d":"01/04","r":"stable"},{"d":"01/11","r":"stable"},{"d":"01/18","r":"rising"},{"d":"01/25","r":"rising"},{"d":"02/01","r":"stable"},{"d":"02/08","r":"stable"},{"d":"02/15","r":"falling"},{"d":"02/22","r":"falling"},{"d":"03/01","r":"falling"},{"d":"03/08","r":"stable"},{"d":"03/15","r":"rising"},{"d":"03/22","r":"rising"}],"US_30Y":[{"d":"01/04","r":"stable"},{"d":"01/11","r":"stable"},{"d":"01/18","r":"stable"},{"d":"01/25","r":"stable"},{"d":"02/01","r":"stable"},{"d":"02/08","r":"stable"},{"d":"02/15","r":"falling"},{"d":"02/22","r":"falling"},{"d":"03/01","r":"falling"},{"d":"03/08","r":"stable"},{"d":"03/15","r":"rising"},{"d":"03/22","r":"rising"}],"AUDUSD":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"Staples":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"sideways"}],"Korea":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"US_10Y":[{"d":"01/04","r":"stable"},{"d":"01/11","r":"stable"},{"d":"01/18","r":"stable"},{"d":"01/25","r":"stable"},{"d":"02/01","r":"stable"},{"d":"02/08","r":"stable"},{"d":"02/15","r":"falling"},{"d":"02/22","r":"falling"},{"d":"03/01","r":"falling"},{"d":"03/08","r":"stable"},{"d":"03/15","r":"rising"},{"d":"03/22","r":"rising"}],"Financials":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"bear"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Gold":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"Copper":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"Platinum":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"SGDUSD":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"sideways"}],"BankLoans":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bear"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"bear"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"Brent":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bull"},{"d":"03/15","r":"bull"},{"d":"03/22","r":"bull"}],"YC_10Y5Y":[{"d":"01/04","r":"stable"},{"d":"01/11","r":"stable"},{"d":"01/18","r":"flattening"},{"d":"01/25","r":"flattening"},{"d":"02/01","r":"stable"},{"d":"02/08","r":"stable"},{"d":"02/15","r":"steepening"},{"d":"02/22","r":"stable"},{"d":"03/01","r":"stable"},{"d":"03/08","r":"stable"},{"d":"03/15","r":"flattening"},{"d":"03/22","r":"stable"}],"Taiwan":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"GBPUSD":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"sideways"}],"WTI":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bull"},{"d":"03/15","r":"bull"},{"d":"03/22","r":"bull"}],"EU_Stoxx50":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Germany":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Industrials":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"US_SP500":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Materials":[{"d":"01/04","r":"bull"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Singapore":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Qatar":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Utilities":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bull"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"CreditSpread":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bull"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"JPYUSD":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Turkey":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Vietnam":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"bull"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"bear"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"Australia":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"sideways"}],"NatGas":[{"d":"01/04","r":"bear"},{"d":"01/11","r":"bear"},{"d":"01/18","r":"bear"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"bear"},{"d":"03/01","r":"bear"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"Mexico":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"bull"},{"d":"01/25","r":"bull"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"bull"},{"d":"03/01","r":"bull"},{"d":"03/08","r":"bear"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"bear"}],"CommSvc":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"sideways"},{"d":"02/08","r":"sideways"},{"d":"02/15","r":"sideways"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"sideways"},{"d":"03/22","r":"sideways"}],"CHFUSD":[{"d":"01/04","r":"sideways"},{"d":"01/11","r":"sideways"},{"d":"01/18","r":"sideways"},{"d":"01/25","r":"sideways"},{"d":"02/01","r":"bull"},{"d":"02/08","r":"bull"},{"d":"02/15","r":"bull"},{"d":"02/22","r":"sideways"},{"d":"03/01","r":"sideways"},{"d":"03/08","r":"sideways"},{"d":"03/15","r":"bear"},{"d":"03/22","r":"sideways"}]},"z":{"Tech":[-0.29,0.39,0.18,-0.2,-0.06,-0.74,-0.89,-0.62,-0.75,-0.57,-0.43,-0.33],"ETH":[0.13,0.1,0.6,-0.27,-1.57,-2.18,-2.69,-2.12,-1.02,-0.51,0.72,0.75],"ETH_BTC":[0.1,-0.07,0.35,-0.3,-1.33,-1.6,-2.33,-1.72,0.02,-0.2,0.75,0.55],"Gasoline":[-0.98,0.21,0.58,1.15,1.64,1.2,0.87,0.97,0.97,2.82,3.98,3.52],"Zinc":[-0.42,-0.13,-0.94,-0.9,-0.42,-0.12,1.48,1.34,2.03,0.42,-1.4,-1.21],"HY_Junk":[0.52,1.36,1.22,0.87,0.71,0.33,0.27,0.39,-0.01,-1.1,-1.85,-1.57],"Energy_Eq":[0.05,0.69,1.9,2.33,2.41,2.79,2.76,2.31,1.92,1.34,1.32,1.18],"Indonesia":[0.23,0.6,0.82,0.79,-1.28,-1.54,-1.56,-1.08,0.23,-1.45,-2.24,-2.6],"India":[0.34,0.02,-0.73,-1.4,-1.53,0.05,0.02,1.21,0.3,-1.63,-2.28,-2.29],"SOL":[0.08,0.44,0.57,-0.29,-1.41,-2.19,-2.23,-1.85,-1.04,-0.38,0.46,0.73],"Silver":[2.06,2.67,2.87,2.71,0.71,-0.17,-0.75,-1.19,1.15,0.55,0.23,-0.1],"US_3M":[-0.87,-0.15,0.41,0.46,0.46,0.9,0.42,0.15,0.07,-0.28,0.14,0.14],"YC_10Y3M":[0.74,-0.07,0.28,0.41,0.1,-0.29,-1.32,-1.05,-1.73,-0.3,1.21,0.69],"Aluminum":[0.6,1.97,1.28,1.29,0.78,-0.26,-0.15,-0.59,0.08,2.04,2.35,2.33],"CNYUSD":[2.18,2.19,2.23,1.68,1.87,1.8,2.4,2.29,3.03,0.92,0.7,0.88],"HY_Bond":[0.46,1.28,1.15,0.85,0.71,0.33,0.25,0.42,-0.0,-1.07,-1.76,-1.63],"Brazil":[0.41,0.5,1.3,2.47,2.4,2.21,2.39,1.22,0.73,-0.49,-0.96,-1.02],"Palladium":[0.89,1.51,0.22,0.08,0.07,-0.4,-0.36,-0.71,0.38,-0.34,-0.5,-0.75],"China":[0.16,0.32,0.34,0.25,-0.11,-0.07,-0.5,-0.33,-1.16,-1.64,-1.08,-0.98],"Thailand":[0.19,0.33,0.49,1.13,1.23,2.21,3.07,2.59,3.67,-0.01,-0.98,-1.15],"SouthAfrica":[1.48,1.73,1.54,1.68,1.02,1.13,0.69,0.23,2.2,-0.72,-1.42,-1.29],"Japan":[0.17,0.94,1.29,1.01,1.26,1.37,2.23,1.79,1.76,-0.92,-1.97,-1.23],"EM_Broad":[1.01,1.65,1.87,1.87,1.29,1.32,1.44,1.41,1.54,-0.87,-1.37,-1.21],"UK":[1.73,1.96,1.35,1.1,1.48,1.82,1.81,2.15,2.29,-0.55,-1.17,-1.17],"Discretionary":[-0.22,0.7,0.12,0.19,0.53,-1.15,-1.12,-1.04,-0.81,-0.68,-1.0,-0.98],"EURUSD":[0.47,-0.35,-0.5,-0.13,1.05,0.62,1.33,0.07,-0.8,-0.79,-1.6,-1.16],"Healthcare":[0.4,0.54,0.2,0.2,-0.12,0.06,0.32,-0.11,0.9,-0.71,-1.1,-0.82],"SaudiArabia":[0.01,-0.06,1.06,1.68,2.1,1.96,0.87,-0.24,-1.59,-1.58,-0.94,-0.2],"IG_Bond":[-0.18,0.65,0.31,0.14,0.3,0.24,1.03,0.83,1.11,-0.02,-2.03,-1.66],"YC_30Y10Y":[0.41,-0.27,-1.12,-1.49,-0.77,0.02,0.56,0.78,0.75,-0.48,-0.39,0.0],"KRWUSD":[1.0,0.73,0.19,-0.62,0.51,-0.61,0.78,0.43,-0.1,-0.22,-0.73,-0.56],"Canada":[0.77,0.69,0.82,0.53,0.04,0.22,0.58,0.77,2.11,0.69,-0.55,-0.63],"BTC":[0.11,0.32,0.6,-0.15,-1.52,-2.15,-2.52,-2.08,-1.4,-0.59,0.52,0.68],"RealEstate":[-0.12,0.13,1.48,0.46,0.71,0.99,0.77,1.46,1.51,0.54,-0.72,-0.56],"HeatingOil":[-1.39,-0.38,0.7,1.8,3.06,1.21,0.63,0.58,-0.21,2.84,3.8,3.08],"EM_Bond":[0.38,0.58,-0.07,0.22,0.34,0.92,1.96,1.62,1.91,-0.53,-2.25,-2.13],"US_Nasdaq":[-0.36,0.51,0.22,-0.1,0.25,-0.72,-1.06,-0.67,-0.86,-0.71,-0.5,-0.58],"US_5Y":[0.16,0.04,0.9,0.95,0.44,-0.02,-1.54,-1.35,-1.92,-0.25,1.53,0.88],"US_30Y":[0.51,-0.29,0.09,0.1,0.06,0.29,-1.06,-0.8,-1.74,-0.73,1.47,0.94],"AUDUSD":[0.44,0.22,0.58,0.83,2.28,1.27,2.15,1.21,0.3,0.52,-0.07,0.11],"Staples":[-0.07,0.21,1.6,1.88,2.42,3.09,2.52,1.63,2.14,-0.59,-1.27,-0.8],"Korea":[1.4,2.53,2.88,2.87,2.55,1.88,2.45,2.55,3.0,0.15,-0.67,-0.56],"US_10Y":[0.33,-0.16,0.56,0.72,0.42,0.28,-1.28,-1.13,-1.96,-0.49,1.43,0.84],"Financials":[0.79,0.53,-0.11,-1.29,-0.85,-0.81,-1.36,-0.29,-0.99,-1.8,-1.36,-1.55],"Gold":[0.5,0.9,1.06,1.76,1.49,1.62,1.55,0.27,1.79,0.64,0.1,-0.02],"Copper":[0.41,0.98,0.58,0.23,0.84,0.03,0.01,-0.25,0.33,-0.31,-0.23,-0.34],"Platinum":[2.02,2.09,1.02,0.67,-0.06,-0.45,-0.56,-1.12,0.69,0.12,-0.09,-0.32],"SGDUSD":[0.75,0.43,0.12,0.26,1.47,0.68,1.73,0.78,0.05,-0.25,-1.01,-0.63],"BankLoans":[1.52,1.51,1.5,-0.02,-1.29,-2.12,-2.39,-1.86,-2.32,-1.13,-0.4,-0.35],"Brent":[-0.73,0.55,0.92,1.3,2.26,1.04,0.79,1.2,0.34,2.79,3.86,3.24],"YC_10Y5Y":[0.47,-0.56,-1.12,-0.82,-0.08,0.74,0.9,0.74,0.13,-0.69,-0.89,-0.47],"Taiwan":[0.68,1.41,1.72,1.94,0.92,1.14,1.49,1.19,2.02,-0.11,-0.65,-0.49],"GBPUSD":[0.58,0.18,-0.02,-0.03,1.3,0.31,0.9,-0.15,-1.15,-0.6,-0.99,-0.41],"WTI":[-0.72,0.45,0.76,1.18,2.0,1.13,0.88,1.25,0.4,2.79,3.64,3.11],"EU_Stoxx50":[0.41,1.49,1.44,1.05,0.8,0.0,-0.23,0.92,1.03,-1.1,-1.06,-1.52],"Germany":[0.69,0.71,0.72,0.48,0.37,0.09,0.45,0.6,0.91,-1.4,-2.06,-1.86],"Industrials":[0.87,1.19,2.29,1.37,1.63,2.08,1.31,2.39,2.15,-0.5,-1.37,-1.58],"US_SP500":[-0.06,0.69,0.52,-0.07,0.43,-0.19,-0.55,-0.03,-0.32,-0.96,-1.03,-1.06],"Materials":[1.18,1.58,1.69,1.79,1.74,1.6,2.2,1.39,1.96,-0.62,-1.49,-1.3],"Singapore":[0.58,1.21,1.15,1.02,0.49,0.18,0.48,0.89,0.57,-1.06,-1.18,-1.29],"Qatar":[0.2,0.42,1.07,1.61,1.49,0.95,1.12,0.04,-0.43,-1.85,-2.1,-1.8],"Utilities":[0.14,-0.0,0.72,-0.14,0.04,0.54,1.56,1.93,2.25,1.67,0.21,0.44],"CreditSpread":[-0.56,-0.17,-0.47,-0.45,-0.19,0.04,1.08,0.71,1.35,0.96,-1.19,-0.86],"JPYUSD":[-0.35,-0.29,-0.67,-0.54,0.77,0.02,1.21,0.68,-0.55,-0.15,-1.29,-0.82],"Turkey":[0.65,1.13,1.45,1.91,2.52,1.38,1.37,0.79,-0.21,-1.15,-1.1,-0.99],"Vietnam":[0.32,1.36,0.98,0.74,-0.03,-0.9,-0.58,-0.09,0.01,-0.41,-1.44,-1.27],"Australia":[0.63,0.2,0.92,0.71,1.34,2.14,2.45,2.28,2.28,0.08,-0.91,-0.76],"NatGas":[-1.56,-1.1,-1.07,0.62,0.59,0.22,0.13,-1.18,-0.96,-0.19,-0.1,0.08],"Mexico":[0.75,0.56,1.67,1.54,1.79,2.6,2.01,1.44,1.67,-1.28,-1.93,-1.63],"CommSvc":[0.04,0.45,-0.24,-0.24,0.76,-0.47,-0.14,-0.04,-0.45,0.41,-0.03,-0.35],"CHFUSD":[0.75,-0.26,-0.59,-0.06,1.64,1.19,1.89,0.75,-0.49,-0.16,-0.86,-0.54]}};
+const CAT_ORDER=["Crypto","Metals","Energy","US Sectors","Global Equities","Rates","Curves","Currencies","Credit"];
+const ib=r=>r==="bull"||r==="falling"||r==="steepening";
+const ie=r=>r==="bear"||r==="rising"||r==="flattening";
+const rc=r=>ib(r)?"bu":ie(r)?"be":"si";
+const rl=r=>({bull:"BULL",bear:"BEAR",sideways:"SIDE",rising:"RISING",falling:"FALLING",stable:"STABLE",steepening:"STEEP",flattening:"FLAT"}[r]||r||"—");
+const tc=r=>ib(r)?"var(--g)":ie(r)?"var(--r)":"var(--x)";
+const fP=(p,n)=>{if(p==null)return"—";if(["ETH_BTC","JPYUSD","CreditSpread","CNYUSD","KRWUSD"].includes(n))return p.toFixed(4);if(p>10000)return p.toLocaleString("en",{maximumFractionDigits:0});if(p>100)return p.toLocaleString("en",{maximumFractionDigits:1});return p<1?p.toFixed(4):p.toFixed(2)};
+const zP=z=>((Math.max(-3,Math.min(3,z||0))+3)/6)*100;
+function catScore(a){const v=Object.values(a),s=v.map(x=>ib(x.regime)?1:ie(x.regime)?-1:0);return s.reduce((a,b)=>a+b,0)/s.length}
+let S={view:"overview",exp:null,sort:"default"};
 function render(){
-  const {view,expanded} = state;
-  const app = document.getElementById("app");
+const{view,exp,sort}=S;const app=document.getElementById("app");
+let h=`<header><h1>Regime Monitor</h1><div class="m">${D.s.total_assets} assets · wk ${D.s.date}</div></header>`;
+h+=`<div class="tabs">${["overview","heatmap","extremes","method"].map(v=>`<button class="${view===v?"on":""}" onclick="U('view','${v}')">${v}</button>`).join("")}</div>`;
+h+=`<div class="strip">`;
+CAT_ORDER.forEach(k=>{const a=D.s.categories[k];if(!a)return;const sc=catScore(a),c=sc>0.3?"bu":sc<-0.3?"be":"si";
+const bg=c==="bu"?"var(--gb)":c==="be"?"var(--rb)":"var(--xb)";const bd=c==="bu"?"var(--gd)":c==="be"?"var(--rd)":"var(--b)";const tc2=c==="bu"?"var(--g)":c==="be"?"var(--r)":"var(--x)";
+h+=`<div class="chip" style="background:${bg};border-color:${bd}" onclick="U('exp','${k}');U('view','overview')"><span>${k}</span><span class="sc" style="color:${tc2}">${sc>0?"+":""}${sc.toFixed(2)}</span></div>`;});
+h+=`</div>`;
+if(view==="overview")h+=rOv();else if(view==="heatmap")h+=rHm();else if(view==="extremes")h+=rEx();else h+=rMe();
+h+=`<footer>4-week return / 26-week rolling vol · z>0.8 = directional regime · weekly data, 3Y</footer>`;
+app.innerHTML=h}
 
-  let h = `<header><h1>Regime Monitor</h1><div class="meta">${D.s.total_assets} assets · ${D.s.weeks}w · ${D.s.date}</div></header>`;
+function sortAssets(entries,sort){
+if(sort==="z-asc")return[...entries].sort((a,b)=>(a[1].zscore||0)-(b[1].zscore||0));
+if(sort==="z-desc")return[...entries].sort((a,b)=>(b[1].zscore||0)-(a[1].zscore||0));
+if(sort==="alpha")return[...entries].sort((a,b)=>a[0].localeCompare(b[0]));
+if(sort==="regime"){const ro=r=>ib(r)?0:ie(r)?2:1;return[...entries].sort((a,b)=>ro(a[1].regime)-ro(b[1].regime));}
+return entries}
 
-  // Tabs
-  h += `<div class="tabs">`;
-  ["overview","heatmap","extremes"].forEach(v=>{
-    h+=`<button class="${view===v?"active":""}" onclick="setState('view','${v}')">${v}</button>`;
-  });
-  h+=`</div>`;
+function sortBar(){return`<div class="sort-ctrl">Sort: ${["default","z-desc","z-asc","alpha","regime"].map(s=>`<button class="${S.sort===s?"on":""}" onclick="U('sort','${s}')">${s==="z-desc"?"z↓":s==="z-asc"?"z↑":s}</button>`).join("")}</div>`}
 
-  // Summary strip
-  h+=`<div class="summary-strip">`;
-  CATS.forEach(([k,label,icon])=>{
-    const assets=D.s.categories[k];if(!assets)return;
-    const sc=catScore(assets),c=sc>0.3?"bull":sc<-0.3?"bear":"side";
-    const bg=c==="bull"?"var(--bull-bg)":c==="bear"?"var(--bear-bg)":"var(--side-bg)";
-    const bd=c==="bull"?"var(--bull-border)":c==="bear"?"var(--bear-border)":"var(--side-border)";
-    const tc=c==="bull"?"var(--bull)":c==="bear"?"var(--bear)":"var(--side)";
-    h+=`<div class="summary-chip" style="background:${bg};border-color:${bd}" onclick="setState('expanded','${k}');setState('view','overview')">
-      <span>${icon}</span><span>${label}</span><span class="score" style="color:${tc}">${sc>0?"+":""}${sc.toFixed(2)}</span></div>`;
-  });
-  h+=`</div>`;
+function rOv(){let h=sortBar();
+CAT_ORDER.forEach(k=>{const assets=D.s.categories[k];if(!assets)return;const isE=S.exp===k;
+const entries=sortAssets(Object.entries(assets),S.sort);
+const nb=entries.filter(([,a])=>ib(a.regime)).length,nr=entries.filter(([,a])=>ie(a.regime)).length,ns=entries.length-nb-nr;
+h+=`<div class="cb"><div class="ch" onclick="U('exp','${isE?"_":k}')"><h2>${k}</h2><div class="st">`;
+if(nb)h+=`<span><span class="d" style="background:var(--g)"></span>${nb}</span>`;
+if(ns)h+=`<span><span class="d" style="background:var(--x)"></span>${ns}</span>`;
+if(nr)h+=`<span><span class="d" style="background:var(--r)"></span>${nr}</span>`;
+h+=`<span>${isE?"▾":"▸"}</span></div></div><div class="cg">`;
+entries.forEach(([n,d])=>{const c=rc(d.regime),z=d.zscore,zc=tc(d.regime);
+h+=`<div class="a ${c}"><div class="ai"><div style="display:flex;justify-content:space-between;align-items:center"><span class="an">${n}</span><span class="al ${c}">${rl(d.regime)}</span></div><div class="ar"><span class="ap">${fP(d.price,n)}</span><span class="az" style="color:${zc}">${z!=null?(z>0?"+":"")+z.toFixed(2):"—"}</span></div><div class="zb"><div class="md"></div><div class="dt" style="left:${zP(z)}%;background:${zc}"></div></div></div></div>`;});
+h+=`</div>`;
+if(isE){h+=`<div class="ce"><div style="font-family:var(--m);font-size:9px;color:var(--t3);margin-bottom:4px">12-WEEK TIMELINE</div>`;
+entries.forEach(([n])=>{const tl=D.t[n],zd=D.z[n];
+h+=`<div class="tr"><span class="lb">${n}</span>`;
+if(zd){const mn=Math.min(...zd),mx=Math.max(...zd),rng=mx-mn||1;
+let pts=zd.map((v,i)=>`${(i/(zd.length-1))*72},${18-((v-mn)/rng)*14-2}`).join(" ");
+const lc=tc(D.s.categories[S.exp]?.[n]?.regime);
+h+=`<svg width="72" height="18" style="flex-shrink:0"><line x1="0" y1="9" x2="72" y2="9" stroke="var(--b)" stroke-width="1" stroke-dasharray="2,2"/><polyline fill="none" stroke="${lc}" stroke-width="1.5" points="${pts}"/></svg>`}
+if(tl){h+=`<div class="tb">`;tl.forEach((d,i)=>{const bc=ib(d.r)?"var(--g)":ie(d.r)?"var(--r)":"var(--b)";
+h+=`<div style="background:${bc};opacity:${i===tl.length-1?1:.6}" title="${d.d}: ${d.r}"></div>`});h+=`</div>`}
+h+=`</div>`});h+=`</div>`}
+h+=`</div>`});return h}
 
-  if(view==="overview") h+=renderOverview();
-  else if(view==="heatmap") h+=renderHeatmap();
-  else h+=renderExtremes();
+function rHm(){
+const all=[];Object.entries(D.s.categories).forEach(([cat,a])=>{Object.entries(a).forEach(([n,d])=>all.push({n,cat,...d}))});
+let sorted;
+if(S.sort==="alpha")sorted=all.sort((a,b)=>a.n.localeCompare(b.n));
+else if(S.sort==="regime"){const ro=r=>ib(r)?0:ie(r)?2:1;sorted=all.sort((a,b)=>ro(a.regime)-ro(b.regime))}
+else sorted=all.sort((a,b)=>(a.zscore||0)-(b.zscore||0));
+let h=sortBar()+`<div style="font-size:10px;color:var(--t3);margin-bottom:8px">${all.length} assets</div>`;
+sorted.forEach(a=>{const z=a.zscore||0,it=Math.min(1,Math.abs(z)/3),
+bg=z>0?`rgba(22,163,106,${it*.12})`:z<0?`rgba(220,38,38,${it*.12})`:"transparent",zc=tc(a.regime);
+h+=`<div class="hr" style="background:${bg}"><span class="nm">${a.n}</span><div class="bw"><div class="md" style="position:absolute;left:50%;top:0;width:1px;height:3px;background:var(--b)"></div><div class="dt" style="position:absolute;top:-2px;left:${zP(z)}%;width:7px;height:7px;border-radius:50%;background:${zc};transform:translateX(-3.5px)"></div></div><span class="hz" style="color:${zc}">${z>0?"+":""}${z.toFixed(2)}</span><span class="hl" style="color:${zc}">${rl(a.regime)}</span></div>`});
+return h}
 
-  h+=`<footer>Regime classification: 4-week return normalized by 26-week rolling volatility · z>0.8=bull, z<-0.8=bear · Weekly data, 3Y history</footer>`;
-  app.innerHTML=h;
-}
+function rEx(){
+const all=[];Object.entries(D.s.categories).forEach(([cat,a])=>{Object.entries(a).forEach(([n,d])=>all.push({n,cat,...d}))});
+const ext=all.filter(a=>a.zscore!=null&&Math.abs(a.zscore)>1.5).sort((a,b)=>a.zscore-b.zscore);
+let h=`<div style="font-size:10px;color:var(--t3);margin-bottom:10px">Assets with |z| > 1.5</div>`;
+ext.forEach(a=>{const bear=a.zscore<0,c=bear?"be":"bu";
+h+=`<div class="ec ${c}"><div class="ei">${bear?"▼":"▲"}</div><div class="ef"><div class="n">${a.n}</div><div class="s">${a.cat} · ${fP(a.price,a.n)}</div></div><div class="ez"><div class="v" style="color:${tc(a.regime)}">${a.zscore>0?"+":""}${a.zscore.toFixed(2)}</div><div class="l" style="color:${tc(a.regime)}">${rl(a.regime)}</div></div></div>`});
+h+=`<div class="rb"><h3>Regime Reading</h3><p><strong>Bear (${ext.filter(a=>a.zscore<0).length}):</strong> ${ext.filter(a=>a.zscore<0).map(a=>a.n+"("+a.zscore.toFixed(2)+")").join(", ")}<br><strong>Bull (${ext.filter(a=>a.zscore>0).length}):</strong> ${ext.filter(a=>a.zscore>0).map(a=>a.n+"(+"+a.zscore.toFixed(2)+")").join(", ")}<br><br>Global equities, credit, and rates simultaneously in bear/rising regime. Only energy shows strong bull. Crypto in sideways — decoupling window.</p></div>`;
+return h}
 
-function renderOverview(){
-  let h="";
-  CATS.forEach(([k,label,icon])=>{
-    const assets=D.s.categories[k];if(!assets)return;
-    const isExp=state.expanded===k;
-    const entries=Object.entries(assets);
-    const nb=entries.filter(([,a])=>isBull(a.regime)).length;
-    const nr=entries.filter(([,a])=>isBear(a.regime)).length;
-    const ns=entries.length-nb-nr;
+function rMe(){return`
+<div class="meth"><h3>Methodology</h3><p>
+<strong>Regime classification</strong> is based on vol-normalized z-scores:<br><br>
+1. Compute <strong>4-week return</strong> for each asset<br>
+2. Divide by <strong>26-week rolling volatility</strong> (that asset's "normal" range)<br>
+3. <code>z = 4w return ÷ expected volatility</code><br><br>
+<strong>Price-based assets</strong> (equities, crypto, commodities, FX, credit):<br>
+&nbsp;&nbsp;z > +0.8 → <span style="color:var(--g);font-weight:700">BULL</span> &nbsp; z < -0.8 → <span style="color:var(--r);font-weight:700">BEAR</span> &nbsp; between → <span style="color:var(--x);font-weight:700">SIDEWAYS</span><br><br>
+<strong>Rates</strong> (bond yields — level changes, not returns):<br>
+&nbsp;&nbsp;z > +0.8 → <span style="color:var(--r);font-weight:700">RISING</span> (yields up = bonds down)<br>
+&nbsp;&nbsp;z < -0.8 → <span style="color:var(--g);font-weight:700">FALLING</span> (yields down = bonds up)<br>
+&nbsp;&nbsp;between → <span style="color:var(--x);font-weight:700">STABLE</span><br><br>
+<strong>Curves</strong> (yield spreads — long minus short):<br>
+&nbsp;&nbsp;z > +0.8 → <span style="color:var(--g);font-weight:700">STEEPENING</span> &nbsp; z < -0.8 → <span style="color:var(--r);font-weight:700">FLATTENING</span><br><br>
+Vol-normalization means BTC (weekly vol ~8%) and Gold (~2%) use the <strong>same threshold</strong>. The question is always: "is this move abnormal <em>for this asset</em>?"<br><br>
+Data: weekly close, 3-year history (158 weeks). Source: Yahoo Finance.
+</p></div>`}
 
-    h+=`<div class="cat-block">`;
-    h+=`<div class="cat-header" onclick="setState('expanded','${isExp?"null":k}')">`;
-    h+=`<h2>${icon} ${label}</h2>`;
-    h+=`<div class="stats">`;
-    if(nb)h+=`<span><span class="dot" style="background:var(--bull)"></span> ${nb}</span>`;
-    if(ns)h+=`<span><span class="dot" style="background:var(--side)"></span> ${ns}</span>`;
-    if(nr)h+=`<span><span class="dot" style="background:var(--bear)"></span> ${nr}</span>`;
-    h+=`<span style="font-size:14px">${isExp?"▾":"▸"}</span></div></div>`;
-
-    h+=`<div class="cat-grid">`;
-    entries.forEach(([name,data])=>{
-      const c=rCls(data.regime), z=data.zscore, zc=z>0.8?"var(--bull)":z<-0.8?"var(--bear)":"var(--side)";
-      h+=`<div class="asset ${c}"><div class="asset-info">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span class="asset-name">${name}</span>
-          <span class="asset-regime regime-${c}">${rLbl(data.regime)}</span>
-        </div>
-        <div class="asset-row"><span class="asset-price">${fP(data.price,name)}</span><span class="asset-z" style="color:${zc}">${z!=null?((z>0?"+":"")+z.toFixed(2)):"—"}</span></div>
-        <div class="z-bar"><div class="mid"></div><div class="dot" style="left:${zPct(z)}%;background:${zc}"></div></div>
-      </div></div>`;
-    });
-    h+=`</div>`;
-
-    if(isExp){
-      h+=`<div class="cat-expanded"><div style="font-family:var(--mono);font-size:10px;color:var(--text-3);margin-bottom:6px">12-WEEK REGIME TIMELINE</div>`;
-      entries.forEach(([name])=>{
-        const tl=D.t[name];
-        const zd=D.z[name];
-        h+=`<div class="timeline-row"><span class="label">${name}</span>`;
-        // sparkline
-        if(zd){
-          const mn=Math.min(...zd),mx=Math.max(...zd),rng=mx-mn||1;
-          let pts=zd.map((v,i)=>`${(i/(zd.length-1))*80},${20-((v-mn)/rng)*16-2}`).join(" ");
-          const lc=zd[zd.length-1]>0.8?"var(--bull)":zd[zd.length-1]<-0.8?"var(--bear)":"var(--side)";
-          h+=`<div class="spark-container"><svg width="80" height="20"><line x1="0" y1="10" x2="80" y2="10" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,2"/><polyline fill="none" stroke="${lc}" stroke-width="1.5" points="${pts}"/></svg></div>`;
-        }
-        // timeline blocks
-        if(tl){
-          h+=`<div class="tl-blocks">`;
-          tl.forEach((d,i)=>{
-            const bc=isBull(d.r)?"var(--bull)":isBear(d.r)?"var(--bear)":"var(--border)";
-            const op=i===tl.length-1?1:0.65;
-            h+=`<div class="tl-block" style="background:${bc};opacity:${op}" title="${d.d}: ${d.r}"></div>`;
-          });
-          h+=`</div>`;
-        }
-        h+=`</div>`;
-      });
-      h+=`</div>`;
-    }
-    h+=`</div>`;
-  });
-  return h;
-}
-
-function renderHeatmap(){
-  const all=[];
-  Object.entries(D.s.categories).forEach(([cat,assets])=>{
-    Object.entries(assets).forEach(([n,d])=>all.push({n,cat,...d}));
-  });
-  all.sort((a,b)=>(a.zscore||0)-(b.zscore||0));
-  let h=`<div style="font-size:11px;color:var(--text-3);margin-bottom:10px">All ${all.length} assets by z-score</div>`;
-  all.forEach(a=>{
-    const z=a.zscore||0,c=rCls(a.regime),tc=z>0.8?"var(--bull)":z<-0.8?"var(--bear)":"var(--side)";
-    const intensity=Math.min(1,Math.abs(z)/3);
-    const bg=z>0?`rgba(22,163,106,${intensity*0.12})`:z<0?`rgba(220,38,38,${intensity*0.12})`:"transparent";
-    h+=`<div class="hm-row" style="background:${bg}"><span class="hm-name">${a.n}</span>
-    <div class="hm-bar-wrap"><div class="mid"></div><div class="dot" style="left:${zPct(z)}%;background:${tc}"></div></div>
-    <span class="hm-z" style="color:${tc}">${z>0?"+":""}${z.toFixed(2)}</span>
-    <span class="hm-regime" style="color:${tc}">${rLbl(a.regime)}</span></div>`;
-  });
-  return h;
-}
-
-function renderExtremes(){
-  const all=[];
-  Object.entries(D.s.categories).forEach(([cat,assets])=>{
-    Object.entries(assets).forEach(([n,d])=>all.push({n,cat,...d}));
-  });
-  const ext=all.filter(a=>a.zscore!=null&&Math.abs(a.zscore)>1.5).sort((a,b)=>a.zscore-b.zscore);
-  const catLabel=c=>CATS.find(x=>x[0]===c)?.[1]||c;
-
-  let h=`<div style="font-size:11px;color:var(--text-3);margin-bottom:12px">Assets with |z| > 1.5</div>`;
-  ext.forEach(a=>{
-    const bear=a.zscore<0, c=bear?"bear":"bull";
-    h+=`<div class="extreme-card ${c}-card">
-      <div class="extreme-icon">${bear?"▼":"▲"}</div>
-      <div class="extreme-info"><div class="name">${a.n}</div><div class="sub">${catLabel(a.cat)} · ${fP(a.price,a.n)}</div></div>
-      <div class="extreme-z"><div class="val" style="color:var(--${c})">${a.zscore>0?"+":""}${a.zscore.toFixed(2)}</div>
-      <div class="lbl" style="color:var(--${c})">${rLbl(a.regime)}</div></div></div>`;
-  });
-
-  h+=`<div class="reading-box"><h3>Regime Reading</h3><p>
-    <strong>Bear dominant:</strong> India(-2.29), EM Bond(-2.13), Germany(-1.86), IG Bond(-1.66), HY(-1.63), Industrials(-1.58), Financials(-1.55), EU Stoxx50(-1.52), UK Gilt(-1.50)<br>
-    <strong>Bull dominant:</strong> Brent(+3.24), WTI(+3.11), XLE Energy(+1.18)<br><br>
-    Global equities, credit, and bonds are simultaneously in bear regime. Only energy commodities show strong bull momentum. Crypto (BTC z=+0.68, ETH z=+0.75) sits in sideways — decoupling window still open. Classic supply-shock stagflation signature.
-  </p></div>`;
-  return h;
-}
-
-function setState(key,val){
-  if(val==="null")val=null;
-  if(key==="expanded"&&state.expanded===val)state.expanded=null;
-  else state[key]=val;
-  render();
-}
-
+function U(k,v){if(k==="exp")S.exp=S.exp===v?null:v;else S[k]=v;render()}
 render();
 </script>
 </body>
