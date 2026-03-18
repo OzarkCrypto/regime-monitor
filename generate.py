@@ -12,7 +12,7 @@ from datetime import datetime
 warnings.filterwarnings('ignore')
 
 END = datetime.now().strftime('%Y-%m-%d')
-START = '2019-01-01'
+START = '2018-01-01'
 
 UNIVERSE = {
     'Crypto': {'BTC-USD':'BTC','ETH-USD':'ETH','SOL-USD':'SOL'},
