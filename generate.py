@@ -259,55 +259,86 @@ tactical = run_model(daily, 10, 65, 1, 5)
 print(f"  -> {tactical['current']['label']} G={tactical['current']['growth']:+.2f} I={tactical['current']['inflation']:+.2f}")
 
 # ═══════════════ 3. INTERNALS PIPELINE ═══════════════
-print("INTERNALS (20d z-scores, SPY relative)...")
-lookback_int = 20
-vol_int = 130
-zscores_int = pd.DataFrame(index=daily_int.index)
-for col in daily_int.columns:
-    zscores_int[col] = daily_int[col].pct_change(lookback_int) / (daily_int[col].pct_change(1).rolling(vol_int).std() * np.sqrt(lookback_int))
-zscores_int = zscores_int.dropna(how='all')
+def run_internals(daily_int, lookback, vol_window, label):
+    zscores_int = pd.DataFrame(index=daily_int.index)
+    for col in daily_int.columns:
+        zscores_int[col] = daily_int[col].pct_change(lookback) / (daily_int[col].pct_change(1).rolling(vol_window).std() * np.sqrt(lookback))
+    zscores_int = zscores_int.dropna(how='all')
+    spy_z = float(zscores_int['SPY'].iloc[-1]) if 'SPY' in zscores_int.columns and pd.notna(zscores_int['SPY'].iloc[-1]) else 0.0
+    baskets_out = []
+    for bname, binfo in BASKETS.items():
+        tickers = [t for t in binfo['t'] if t in zscores_int.columns]
+        if not tickers: continue
+        scores = [float(zscores_int[t].iloc[-1]) for t in tickers if pd.notna(zscores_int[t].iloc[-1])]
+        if not scores: continue
+        avg_z = sum(scores) / len(scores)
+        rel_z = avg_z - spy_z
+        stocks = []
+        for t in tickers:
+            z = float(zscores_int[t].iloc[-1]) if pd.notna(zscores_int[t].iloc[-1]) else None
+            p = float(daily_int[t].iloc[-1]) if t in daily_int.columns and pd.notna(daily_int[t].iloc[-1]) else None
+            if z is not None:
+                stocks.append({'t':t,'z':round(z,2),'rz':round(z - spy_z,2),'p':round(p,2) if p else None})
+        baskets_out.append({'name':bname,'cat':binfo['cat'],'z':round(avg_z,2),'rel':round(rel_z,2),
+            'n':len(tickers),'n_ok':len(scores),'stocks':sorted(stocks, key=lambda x: -x['rz'])})
+    baskets_out.sort(key=lambda x: -x['rel'])
+    # Catchphrase: read the top/bottom baskets
+    top3 = [b['name'] for b in baskets_out[:3]]
+    bot3 = [b['name'] for b in baskets_out[-3:]]
+    top_cats = [b['cat'] for b in baskets_out[:5]]
+    bot_cats = [b['cat'] for b in baskets_out[-5:]]
+    phrases = []
+    # Defensive dominance
+    if sum(1 for c in top_cats if c in ('Defensive','Fear')) >= 2:
+        phrases.append('Defensive rotation')
+    # Geopolitical risk
+    if sum(1 for c in top_cats if c in ('Geopolitics','Energy','Security')) >= 2:
+        phrases.append('Geopolitical risk-on')
+    # Rate pain
+    if sum(1 for c in bot_cats if c in ('Rate Sensitive','Credit Cycle')) >= 2:
+        phrases.append('Rate-sensitive stress')
+    # Consumer weakness
+    if sum(1 for c in bot_cats if c == 'Consumer') >= 2:
+        phrases.append('Consumer fading')
+    # Industrial weakness
+    if sum(1 for c in bot_cats if c in ('Industrial','Manufacturing','Inventory Cycle')) >= 2:
+        phrases.append('Industrial slowdown')
+    # Tech/AI strength
+    if sum(1 for c in top_cats if c in ('Tech Growth','AI Capex','AI Infra')) >= 2:
+        phrases.append('Tech/AI leadership')
+    # Broad risk-off
+    if spy_z < -1.0:
+        phrases.append('Broad selloff')
+    elif spy_z > 1.0:
+        phrases.append('Broad rally')
+    # Energy/inflation
+    if sum(1 for c in top_cats if c in ('Energy','Inflation')) >= 2:
+        phrases.append('Inflation hedging')
+    # Labor leading
+    if any(b['name'] == 'Staffing' and b['rel'] < -0.5 for b in baskets_out):
+        phrases.append('Hiring slowdown signal')
+    if not phrases:
+        phrases.append('Mixed signals')
+    catchphrase = ' · '.join(phrases[:3])
+    spy_z_val = round(spy_z, 2)
+    print(f"  {label}: {len(baskets_out)} baskets, SPY z={spy_z_val}")
+    print(f"    Top 3: {', '.join(top3)}")
+    print(f"    Bot 3: {', '.join(bot3)}")
+    print(f"    Signal: {catchphrase}")
+    return {'date':zscores_int.index[-1].strftime('%Y-%m-%d'),'spy_z':spy_z_val,
+            'params':{'lookback':lookback,'vol_window':vol_window},
+            'baskets':baskets_out,'cat_order':BASKET_CAT_ORDER,'catchphrase':catchphrase}
 
-spy_z = zscores_int['SPY'].iloc[-1] if 'SPY' in zscores_int.columns and pd.notna(zscores_int['SPY'].iloc[-1]) else 0.0
-
-baskets_out = []
-for bname, binfo in BASKETS.items():
-    tickers = [t for t in binfo['t'] if t in zscores_int.columns]
-    if not tickers: continue
-    scores = [float(zscores_int[t].iloc[-1]) for t in tickers if pd.notna(zscores_int[t].iloc[-1])]
-    if not scores: continue
-    avg_z = sum(scores) / len(scores)
-    rel_z = avg_z - float(spy_z)
-    # Per-stock detail
-    stocks = []
-    for t in tickers:
-        z = float(zscores_int[t].iloc[-1]) if pd.notna(zscores_int[t].iloc[-1]) else None
-        p = float(daily_int[t].iloc[-1]) if t in daily_int.columns and pd.notna(daily_int[t].iloc[-1]) else None
-        if z is not None:
-            stocks.append({'t':t,'z':round(z,2),'rz':round(z - float(spy_z),2),'p':round(p,2) if p else None})
-    baskets_out.append({
-        'name': bname, 'cat': binfo['cat'],
-        'z': round(avg_z, 2), 'rel': round(rel_z, 2),
-        'n': len(tickers), 'n_ok': len(scores),
-        'stocks': sorted(stocks, key=lambda x: -x['rz'])
-    })
-
-baskets_out.sort(key=lambda x: -x['rel'])
-spy_z_val = round(float(spy_z), 2)
-print(f"  -> {len(baskets_out)} baskets, SPY z={spy_z_val}")
-print(f"  Top 3: {', '.join(b['name']+' '+str(b['rel']) for b in baskets_out[:3])}")
-print(f"  Bot 3: {', '.join(b['name']+' '+str(b['rel']) for b in baskets_out[-3:])}")
+print("INTERNALS...")
+int_strategic = run_internals(daily_int, 20, 130, 'STRATEGIC')
+int_tactical = run_internals(daily_int, 10, 65, 'TACTICAL')
 
 # ═══════════════ 4. BUILD OUTPUT ═══════════════
 data = {
     'strategic': strategic,
     'tactical': tactical,
-    'internals': {
-        'date': zscores_int.index[-1].strftime('%Y-%m-%d'),
-        'spy_z': spy_z_val,
-        'params': {'lookback': lookback_int, 'vol_window': vol_int},
-        'baskets': baskets_out,
-        'cat_order': BASKET_CAT_ORDER,
-    }
+    'int_strategic': int_strategic,
+    'int_tactical': int_tactical,
 }
 data_str = json.dumps(data, separators=(',',':'))
 
@@ -327,10 +358,10 @@ header{{display:flex;justify-content:space-between;align-items:baseline;padding-
 header h1{{font-family:var(--m);font-size:15px;font-weight:700;letter-spacing:-0.03em;text-transform:uppercase}}
 header .m{{font-size:11px;color:var(--t3);font-family:var(--m)}}
 .topnav{{display:flex;gap:0;margin-bottom:16px;border-radius:8px;overflow:hidden;border:2px solid var(--t)}}
-.topnav button{{flex:1;font-family:var(--m);font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:12px 20px;border:none;cursor:pointer;transition:all .15s}}
+.topnav button{{flex:1;font-family:var(--m);font-size:13px;font-weight:800;letter-spacing:.02em;padding:12px 20px;border:none;cursor:pointer;transition:all .15s}}
 .topnav button.on{{background:var(--t);color:var(--bg)}}.topnav button:not(.on){{background:var(--bg);color:var(--t3)}}.topnav button:not(.on):hover{{background:var(--bl)}}
 .msw{{display:flex;gap:0;margin-bottom:12px;border-radius:6px;overflow:hidden;border:1px solid var(--b)}}
-.msw button{{flex:1;font-family:var(--m);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:8px 16px;border:none;cursor:pointer}}
+.msw button{{flex:1;font-family:var(--m);font-size:11px;font-weight:700;letter-spacing:.02em;padding:8px 16px;border:none;cursor:pointer}}
 .msw button.on{{background:var(--t);color:var(--bg)}}.msw button:not(.on){{background:var(--s);color:var(--t3)}}
 .mdesc{{font-family:var(--m);font-size:9px;color:var(--t3);margin-bottom:16px;padding:6px 10px;background:var(--bl);border-radius:4px}}
 .hero{{padding:28px 32px;border-radius:12px;margin-bottom:20px;text-align:center}}
@@ -346,7 +377,7 @@ header .m{{font-size:11px;color:var(--t3);font-family:var(--m)}}
 .axes{{display:flex;gap:20px;margin-bottom:20px;font-family:var(--m)}}.ax{{flex:1;padding:12px 16px;border-radius:8px;background:var(--s);border:1px solid var(--b)}}.ax .al{{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:4px}}.ax .av{{font-size:28px;font-weight:800}}.ax .av.pos{{color:var(--g)}}.ax .av.neg{{color:var(--r)}}.ax .av.neu{{color:var(--x)}}
 .fg{{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin-bottom:20px}}.fc{{padding:8px 10px;border-radius:6px;background:var(--s);border:1px solid var(--b)}}.fc .fn{{font-family:var(--m);font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:2px}}.fc .fv{{font-family:var(--m);font-size:18px;font-weight:700}}.fc .fv.pos{{color:var(--g)}}.fc .fv.neg{{color:var(--r)}}.fc .fv.neu{{color:var(--x)}}
 .tw{{position:relative}}.tb{{display:flex;height:36px;border-radius:6px;overflow:hidden;margin-bottom:4px;border:1px solid var(--b)}}.ts{{min-width:3px;cursor:pointer;transition:opacity .15s}}.ts:hover{{opacity:.8;outline:2px solid var(--t);outline-offset:-2px;z-index:2}}.tt{{display:none;position:absolute;top:-48px;left:50%;transform:translateX(-50%);background:var(--t);color:var(--s);padding:6px 10px;border-radius:6px;font-family:var(--m);font-size:10px;white-space:nowrap;pointer-events:none;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,.2)}}.tt::after{{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:6px solid var(--t)}}.tleg{{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;font-family:var(--m);font-size:9px;color:var(--t2)}}.tleg span{{display:flex;align-items:center;gap:3px}}.tleg .dot{{width:10px;height:10px;border-radius:2px}}.td{{display:flex;justify-content:space-between;font-family:var(--m);font-size:9px;color:var(--t3);margin-bottom:12px}}
-.mt{{display:flex;gap:2px;margin-bottom:12px;background:var(--bl);border-radius:6px;padding:2px;width:fit-content}}.mt button{{font-family:var(--m);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:5px 12px;border:none;border-radius:4px;background:0;color:var(--t3);cursor:pointer}}.mt button.on{{background:var(--s);color:var(--t);box-shadow:0 1px 3px rgba(0,0,0,.06)}}
+.mt{{display:flex;gap:2px;margin-bottom:12px;background:var(--bl);border-radius:6px;padding:2px;width:fit-content}}.mt button{{font-family:var(--m);font-size:10px;font-weight:600;letter-spacing:.02em;padding:5px 12px;border:none;border-radius:4px;background:0;color:var(--t3);cursor:pointer}}.mt button.on{{background:var(--s);color:var(--t);box-shadow:0 1px 3px rgba(0,0,0,.06)}}
 .cb{{margin-bottom:6px;border:1px solid var(--b);border-radius:6px;background:var(--s);overflow:hidden}}.ch{{display:flex;justify-content:space-between;align-items:center;padding:6px 12px;cursor:pointer}}.ch:hover{{background:var(--bl)}}.ch h2{{font-size:11px;font-weight:700}}.ch .st{{display:flex;align-items:center;gap:6px;font-family:var(--m);font-size:10px}}.ch .d{{width:6px;height:6px;border-radius:50%;display:inline-block}}.cg{{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:3px;padding:3px 8px 6px}}.a{{display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:4px;border-left:3px solid transparent}}.a.bu{{border-left-color:var(--g);background:var(--gb)}}.a.be{{border-left-color:var(--r);background:var(--rb)}}.ai{{flex:1;min-width:0}}.an{{font-family:var(--m);font-size:10px;font-weight:600}}.ar{{display:flex;justify-content:space-between;margin-top:1px}}.ap{{font-size:9px;color:var(--t3)}}.az{{font-family:var(--m);font-size:10px;font-weight:600}}.al2{{font-family:var(--m);font-size:8px;font-weight:700;text-transform:uppercase;padding:1px 4px;border-radius:2px}}.al2.bu{{color:var(--g);background:var(--gb)}}.al2.be{{color:var(--r);background:var(--rb)}}.al2.si{{color:var(--x);background:var(--xb)}}.zb{{position:relative;width:100%;height:3px;background:var(--bl);border-radius:2px;margin-top:2px}}.zb .md{{position:absolute;left:50%;top:0;width:1px;height:3px;background:var(--b)}}.dt{{position:absolute;top:-1px;width:5px;height:5px;border-radius:50%;margin-left:-2px}}
 .rp{{margin-bottom:12px;padding:12px;border-radius:8px;background:var(--s);border:1px solid var(--b)}}.rp h3{{font-family:var(--m);font-size:11px;font-weight:700;margin-bottom:8px}}.rp .br{{display:flex;align-items:center;gap:6px;margin-bottom:3px}}.rp .bl2{{font-family:var(--m);font-size:9px;width:70px;text-align:right;color:var(--t2)}}.rp .bt{{flex:1;height:6px;background:var(--bl);border-radius:3px;position:relative}}.rp .bf{{height:6px;border-radius:3px;position:absolute;top:0}}.rp .bv{{font-family:var(--m);font-size:9px;width:35px;font-weight:600}}
 .me{{margin-top:16px;padding:12px;border-radius:6px;background:var(--bl);border:1px solid var(--b)}}.me h3{{font-family:var(--m);font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;margin-bottom:4px}}.me p{{font-size:11px;color:var(--t2);line-height:1.6}}
@@ -376,17 +407,17 @@ function MR(){{return D[S.model]}}
 function render(){{
 const app=document.getElementById('app');
 let h='<header><h1>Regime Monitor</h1><div class="m">'+D.strategic.date+'</div></header>';
-h+='<div class="topnav">';['regime','internals'].forEach(p=>{{h+='<button class="'+(S.page===p?'on':'')+'" onclick="U(\\'page\\',\\''+p+'\\')">'+p+'</button>'}});h+='</div>';
+const TN={{'regime':'Macro Indicators','internals':'Stock Market Internals'}};h+='<div class="topnav">';Object.entries(TN).forEach(([k,v])=>{{h+='<button class="'+(S.page===k?'on':'')+'" onclick="U(\\'page\\',\\''+k+'\\')">'+v+'</button>'}});h+='</div>';
 if(S.page==='regime')h+=renderRegime();else h+=renderInternals();
 h+='<footer>4+2 Investment Clock + Market Internals \\u00b7 Daily</footer>';
 app.innerHTML=h}}
 function renderRegime(){{
 const d=MR();const p=d.params;const cur=d.current;
-let h='<div class="msw">';['strategic','tactical'].forEach(m=>{{h+='<button class="'+(S.model===m?'on':'')+'" onclick="U(\\'model\\',\\''+m+'\\')">'+m+'</button>'}});h+='</div>';
-if(S.model==='strategic')h+='<div class="mdesc">STRATEGIC \\u2014 '+p.lookback+'d lookback \\u00b7 '+p.vol_window+'d vol \\u00b7 '+p.smooth+'d smooth \\u00b7 '+p.min_dur+'d min</div>';
-else h+='<div class="mdesc">TACTICAL \\u2014 '+p.lookback+'d lookback \\u00b7 '+p.vol_window+'d vol \\u00b7 No smooth \\u00b7 '+p.min_dur+'d min</div>';
+let h='<div class="msw">';['strategic','tactical'].forEach(m=>{{h+='<button class="'+(S.model===m?'on':'')+'" onclick="U(\\'model\\',\\''+m+'\\')">'+m[0].toUpperCase()+m.slice(1)+'</button>'}});h+='</div>';
+if(S.model==='strategic')h+='<div class="mdesc">Strategic \\u2014 '+p.lookback+'d lookback \\u00b7 '+p.vol_window+'d vol \\u00b7 '+p.smooth+'d smooth \\u00b7 '+p.min_dur+'d min</div>';
+else h+='<div class="mdesc">Tactical \\u2014 '+p.lookback+'d lookback \\u00b7 '+p.vol_window+'d vol \\u00b7 No smooth \\u00b7 '+p.min_dur+'d min</div>';
 const hc=cur.label.replace(/ /g,'_');
-h+='<div class="hero '+hc+'"><div class="lb">Current '+S.model.toUpperCase()+' Regime</div><div class="nm">'+cur.label+'</div><div class="cf">Growth: '+(cur.growth>=0?'+':'')+cur.growth.toFixed(2)+' \\u00b7 Inflation: '+(cur.inflation>=0?'+':'')+cur.inflation.toFixed(2)+'</div></div>';
+h+='<div class="hero '+hc+'"><div class="lb">Current '+(S.model[0].toUpperCase()+S.model.slice(1))+' Regime</div><div class="nm">'+cur.label+'</div><div class="cf">Growth: '+(cur.growth>=0?'+':'')+cur.growth.toFixed(2)+' \\u00b7 Inflation: '+(cur.inflation>=0?'+':'')+cur.inflation.toFixed(2)+'</div></div>';
 const gc=cur.growth>0.3?'pos':cur.growth<-0.3?'neg':'neu';const ic=cur.inflation>0.3?'pos':cur.inflation<-0.3?'neg':'neu';
 h+='<div class="axes"><div class="ax"><div class="al">Growth Axis</div><div class="av '+gc+'">'+(cur.growth>=0?'+':'')+cur.growth.toFixed(2)+'</div></div><div class="ax"><div class="al">Inflation Axis</div><div class="av '+ic+'">'+(cur.inflation>=0?'+':'')+cur.inflation.toFixed(2)+'</div></div></div>';
 const feats=cur.features;const fo=['cat_Energy','cat_Global_Equities','cat_Credit','cat_Rates','cat_Crypto','cat_Metals','cat_Currencies','cyclical_vs_defensive','energy_vs_tech','financials','sector_breadth','sector_dispersion'];
@@ -395,9 +426,10 @@ h+=rTL(d);h+='<div class="mt">';['regime','assets','method'].forEach(v=>{{h+='<b
 if(S.view==='regime')h+=rR(d);else if(S.view==='assets')h+=rA(d);else h+=rMth(d);
 return h}}
 function renderInternals(){{
-const I=D.internals;const bs=I.baskets;const co=I.cat_order;
-let h='<div class="spy-ref"><span>SPY z-score (20d)</span><span class="sv">'+(I.spy_z>=0?'+':'')+I.spy_z.toFixed(2)+'</span></div>';
-h+='<div class="mdesc">Relative to SPY \\u2014 '+I.params.lookback+'d lookback \\u00b7 '+I.params.vol_window+'d vol \\u00b7 '+bs.length+' baskets</div>';
+const ik=S.model==='tactical'?'int_tactical':'int_strategic';const I=D[ik];const bs=I.baskets;const co=I.cat_order;
+let h='<div class="msw">';['strategic','tactical'].forEach(m=>{{h+='<button class="'+(S.model===m?'on':'')+'" onclick="U(\\'model\\',\\''+m+'\\')">'+m[0].toUpperCase()+m.slice(1)+'</button>'}});h+='</div>';
+const p=I.params;h+='<div class="mdesc">'+(S.model==='strategic'?'Strategic':'Tactical')+' \\u2014 '+p.lookback+'d lookback \\u00b7 '+p.vol_window+'d vol \\u00b7 '+bs.length+' baskets \\u00b7 vs SPY</div>';
+h+='<div class="hero OVERHEAT" style="background:linear-gradient(135deg,var(--bl),var(--s));color:var(--t);border:2px solid var(--b)"><div class="lb">Market Internals</div><div class="nm" style="font-size:28px">'+I.catchphrase+'</div><div class="cf">SPY z-score: '+(I.spy_z>=0?'+':'')+I.spy_z.toFixed(2)+'</div></div>';
 h+='<div class="sc">Sort: <button class="'+(S.sort==='rel'||S.sort==='default'?'on':'')+'" onclick="U(\\'sort\\',\\'rel\\')">Rel \\u2193</button><button class="'+(S.sort==='abs'?'on':'')+'" onclick="U(\\'sort\\',\\'abs\\')">Abs \\u2193</button><button class="'+(S.sort==='cat'?'on':'')+'" onclick="U(\\'sort\\',\\'cat\\')">Category</button></div>';
 if(S.sort==='cat'){{
 co.forEach(cat=>{{const cbs=bs.filter(b=>b.cat===cat);if(!cbs.length)return;h+='<div class="bcat"><h3>'+cat+' ('+cbs.length+')</h3><div class="bgrid">';cbs.sort((a,b)=>b.rel-a.rel);cbs.forEach(b=>{{h+=bCard(b)}});h+='</div></div>'}})}}
@@ -416,7 +448,7 @@ function hideT(){{const t=document.getElementById('tip');if(t)t.style.display='n
 function rTL(d){{const tl=d.timeline;if(!tl||!tl.length)return'';const t0=new Date(tl[0].start).getTime();const t1=new Date(tl[tl.length-1].end).getTime()+864e5;const sp=t1-t0||1;let h='<div class="tw"><div id="tip" class="tt"></div><div class="tb">';tl.forEach((s,i)=>{{const a=new Date(s.start).getTime();const b=new Date(s.end).getTime()+864e5;const w=Math.max(0.5,((b-a)/sp)*100);const col=RC[s.l]||'#a8a29e';const ic=i===tl.length-1;h+='<div class="ts" style="width:'+w+'%;background:'+col+(ic?';box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)':'')+'" data-label="'+s.l+'" data-start="'+s.start+'" data-end="'+s.end+'" onmouseenter="showT(this)" onmouseleave="hideT()"></div>'}});h+='</div></div>';h+='<div class="td"><span>'+tl[0].start+'</span><span>'+tl[tl.length-1].end+'</span></div>';const seen=new Set();h+='<div class="tleg">';tl.forEach(s=>{{if(!seen.has(s.l)){{seen.add(s.l);h+='<span><span class="dot" style="background:'+(RC[s.l]||'#a8a29e')+'"></span>'+s.l+'</span>'}}}});h+='</div>';return h}}
 function rR(d){{let h='';Object.values(d.regimes).forEach(info=>{{const col=RC[info.label]||'#a8a29e';const ic=info.label===d.current.label;h+='<div class="rp" style="'+(ic?'border:2px solid '+col:'')+'"><h3 style="color:'+col+'">'+(ic?'\\u25b6 ':'')+info.label+' \\u2014 '+info.n_days+'d ('+info.pct+'%)</h3>';h+='<div style="font-size:10px;color:var(--t3);margin-bottom:8px">'+info.periods.slice(0,5).join(', ')+'</div>';const p=info.profile;['cat_Energy','cat_Global_Equities','cat_Credit','cat_Rates','cat_Crypto','cat_Metals','cyclical_vs_defensive','energy_vs_tech'].forEach(fn=>{{const v=p[fn]||0;const pct=Math.min(100,Math.abs(v)*30);const c2=v>0.2?'var(--g)':v<-0.2?'var(--r)':'var(--x)';const left=v>=0?'50%':(50-pct)+'%';h+='<div class="br"><span class="bl2">'+cl(fn)+'</span><div class="bt"><div class="bf" style="left:'+left+'%;width:'+pct+'%;background:'+c2+'"></div><div style="position:absolute;left:50%;top:0;width:1px;height:6px;background:var(--b)"></div></div><span class="bv" style="color:'+c2+'">'+(v>0?'+':'')+v.toFixed(2)+'</span></div>'}});h+='</div>'}});return h}}
 function rA(d){{const cats=d.assets;const CO=d.cat_order;let h='<div class="sc">Sort: '+['default','z-desc','z-asc','alpha','regime'].map(s=>'<button class="'+(S.sort===s?'on':'')+'" onclick="U(\\'sort\\',\\''+s+'\\')">'+({{'z-desc':'z\\u2193','z-asc':'z\\u2191'}}[s]||s)+'</button>').join('')+'</div>';CO.forEach(k=>{{const a2=cats[k];if(!a2)return;let en=Object.entries(a2);if(S.sort==='z-asc')en.sort((a,b)=>(a[1].score||0)-(b[1].score||0));else if(S.sort==='z-desc')en.sort((a,b)=>(b[1].score||0)-(a[1].score||0));else if(S.sort==='alpha')en.sort((a,b)=>a[0].localeCompare(b[0]));else if(S.sort==='regime'){{const ro=r=>ib(r)?0:ie(r)?2:1;en.sort((a,b)=>ro(a[1].regime)-ro(b[1].regime))}}const nb=en.filter(([,x])=>ib(x.regime)).length,nr=en.filter(([,x])=>ie(x.regime)).length,ns=en.length-nb-nr;h+='<div class="cb"><div class="ch"><h2>'+k+'</h2><div class="st">';if(nb)h+='<span><span class="d" style="background:var(--g)"></span>'+nb+'</span>';if(ns)h+='<span><span class="d" style="background:var(--x)"></span>'+ns+'</span>';if(nr)h+='<span><span class="d" style="background:var(--r)"></span>'+nr+'</span>';h+='</div></div><div class="cg">';en.forEach(([n,x])=>{{const c=rc(x.regime),z=x.score,zc=tc(x.regime);h+='<div class="a '+c+'"><div class="ai"><div style="display:flex;justify-content:space-between;align-items:center"><span class="an">'+n+'</span><span class="al2 '+c+'">'+rl(x.regime)+'</span></div><div class="ar"><span class="ap">'+fP(x.price,n)+'</span><span class="az" style="color:'+zc+'">'+(z!=null?(z>0?'+':'')+z.toFixed(2):'\\u2014')+'</span></div><div class="zb"><div class="md"></div>'+(z!=null?'<div class="dt" style="left:'+zP(z)+'%;background:'+zc+'"></div>':'')+'</div></div></div>'}});h+='</div></div>'}});return h}}
-function rMth(d){{const p=d.params;return'<div class="me"><h3>'+S.model.toUpperCase()+' \\u2014 4+2 Framework</h3><p><b>Growth</b> = (Equities + Credit + Cyclical/Defensive) / 3<br><b>Inflation</b> = (Energy + Rates + E/T Spread) / 3<br><br>G\\u22650 I\\u22650 \\u2192 OVERHEAT \\u00b7 G\\u22650 I&lt;0 \\u2192 GOLDILOCKS<br>G&lt;0 I\\u22650 \\u2192 STAGFLATION \\u00b7 G&lt;0 I&lt;0 \\u2192 RECESSION<br><br>Overrides: CRISIS (all&lt;-1.0) \\u00b7 SUPPLY SHOCK (Energy&gt;1.0 & E/T&gt;1.0)<br><br>'+p.lookback+'d lookback, '+p.vol_window+'d vol'+(p.smooth>1?', '+p.smooth+'d smooth':'')+', '+p.min_dur+'d min duration</p></div>'}}
+function rMth(d){{const p=d.params;return'<div class="me"><h3>'+(S.model[0].toUpperCase()+S.model.slice(1))+' \\u2014 4+2 Framework</h3><p><b>Growth</b> = (Equities + Credit + Cyclical/Defensive) / 3<br><b>Inflation</b> = (Energy + Rates + E/T Spread) / 3<br><br>G\\u22650 I\\u22650 \\u2192 OVERHEAT \\u00b7 G\\u22650 I&lt;0 \\u2192 GOLDILOCKS<br>G&lt;0 I\\u22650 \\u2192 STAGFLATION \\u00b7 G&lt;0 I&lt;0 \\u2192 RECESSION<br><br>Overrides: CRISIS (all&lt;-1.0) \\u00b7 SUPPLY SHOCK (Energy&gt;1.0 & E/T&gt;1.0)<br><br>'+p.lookback+'d lookback, '+p.vol_window+'d vol'+(p.smooth>1?', '+p.smooth+'d smooth':'')+', '+p.min_dur+'d min duration</p></div>'}}
 function U(k,v){{S[k]=v;render()}}render();
 </script></body></html>"""
 
