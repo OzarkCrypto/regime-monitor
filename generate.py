@@ -251,8 +251,8 @@ def run_model(daily, lookback, vol_window, smooth, min_dur):
                 'features':{fn:round(float(features.iloc[-1][fn]),3) for fn in feat_names}},
             'regimes':regimes,'timeline':timeline,'assets':assets_out,'cat_order':CAT_ORDER}
 
-print("STRATEGIC (20d/130d/15d smooth)...")
-strategic = run_model(daily, 20, 130, 15, 15)
+print("STRATEGIC (25d/130d/15d smooth)...")
+strategic = run_model(daily, 25, 130, 15, 15)
 print(f"  -> {strategic['current']['label']} G={strategic['current']['growth']:+.2f} I={strategic['current']['inflation']:+.2f}")
 print("TACTICAL (10d/65d/raw)...")
 tactical = run_model(daily, 10, 65, 1, 5)
@@ -290,35 +290,35 @@ def run_internals(daily_int, lookback, vol_window, label):
     phrases = []
     # Defensive dominance
     if sum(1 for c in top_cats if c in ('Defensive','Fear')) >= 2:
-        phrases.append('Defensive rotation')
-    # Geopolitical risk
+        phrases.append('Money hiding in safe stocks')
+    # Geopolitical / security rotation
     if sum(1 for c in top_cats if c in ('Geopolitics','Energy','Security')) >= 2:
-        phrases.append('Geopolitical risk-on')
+        phrases.append('Defense & energy leading')
     # Rate pain
     if sum(1 for c in bot_cats if c in ('Rate Sensitive','Credit Cycle')) >= 2:
-        phrases.append('Rate-sensitive stress')
+        phrases.append('High rates hurting banks & housing')
     # Consumer weakness
     if sum(1 for c in bot_cats if c == 'Consumer') >= 2:
-        phrases.append('Consumer fading')
+        phrases.append('Consumer spending weakening')
     # Industrial weakness
     if sum(1 for c in bot_cats if c in ('Industrial','Manufacturing','Inventory Cycle')) >= 2:
-        phrases.append('Industrial slowdown')
+        phrases.append('Factories & industry slowing')
     # Tech/AI strength
     if sum(1 for c in top_cats if c in ('Tech Growth','AI Capex','AI Infra')) >= 2:
-        phrases.append('Tech/AI leadership')
+        phrases.append('Tech & AI stocks leading')
     # Broad risk-off
     if spy_z < -1.0:
-        phrases.append('Broad selloff')
+        phrases.append('Market selling off broadly')
     elif spy_z > 1.0:
-        phrases.append('Broad rally')
+        phrases.append('Market rallying broadly')
     # Energy/inflation
     if sum(1 for c in top_cats if c in ('Energy','Inflation')) >= 2:
-        phrases.append('Inflation hedging')
+        phrases.append('Energy & commodity stocks rising')
     # Labor leading
     if any(b['name'] == 'Staffing' and b['rel'] < -0.5 for b in baskets_out):
-        phrases.append('Hiring slowdown signal')
+        phrases.append('Temp hiring slowing down')
     if not phrases:
-        phrases.append('Mixed signals')
+        phrases.append('No clear direction')
     catchphrase = ' · '.join(phrases[:3])
     spy_z_val = round(spy_z, 2)
     print(f"  {label}: {len(baskets_out)} baskets, SPY z={spy_z_val}")
@@ -330,7 +330,7 @@ def run_internals(daily_int, lookback, vol_window, label):
             'baskets':baskets_out,'cat_order':BASKET_CAT_ORDER,'catchphrase':catchphrase}
 
 print("INTERNALS...")
-int_strategic = run_internals(daily_int, 20, 130, 'STRATEGIC')
+int_strategic = run_internals(daily_int, 25, 130, 'STRATEGIC')
 int_tactical = run_internals(daily_int, 10, 65, 'TACTICAL')
 
 # ═══════════════ 4. BUILD OUTPUT ═══════════════
