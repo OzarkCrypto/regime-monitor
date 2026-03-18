@@ -283,48 +283,91 @@ def run_internals(daily_int, lookback, vol_window, label):
             'n':len(tickers),'n_ok':len(scores),'stocks':sorted(stocks, key=lambda x: -x['rz'])})
     baskets_out.sort(key=lambda x: -x['rel'])
     # Catchphrase: read the top/bottom baskets
-    top3 = [b['name'] for b in baskets_out[:3]]
-    bot3 = [b['name'] for b in baskets_out[-3:]]
-    top_cats = [b['cat'] for b in baskets_out[:5]]
-    bot_cats = [b['cat'] for b in baskets_out[-5:]]
-    phrases = []
-    # Defensive dominance
-    if sum(1 for c in top_cats if c in ('Defensive','Fear')) >= 2:
-        phrases.append('Money hiding in safe stocks')
-    # Geopolitical / security rotation
-    if sum(1 for c in top_cats if c in ('Geopolitics','Energy','Security')) >= 2:
-        phrases.append('Defense & energy leading')
-    # Rate pain
-    if sum(1 for c in bot_cats if c in ('Rate Sensitive','Credit Cycle')) >= 2:
-        phrases.append('High rates hurting banks & housing')
-    # Consumer weakness
-    if sum(1 for c in bot_cats if c == 'Consumer') >= 2:
-        phrases.append('Consumer spending weakening')
-    # Industrial weakness
-    if sum(1 for c in bot_cats if c in ('Industrial','Manufacturing','Inventory Cycle')) >= 2:
-        phrases.append('Factories & industry slowing')
-    # Tech/AI strength
-    if sum(1 for c in top_cats if c in ('Tech Growth','AI Capex','AI Infra')) >= 2:
-        phrases.append('Tech & AI stocks leading')
-    # Broad risk-off
-    if spy_z < -1.0:
-        phrases.append('Market selling off broadly')
-    elif spy_z > 1.0:
-        phrases.append('Market rallying broadly')
-    # Energy/inflation
-    if sum(1 for c in top_cats if c in ('Energy','Inflation')) >= 2:
-        phrases.append('Energy & commodity stocks rising')
-    # Labor leading
+    # ═══ TWO-LAYER SIGNALS: Cycle Assessment + Thematic Rotation ═══
+    CYCL_CATS = {'Transport','Consumer','Industrial','Manufacturing','Capex',
+                 'Inventory Cycle','Credit Cycle','Labor','Global Trade','Ag Cycle'}
+    DEF_CATS = {'Defensive','Fear'}
+
+    n_out = sum(1 for b in baskets_out if b['rel'] > 0.3)
+    n_total = len(baskets_out)
+    breadth_pct = round(n_out / n_total * 100) if n_total else 0
+
+    cyc_scores = [b['rel'] for b in baskets_out if b['cat'] in CYCL_CATS]
+    def_scores = [b['rel'] for b in baskets_out if b['cat'] in DEF_CATS]
+    rate_scores = [b['rel'] for b in baskets_out if b['cat'] in ('Rate Sensitive','Credit Cycle')]
+    avg_cyc = np.mean(cyc_scores) if cyc_scores else 0
+    avg_def = np.mean(def_scores) if def_scores else 0
+    avg_rate = np.mean(rate_scores) if rate_scores else 0
+    cyc_vs_def = avg_cyc - avg_def
+
+    # ── LAYER 1: CYCLE (경기 종합 판단) ──
+    cycle = []
+    if breadth_pct >= 60:
+        cycle.append(f'{n_out} of {n_total} baskets beating the market — broad strength')
+    elif breadth_pct <= 25:
+        cycle.append(f'Only {n_out} of {n_total} baskets beating the market — narrow leadership')
+    else:
+        cycle.append(f'{n_out} of {n_total} baskets beating the market')
+
+    if cyc_vs_def > 0.4:
+        cycle.append('Cyclical stocks leading defensives — economy looks strong')
+    elif cyc_vs_def > 0.15:
+        cycle.append('Cyclical stocks slightly ahead of defensives')
+    elif cyc_vs_def < -0.4:
+        cycle.append('Defensive stocks leading cyclicals — market worried about growth')
+    elif cyc_vs_def < -0.15:
+        cycle.append('Defensive stocks slightly ahead of cyclicals')
+
+    if avg_rate > 0.5:
+        cycle.append('Rate-sensitive stocks recovering — market expects lower rates')
+    elif avg_rate < -0.5:
+        cycle.append('Rate-sensitive stocks under pressure — tight money hurting')
+
+    if spy_z < -1.5: cycle.append('Market in sharp decline')
+    elif spy_z < -0.8: cycle.append('Market trending lower')
+    elif spy_z > 1.5: cycle.append('Market in strong rally')
+    elif spy_z > 0.8: cycle.append('Market trending higher')
+
+    # ── LAYER 2: THEMES (테마 로테이션) ──
+    themes = []
+    top7 = [b['cat'] for b in baskets_out[:7]]
+    bot7 = [b['cat'] for b in baskets_out[-7:]]
+
+    if sum(1 for c in top7 if c in ('Geopolitics','Security')) >= 2:
+        themes.append('Defense & security stocks leading')
+    if sum(1 for c in top7 if c in ('Energy','Inflation')) >= 2:
+        themes.append('Energy & commodities outperforming')
+    if sum(1 for c in top7 if c in ('Tech Growth','AI Capex','AI Infra')) >= 2:
+        themes.append('Tech & AI theme leading')
+    if sum(1 for c in top7 if c in ('Defensive','Fear')) >= 2:
+        themes.append('Money rotating into safe havens')
+    if sum(1 for c in top7 if c == 'Consumer') >= 2:
+        themes.append('Consumer stocks outperforming')
+    if sum(1 for c in top7 if c == 'Transport') >= 2:
+        themes.append('Transport stocks leading')
+    if any(b['name'] == 'Gold Miners' and b['rel'] > 0.8 for b in baskets_out):
+        themes.append('Gold miners surging')
+    if sum(1 for c in top7 if c == 'China') >= 1:
+        themes.append('China-linked stocks rising')
+    if sum(1 for c in bot7 if c == 'Consumer') >= 2:
+        themes.append('Consumer stocks lagging')
+    if sum(1 for c in bot7 if c in ('Industrial','Manufacturing')) >= 2:
+        themes.append('Industrial stocks lagging')
+    if sum(1 for c in bot7 if c == 'Transport') >= 1 and sum(1 for c in bot7 if c in ('Global Trade','Industrial')) >= 1:
+        themes.append('Transport & trade stocks lagging')
     if any(b['name'] == 'Staffing' and b['rel'] < -0.5 for b in baskets_out):
-        phrases.append('Temp hiring slowing down')
-    if not phrases:
-        phrases.append('No clear direction')
-    catchphrase = ' · '.join(phrases[:3])
+        themes.append('Staffing stocks weak — watch hiring')
+    if any(b['name'] == 'Staffing' and b['rel'] > 0.5 for b in baskets_out):
+        themes.append('Staffing stocks rising — hiring picking up')
+
+    if not themes: themes.append('No clear thematic rotation')
+    catchphrase = {'cycle': cycle[:4], 'themes': themes[:4]}
     spy_z_val = round(spy_z, 2)
     print(f"  {label}: {len(baskets_out)} baskets, SPY z={spy_z_val}")
-    print(f"    Top 3: {', '.join(top3)}")
-    print(f"    Bot 3: {', '.join(bot3)}")
-    print(f"    Signal: {catchphrase}")
+    print(f"    Top 3: {', '.join(b['name'] for b in baskets_out[:3])}")
+    print(f"    Bot 3: {', '.join(b['name'] for b in baskets_out[-3:])}")
+    print(f"    Cycle: {' / '.join(catchphrase['cycle'])}")
+    print(f"    Theme: {' / '.join(catchphrase['themes'])}")
     return {'date':zscores_int.index[-1].strftime('%Y-%m-%d'),'spy_z':spy_z_val,
             'params':{'lookback':lookback,'vol_window':vol_window},
             'baskets':baskets_out,'cat_order':BASKET_CAT_ORDER,'catchphrase':catchphrase}
@@ -429,7 +472,8 @@ function renderInternals(){{
 const ik=S.model==='tactical'?'int_tactical':'int_strategic';const I=D[ik];const bs=I.baskets;const co=I.cat_order;
 let h='<div class="msw">';['strategic','tactical'].forEach(m=>{{h+='<button class="'+(S.model===m?'on':'')+'" onclick="U(\\'model\\',\\''+m+'\\')">'+m[0].toUpperCase()+m.slice(1)+'</button>'}});h+='</div>';
 const p=I.params;h+='<div class="mdesc">'+(S.model==='strategic'?'Strategic':'Tactical')+' \\u2014 '+p.lookback+'d lookback \\u00b7 '+p.vol_window+'d vol \\u00b7 '+bs.length+' baskets \\u00b7 vs SPY</div>';
-h+='<div class="hero OVERHEAT" style="background:linear-gradient(135deg,var(--bl),var(--s));color:var(--t);border:2px solid var(--b)"><div class="lb">Market Internals</div><div class="nm" style="font-size:28px">'+I.catchphrase+'</div><div class="cf">SPY z-score: '+(I.spy_z>=0?'+':'')+I.spy_z.toFixed(2)+'</div></div>';
+h+='<div style="display:flex;gap:12px;margin-bottom:16px"><div style="flex:1;padding:16px;border-radius:10px;background:var(--s);border:1px solid var(--b)"><div style="font-family:var(--m);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:8px">Cycle Assessment</div><div style="font-family:var(--m);font-size:13px;font-weight:600;line-height:1.8">'+I.catchphrase.cycle.join('<br>')+'</div></div><div style="flex:1;padding:16px;border-radius:10px;background:var(--s);border:1px solid var(--b)"><div style="font-family:var(--m);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:8px">Thematic Rotation</div><div style="font-family:var(--m);font-size:13px;font-weight:600;line-height:1.8">'+I.catchphrase.themes.join('<br>')+'</div></div></div>';
+h+='<div style="font-family:var(--m);font-size:11px;padding:8px 12px;background:var(--bl);border-radius:6px;margin-bottom:16px;display:flex;justify-content:space-between"><span>SPY z-score</span><span style="font-weight:800">'+(I.spy_z>=0?'+':'')+I.spy_z.toFixed(2)+'</span></div>';
 h+='<div class="sc">Sort: <button class="'+(S.sort==='rel'||S.sort==='default'?'on':'')+'" onclick="U(\\'sort\\',\\'rel\\')">Rel \\u2193</button><button class="'+(S.sort==='abs'?'on':'')+'" onclick="U(\\'sort\\',\\'abs\\')">Abs \\u2193</button><button class="'+(S.sort==='cat'?'on':'')+'" onclick="U(\\'sort\\',\\'cat\\')">Category</button></div>';
 if(S.sort==='cat'){{
 co.forEach(cat=>{{const cbs=bs.filter(b=>b.cat===cat);if(!cbs.length)return;h+='<div class="bcat"><h3>'+cat+' ('+cbs.length+')</h3><div class="bgrid">';cbs.sort((a,b)=>b.rel-a.rel);cbs.forEach(b=>{{h+=bCard(b)}});h+='</div></div>'}})}}
