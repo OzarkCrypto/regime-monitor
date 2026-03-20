@@ -385,7 +385,8 @@ def run_internals(daily_int, baskets, cat_order, bench_ticker, lookback, vol_win
     avg_rate = np.mean(rate_s) if rate_s else 0
     cvd = avg_cyc - avg_def
     cycle = []
-    if breadth_pct>=60: cycle.append(f'{n_out} of {n_total} baskets beating the market — broad strength')
+    if n_out == 0: cycle.append(f'No baskets beating the market — everything lagging')
+    elif breadth_pct>=60: cycle.append(f'{n_out} of {n_total} baskets beating the market — broad strength')
     elif breadth_pct<=25: cycle.append(f'Only {n_out} of {n_total} baskets beating the market — narrow leadership')
     else: cycle.append(f'{n_out} of {n_total} baskets beating the market')
     if total_pct200 is not None:
