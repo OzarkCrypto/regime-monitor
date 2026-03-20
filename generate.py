@@ -65,6 +65,15 @@ G_BASK = {
     'Luxury':{'t':['RL','CPRI','TPR'],'cat':'Wealth Effect'},
     'DC REITs':{'t':['EQIX','DLR','AMT'],'cat':'AI Infra'},
     'Resi REITs':{'t':['AVB','EQR','MAA','INVH'],'cat':'Rate Sensitive'},
+    'Money Ctr Banks':{'t':['JPM','BAC','C','WFC','GS'],'cat':'Credit Cycle'},
+    'Consumer Staples':{'t':['PG','KO','PEP','CL','MDLZ'],'cat':'Defensive'},
+    'Retail':{'t':['WMT','TGT','COST','HD','LOW'],'cat':'Consumer'},
+    'Payments':{'t':['V','MA','PYPL','XYZ'],'cat':'Consumer'},
+    'Digital Ads':{'t':['GOOGL','META','TTD','SNAP'],'cat':'Capex'},
+    'Broad Semis':{'t':['NVDA','AMD','MU','QCOM','INTC'],'cat':'Inventory Cycle'},
+    'Life Insurance':{'t':['MET','PRU','AFL','LNC'],'cat':'Rate Sensitive'},
+    'Aerospace OEM':{'t':['BA','GE','TDG','HWM'],'cat':'Capex'},
+    'Healthcare Svc':{'t':['UNH','HCA','THC','CI'],'cat':'Healthcare'},
 }
 G_BCAT = ['Labor','Rate Sensitive','Credit Cycle','Transport','Global Trade','Consumer',
            'Industrial','Manufacturing','Inventory Cycle','Capex','Infra','Financials',
@@ -107,9 +116,18 @@ KR_BASK = {
     'KR Internet':{'t':['035420.KS','035720.KS'],'cat':'Tech'},
     'KR Gaming':{'t':['259960.KS','251270.KS'],'cat':'Consumer'},
     'KR Robotics':{'t':['454910.KS','277810.KQ'],'cat':'Automation'},
+    'KR Securities':{'t':['006800.KS','071050.KS','005940.KS'],'cat':'Financials'},
+    'KR Insurance':{'t':['000810.KS','005830.KS','088350.KS'],'cat':'Rate Sensitive'},
+    'KR Food':{'t':['003230.KS','007310.KS','004370.KS','097950.KS'],'cat':'Defensive'},
+    'KR Cosmetics':{'t':['090430.KS','051900.KS','192820.KQ'],'cat':'Consumer'},
+    'KR Logistics':{'t':['000120.KS','086280.KS'],'cat':'Transport'},
+    'KR Airlines':{'t':['003490.KS','089590.KS'],'cat':'Transport'},
+    'KR Leisure':{'t':['008770.KS','034230.KS','035250.KS'],'cat':'Consumer'},
+    'KR Semi Equip':{'t':['042700.KQ','036930.KQ','240810.KS'],'cat':'Tech'},
+    'KR Batt Materials':{'t':['247540.KQ','066970.KS','278280.KQ'],'cat':'EV/Battery'},
 }
-KR_BCAT = ['Tech','EV/Battery','Industrial','Geopolitics','Consumer','Rate Sensitive',
-            'Financials','Healthcare','Energy','Defensive','Automation']
+KR_BCAT = ['Tech','EV/Battery','Industrial','Geopolitics','Consumer','Transport',
+            'Rate Sensitive','Financials','Healthcare','Energy','Defensive','Automation']
 
 # ═══ 1. DOWNLOAD ALL ═══
 print(f"Regime Monitor v2: {START} -> {END}")
@@ -378,6 +396,19 @@ def run_internals(daily_int, baskets, cat_order, bench_ticker, lookback, vol_win
     elif cvd<-0.15: cycle.append('Defensive stocks slightly ahead of cyclicals')
     if avg_rate>0.5: cycle.append('Rate-sensitive stocks recovering — market expects lower rates')
     elif avg_rate<-0.5: cycle.append('Rate-sensitive stocks under pressure — tight money hurting')
+    # Discretionary vs Staples
+    disc_s = [b['rel'] for b in baskets_out if b['cat']=='Consumer']
+    stap_s = [b['rel'] for b in baskets_out if b['name'] in ('Consumer Staples','KR Food') or (b['cat']=='Defensive' and 'Staple' in b['name'])]
+    if disc_s and stap_s:
+        dvs = np.mean(disc_s) - np.mean(stap_s)
+        if dvs > 0.5: cycle.append('Discretionary spending stocks beating staples — consumer confident')
+        elif dvs < -0.5: cycle.append('Staples beating discretionary — consumer pulling back to essentials')
+    # Payments as real-time spending indicator
+    pay_b = [b for b in baskets_out if b['name']=='Payments']
+    if pay_b and pay_b[0]['rel'] < -0.5:
+        cycle.append('Payment stocks weak — transaction volumes may be slowing')
+    elif pay_b and pay_b[0]['rel'] > 0.5:
+        cycle.append('Payment stocks strong — transaction volumes healthy')
     if bench_z<-1.5: cycle.append('Market in sharp decline')
     elif bench_z<-0.8: cycle.append('Market trending lower')
     elif bench_z>1.5: cycle.append('Market in strong rally')
