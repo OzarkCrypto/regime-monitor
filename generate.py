@@ -129,10 +129,139 @@ KR_BASK = {
 KR_BCAT = ['Tech','EV/Battery','Industrial','Geopolitics','Consumer','Transport',
             'Rate Sensitive','Financials','Healthcare','Energy','Defensive','Automation']
 
-# ═══ 1. DOWNLOAD ALL ═══
+# ═══ 52-WEEK HIGH: BROAD UNIVERSE ═══
+# KR_NAMES kept as fallback for Korean stock names
+KR_NAMES_FALLBACK = {
+    '005930':'삼성전자','000660':'SK하이닉스','005380':'현대자동차','000270':'기아',
+    '005490':'POSCO홀딩스','035420':'NAVER','035720':'카카오','051910':'LG화학',
+    '006400':'삼성SDI','373220':'LG에너지솔루션','207940':'삼성바이오로직스',
+    '068270':'셀트리온','105560':'KB금융','055550':'신한지주','086790':'하나금융지주',
+    '316140':'우리금융지주','003550':'LG','000810':'삼성화재','034730':'SK',
+    '015760':'한국전력','017670':'SK텔레콤','030200':'KT','032830':'삼성생명',
+    '066570':'LG전자','012330':'현대모비스','028260':'삼성물산','004020':'현대제철',
+    '034020':'두산에너빌리티','009150':'삼성전기','000720':'현대건설',
+    '010140':'삼성중공업','042660':'한화오션','329180':'HD한국조선해양',
+    '012450':'한화에어로스페이스','079550':'LIG넥스원','047810':'한국항공우주',
+    '003490':'대한항공','097950':'CJ제일제당','090430':'아모레퍼시픽',
+    '051900':'LG생활건강','011170':'롯데케미칼','036460':'한국가스공사',
+    '086280':'현대글로비스','006800':'미래에셋증권','005940':'NH투자증권',
+    '003230':'삼양식품','259960':'크래프톤','352820':'하이브','035900':'JYP엔터',
+    '004170':'신세계','018260':'삼성SDS','033780':'KT&G','267250':'HD현대',
+    '000880':'한화','138040':'메리츠금융지주','267260':'HD현대일렉트릭',
+    '298040':'효성중공업','042700':'한미반도체','036930':'주성엔지니어링',
+    '058470':'리노공업','383220':'F&F','112610':'씨에스윈드','047050':'포스코인터내셔널',
+    '052690':'한전기술','010620':'HD현대미포','009540':'HD한국조선',
+}
+
+def scrape_us_52w_highs():
+    """Scrape Finviz for US stocks at 52-week new high. All exchanges, all market caps."""
+    import requests, time
+    from io import StringIO
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
+    all_stocks = []
+    for start in range(1, 3000, 20):
+        try:
+            url = f'https://finviz.com/screener.ashx?v=111&f=ta_highlow52w_nh&ft=4&r={start}'
+            r = requests.get(url, headers=headers, timeout=15)
+            tables = pd.read_html(StringIO(r.text), flavor='html5lib')
+            found = None
+            for t in tables:
+                if len(t.columns) == 11:
+                    first_col = t.iloc[:,0]
+                    if pd.to_numeric(first_col, errors='coerce').notna().sum() >= 1:
+                        found = t; break
+            if found is None or len(found) == 0: break
+            all_stocks.append(found)
+            if len(found) < 20: break
+            time.sleep(0.3)
+        except: break
+    if not all_stocks: return []
+    df = pd.concat(all_stocks, ignore_index=True)
+    df.columns = ['No','Ticker','Company','Sector','Industry','Country','MCap','PE','Price','Change','Volume']
+    df = df[pd.to_numeric(df['No'], errors='coerce').notna()].copy()
+    # Filter: only stocks, not ETFs/ETNs (keep stocks-only by excluding known ETF patterns)
+    highs = []
+    for _, row in df.iterrows():
+        try:
+            price = float(str(row['Price']).replace(',',''))
+            highs.append({'t': str(row['Ticker']).strip(), 'n': str(row['Company']).strip(),
+                         'p': round(price, 2), 'sector': str(row['Sector']).strip(), 'pct': 0.0})
+        except: pass
+    print(f"  Finviz: {len(highs)} US stocks at 52-week new high")
+    return highs
+
+def scrape_kr_52w_highs():
+    """Scrape Naver Finance for Korean stocks at 52-week new high. KOSPI + KOSDAQ full."""
+    import requests
+    from io import StringIO
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'}
+    all_stocks = []
+    for sosok in [1, 2]:  # 1=KOSPI, 2=KOSDAQ
+        for page in range(1, 30):
+            try:
+                url = f'https://finance.naver.com/sise/sise_new_high.naver?sosok={sosok}&page={page}'
+                r = requests.get(url, headers=headers, timeout=10)
+                r.encoding = 'euc-kr'
+                tables = pd.read_html(StringIO(r.text), flavor='html5lib')
+                found = None
+                for t in tables:
+                    if len(t) >= 3 and len(t.columns) >= 8:
+                        # Look for table with numeric data in columns
+                        try:
+                            num_check = pd.to_numeric(t.iloc[:,3].dropna(), errors='coerce')
+                            if num_check.notna().sum() >= 2:
+                                found = t; break
+                        except: pass
+                if found is None or len(found) < 2: break
+                # Clean NaN rows
+                found = found.dropna(how='all')
+                found = found[found.iloc[:,1].notna()]
+                all_stocks.append(found)
+                if len(found) < 20: break
+            except: break
+    if not all_stocks:
+        print("  Naver: scraping failed, using basket fallback")
+        return None
+    df = pd.concat(all_stocks, ignore_index=True)
+    highs = []
+    for _, row in df.iterrows():
+        try:
+            name = str(row.iloc[1]).strip()
+            price = float(str(row.iloc[3]).replace(',',''))
+            if name and price > 0 and len(name) > 1:
+                # Extract ticker code from link if available, otherwise use name
+                highs.append({'t': '', 'n': name, 'p': round(price, 0), 'pct': 0.0})
+        except: pass
+    print(f"  Naver: {len(highs)} KR stocks at 52-week new high")
+    return highs
+
+def fallback_kr_52w_highs(raw):
+    """Compute 52-week highs from basket tickers as fallback"""
+    highs = []
+    for t in raw.columns.get_level_values(0).unique():
+        t = str(t)
+        if '.KS' not in t and '.KQ' not in t: continue
+        try:
+            s = raw[t]['Close'].squeeze()
+            if not isinstance(s, pd.Series) or s.notna().sum() < 200: continue
+            s = s.dropna()
+            cur = float(s.iloc[-1])
+            lb = min(252, len(s)-1)
+            h252 = float(s.iloc[-lb:].max())
+            if h252 <= 0: continue
+            pct = (cur/h252-1)*100
+            if pct >= -2.0:
+                code = t.replace('.KS','').replace('.KQ','')
+                name = KR_NAMES_FALLBACK.get(code, code)
+                highs.append({'t':code,'n':name,'p':round(cur,0),'pct':round(pct,1)})
+        except: pass
+    highs.sort(key=lambda x: -x['pct'])
+    return highs
+
+# ═══ 1. DOWNLOAD ═══
 print(f"Regime Monitor v2: {START} -> {END}")
 
-# Collect all tickers
+# Phase 1: Regime + Basket tickers (full history)
 all_tickers = set()
 g_regime_map = {}
 for cat, tks in G_UNI.items():
@@ -145,7 +274,7 @@ for bk in [G_BASK, KR_BASK]:
         for t in bi['t']: all_tickers.add(t)
 all_tickers.add('SPY'); all_tickers.add('^KS11')
 
-print(f"Downloading {len(all_tickers)} tickers...")
+print(f"Downloading {len(all_tickers)} regime+basket tickers...")
 raw = yf.download(list(all_tickers), start=START, end=END, progress=False, group_by='ticker')
 
 def parse_tickers(ticker_map):
@@ -455,9 +584,31 @@ print("Korea internals...")
 ki_strat = run_internals(daily_ki, KR_BASK, KR_BCAT, '^KS11', 25,130,'KR-STRATEGIC')
 ki_tact = run_internals(daily_ki, KR_BASK, KR_BCAT, '^KS11', 10,65,'KR-TACTICAL')
 
+# ═══ 52-WEEK HIGHS (scraping) ═══
+print("52-week highs (scraping)...")
+try:
+    us_highs = scrape_us_52w_highs()
+except Exception as e:
+    print(f"  US scraping failed: {e}")
+    us_highs = []
+
+try:
+    kr_highs = scrape_kr_52w_highs()
+except Exception as e:
+    print(f"  KR scraping failed: {e}")
+    kr_highs = None
+
+if kr_highs is None:
+    kr_highs = fallback_kr_52w_highs(raw)
+    print(f"  KR fallback: {len(kr_highs)} stocks from basket universe")
+
+print(f"  Final: US={len(us_highs)} | KR={len(kr_highs)}")
+
 data = {
     'global':{'strategic':g_strat,'tactical':g_tact,'int_strategic':gi_strat,'int_tactical':gi_tact},
     'korea':{'strategic':kr_strat,'tactical':kr_tact,'int_strategic':ki_strat,'int_tactical':ki_tact},
+    'highs_us': us_highs[:200],
+    'highs_kr': kr_highs[:200],
 }
 data_str = json.dumps(data, separators=(',',':'))
 print(f"Data JSON: {len(data_str)/1024:.0f} KB")
@@ -532,8 +683,8 @@ function render(){{
 const app=document.getElementById('app');const r=R();
 let h='<header><h1>Regime Monitor</h1><div class="m">'+r.strategic.date+'</div></header>';
 h+='<div class="tn">';[['global','Global'],['korea','Korea']].forEach(([k,v])=>{{h+='<button class="'+(S.region===k?'on':'')+'" onclick="U(\\'region\\',\\''+k+'\\')">'+v+'</button>'}});h+='</div>';
-h+='<div class="sw">';[['regime','Macro Indicators'],['internals','Stock Market Internals']].forEach(([k,v])=>{{h+='<button class="'+(S.page===k?'on':'')+'" onclick="U(\\'page\\',\\''+k+'\\')">'+v+'</button>'}});h+='</div>';
-if(S.page==='regime')h+=pgRegime();else h+=pgInternals();
+h+='<div class="sw">';[['regime','Macro Indicators'],['internals','Stock Market Internals'],['highs','52-week Highs']].forEach(([k,v])=>{{h+='<button class="'+(S.page===k?'on':'')+'" onclick="U(\\'page\\',\\''+k+'\\')">'+v+'</button>'}});h+='</div>';
+if(S.page==='regime')h+=pgRegime();else if(S.page==='internals')h+=pgInternals();else h+=pgHighs();
 h+='<footer>4+2 Investment Clock + Market Internals \\u00b7 Global + Korea \\u00b7 Daily</footer>';
 app.innerHTML=h}}
 function pgRegime(){{
@@ -559,6 +710,13 @@ if(S.sort==='cat'){{co.forEach(cat=>{{const cbs=bs.filter(b=>b.cat===cat);if(!cb
 else{{const sorted=S.sort==='abs'?[...bs].sort((a,b)=>Math.abs(b.z)-Math.abs(a.z)):[...bs].sort((a,b)=>b.rel-a.rel);h+='<div class="bgrid">';sorted.forEach(b=>{{h+=mkBC(b)}});h+='</div>'}}
 return h}}
 function mkBC(b){{const zc=b.rel>0.5?'pos':b.rel<-0.5?'neg':'neu';let h='<div class="bc" onclick="this.classList.toggle(\\'open\\')"><div class="bn"><span>'+b.name+'</span><span class="al '+(b.rel>0.3?'bu':b.rel<-0.3?'be':'si')+'">'+( b.rel>0?'OUT':'UNDER')+'</span></div><div class="bz '+zc+'">'+(b.rel>=0?'+':'')+b.rel.toFixed(2)+'</div><div class="bsub">'+b.cat+(b.pct200!=null?' \\u00b7 '+b.pct200+'% >200d':'')+'</div><div class="bst">';b.stocks.forEach(s=>{{const sc=s.rz>0.3?'var(--g)':s.rz<-0.3?'var(--r)':'var(--x)';const a2=s.a200===true?'\\u25b2':s.a200===false?'\\u25bc':'';h+='<div class="bs"><span class="st">'+s.t+'</span><span>'+a2+(s.p?fP(s.p,s.t):'')+'</span><span class="sz" style="color:'+sc+'">'+(s.rz>=0?'+':'')+s.rz.toFixed(2)+'</span></div>'}});h+='</div></div>';return h}}
+function pgHighs(){{
+const hk=S.region==='korea'?'highs_kr':'highs_us';const hs=D[hk];const isKr=S.region==='korea';
+let h='<div class="md">'+(isKr?'KOSPI + KOSDAQ \\u00b7 52\\u00b7\\u00b7\\u00b7 \\u00b7 Naver Finance':'NYSE + NASDAQ + AMEX \\u00b7 52-week New High \\u00b7 Finviz')+' \\u00b7 '+hs.length+' stocks</div>';
+if(hs.length===0){{h+='<div style="padding:40px;text-align:center;color:var(--t3);font-family:var(--m)">No 52-week highs found (scraping may have failed)</div>';return h}}
+h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:5px">';
+hs.forEach(s=>{{h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:6px;background:var(--s);border:1px solid var(--b);border-left:3px solid var(--g)"><div style="min-width:0;flex:1"><div style="font-family:var(--m);font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(isKr?s.n:s.t)+'</div><div style="font-family:var(--m);font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(isKr?(s.t||''):s.n)+'</div>'+(s.sector?'<div style="font-family:var(--m);font-size:8px;color:var(--t3)">'+s.sector+'</div>':'')+'</div><div style="text-align:right;flex-shrink:0;margin-left:8px"><div style="font-family:var(--m);font-size:13px;font-weight:800">'+(isKr?s.p.toLocaleString():fP(s.p,s.t))+'</div><div style="font-family:var(--m);font-size:8px;font-weight:700;color:var(--g)">\\u2605 NEW HIGH</div></div></div>'}});
+h+='</div>';return h}}
 function showT(el){{const t=document.getElementById('tip');if(!t)return;const r=el.getBoundingClientRect();const p=el.parentElement.getBoundingClientRect();t.innerHTML='<b>'+el.dataset.label+'</b><br><span style="opacity:.7;font-size:8px">'+el.dataset.start+' \\u2192 '+el.dataset.end+'</span>';t.style.display='block';t.style.left=(r.left+r.width/2-p.left)+'px';t.style.top='-44px'}}
 function hideT(){{const t=document.getElementById('tip');if(t)t.style.display='none'}}
 function mkTL(d){{const tl=d.timeline;if(!tl||!tl.length)return'';const t0=new Date(tl[0].start).getTime();const t1=new Date(tl[tl.length-1].end).getTime()+864e5;const sp=t1-t0||1;let h='<div class="tw"><div id="tip" class="tt"></div><div class="tb">';tl.forEach((s,i)=>{{const a=new Date(s.start).getTime();const b=new Date(s.end).getTime()+864e5;const w=Math.max(0.5,((b-a)/sp)*100);const col=RC[s.l]||'#a8a29e';h+='<div class="ts" style="width:'+w+'%;background:'+col+(i===tl.length-1?';box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)':'')+'" data-label="'+s.l+'" data-start="'+s.start+'" data-end="'+s.end+'" onmouseenter="showT(this)" onmouseleave="hideT()"></div>'}});h+='</div></div><div class="td"><span>'+tl[0].start+'</span><span>'+tl[tl.length-1].end+'</span></div>';const seen=new Set();h+='<div class="tl">';tl.forEach(s=>{{if(!seen.has(s.l)){{seen.add(s.l);h+='<span><span class="dot" style="background:'+(RC[s.l]||'#a8a29e')+'"></span>'+s.l+'</span>'}}}});h+='</div>';return h}}
