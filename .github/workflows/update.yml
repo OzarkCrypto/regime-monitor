@@ -13,7 +13,7 @@ jobs:
     - uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-    - run: pip install yfinance pandas numpy scipy requests html5lib lxml pykrx
+    - run: pip install yfinance pandas numpy scipy requests html5lib lxml pykrx pykrx
     - run: python generate.py
     - run: |
         git config --local user.email "action@github.com"
