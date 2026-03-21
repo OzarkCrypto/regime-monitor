@@ -130,27 +130,81 @@ KR_BCAT = ['Tech','EV/Battery','Industrial','Geopolitics','Consumer','Transport'
             'Rate Sensitive','Financials','Healthcare','Energy','Defensive','Automation']
 
 # ═══ 52-WEEK HIGH: BROAD UNIVERSE ═══
-# KR_NAMES kept as fallback for Korean stock names
+# Korean stock name map: ticker code -> Korean name (~250 stocks covering KOSPI/KOSDAQ major)
 KR_NAMES_FALLBACK = {
+    # Top 30 by market cap
     '005930':'삼성전자','000660':'SK하이닉스','005380':'현대자동차','000270':'기아',
     '005490':'POSCO홀딩스','035420':'NAVER','035720':'카카오','051910':'LG화학',
     '006400':'삼성SDI','373220':'LG에너지솔루션','207940':'삼성바이오로직스',
     '068270':'셀트리온','105560':'KB금융','055550':'신한지주','086790':'하나금융지주',
     '316140':'우리금융지주','003550':'LG','000810':'삼성화재','034730':'SK',
-    '015760':'한국전력','017670':'SK텔레콤','030200':'KT','032830':'삼성생명',
-    '066570':'LG전자','012330':'현대모비스','028260':'삼성물산','004020':'현대제철',
-    '034020':'두산에너빌리티','009150':'삼성전기','000720':'현대건설',
-    '010140':'삼성중공업','042660':'한화오션','329180':'HD한국조선해양',
+    '032830':'삼성생명','066570':'LG전자','012330':'현대모비스','028260':'삼성물산',
+    '096770':'SK이노베이션','009150':'삼성전기','015760':'한국전력',
+    '017670':'SK텔레콤','030200':'KT','402340':'SK스퀘어',
+    # Defense/Aerospace
     '012450':'한화에어로스페이스','079550':'LIG넥스원','047810':'한국항공우주',
-    '003490':'대한항공','097950':'CJ제일제당','090430':'아모레퍼시픽',
-    '051900':'LG생활건강','011170':'롯데케미칼','036460':'한국가스공사',
-    '086280':'현대글로비스','006800':'미래에셋증권','005940':'NH투자증권',
-    '003230':'삼양식품','259960':'크래프톤','352820':'하이브','035900':'JYP엔터',
-    '004170':'신세계','018260':'삼성SDS','033780':'KT&G','267250':'HD현대',
-    '000880':'한화','138040':'메리츠금융지주','267260':'HD현대일렉트릭',
-    '298040':'효성중공업','042700':'한미반도체','036930':'주성엔지니어링',
-    '058470':'리노공업','383220':'F&F','112610':'씨에스윈드','047050':'포스코인터내셔널',
-    '052690':'한전기술','010620':'HD현대미포','009540':'HD한국조선',
+    '272210':'한화시스템','298040':'효성중공업','000880':'한화',
+    # Nuclear/Energy
+    '034020':'두산에너빌리티','052690':'한전기술','267260':'HD현대일렉트릭',
+    '036460':'한국가스공사','010950':'S-Oil','336260':'두산퓨얼셀',
+    # Construction ★ EXPANDED
+    '000720':'현대건설','006360':'GS건설','375500':'DL이앤씨','047040':'대우건설',
+    '000210':'DL','044490':'태웅','294870':'HDC현대산업개발','002960':'한국쉘석유',
+    '014820':'동원시스템즈','069960':'현대백화점','047050':'포스코인터내셔널',
+    # Shipbuilding
+    '329180':'HD한국조선해양','010140':'삼성중공업','042660':'한화오션',
+    '009540':'HD한국조선','267250':'HD현대',
+    # Steel/Chemical
+    '004020':'현대제철','011170':'롯데케미칼','011780':'금호석유화학',
+    '009830':'한화솔루션','005490':'POSCO홀딩스',
+    # Banks/Securities/Insurance
+    '138040':'메리츠금융지주','024110':'기업은행','006800':'미래에셋증권',
+    '071050':'한국금융지주','005940':'NH투자증권','000810':'삼성화재',
+    '005830':'DB손해보험','088350':'한화생명','016360':'삼성증권',
+    '001450':'현대해상','003490':'대한항공',
+    # Auto/Parts
+    '161390':'한국타이어',
+    # Food/Beverages
+    '003230':'삼양식품','007310':'오뚜기','004370':'농심','097950':'CJ제일제당',
+    '271560':'오리온','033780':'KT&G',
+    # Retail/Consumer
+    '004170':'신세계','139480':'이마트','020000':'한섬','383220':'F&F',
+    # Internet/Software
+    '018260':'삼성SDS','323410':'카카오뱅크','036570':'NCsoft',
+    # Entertainment/Gaming
+    '259960':'크래프톤','251270':'넷마블','352820':'하이브',
+    '041510':'SM엔터','035900':'JYP엔터','263750':'펄어비스',
+    # Bio/Pharma
+    '128940':'한미약품','326030':'SK바이오팜','195940':'HK이노엔',
+    '003850':'보령','009420':'한올바이오파마','214370':'케어젠',
+    # Cosmetics
+    '090430':'아모레퍼시픽','051900':'LG생활건강',
+    # Logistics/Travel
+    '000120':'CJ대한통운','086280':'현대글로비스','089590':'제주항공',
+    '180640':'한진칼','008770':'호텔신라','034230':'파라다이스','035250':'강원랜드',
+    # Conglomerates/Holdings
+    '078930':'GS','004990':'롯데지주','001040':'CJ','000150':'두산',
+    '003670':'포스코퓨처엠',
+    # Utility/Telecom
+    '010130':'고려아연','241560':'두산밥캣',
+    # Semi/Tech
+    '042700':'한미반도체','036930':'주성엔지니어링','058470':'리노공업',
+    '240810':'원익IPS','112610':'씨에스윈드','357780':'솔브레인',
+    # Battery materials
+    '247540':'에코프로비엠','066970':'엘앤에프','278280':'천보',
+    # Robotics
+    '454910':'두산로보틱스','277810':'레인보우로보틱스',
+    # KOSDAQ majors
+    '192820':'코스맥스','039030':'이오테크닉스','095340':'ISC',
+    '403870':'HPSP','214150':'클래시스','145020':'휴젤','328130':'루닛',
+    '086900':'메디톡스','067160':'아프리카TV','293490':'카카오게임즈',
+    '352480':'씨이랩','361610':'SK아이이테크놀로지','178920':'PI첨단소재',
+    # Additional important stocks
+    '006280':'녹십자','285130':'SK케미칼','950160':'코오롱인더',
+    '307950':'현대오토에버','377300':'카카오페이','002380':'KCC',
+    '111770':'영원무역','003410':'쌍용C&E','069500':'KODEX200',
+    # Extra construction/infra/civil engineering
+    '000150':'두산','047050':'포스코인터내셔널',
 }
 
 def scrape_us_52w_highs():
@@ -161,7 +215,7 @@ def scrape_us_52w_highs():
     all_stocks = []
     for start in range(1, 3000, 20):
         try:
-            url = f'https://finviz.com/screener.ashx?v=111&f=ta_highlow52w_nh&ft=4&r={start}'
+            url = f'https://finviz.com/screener.ashx?v=111&f=ind_stocksonly,ta_highlow52w_nh&ft=4&r={start}'
             r = requests.get(url, headers=headers, timeout=15)
             tables = pd.read_html(StringIO(r.text), flavor='html5lib')
             found = None
@@ -191,49 +245,97 @@ def scrape_us_52w_highs():
     return highs
 
 def scrape_kr_52w_highs():
-    """Scrape Naver Finance for Korean stocks at 52-week new high. KOSPI + KOSDAQ full."""
-    import requests
-    from io import StringIO
-    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'}
-    all_stocks = []
-    for sosok in [1, 2]:  # 1=KOSPI, 2=KOSDAQ
-        for page in range(1, 30):
+    """Get Korean stocks at 52-week high via pykrx (KRX direct) then Naver fallback."""
+    # Method 1: pykrx
+    try:
+        from pykrx import stock
+        from datetime import timedelta
+        print("  KR: trying pykrx (KRX API)...")
+        today_str = None
+        for delta in range(0, 10):
+            dt = (datetime.now() - timedelta(days=delta)).strftime('%Y%m%d')
+            tickers = stock.get_market_ticker_list(dt, market='KOSPI')
+            if tickers: today_str = dt; break
+        if not today_str: raise Exception("No trading date found")
+        kospi = stock.get_market_ticker_list(today_str, market='KOSPI')
+        kosdaq = stock.get_market_ticker_list(today_str, market='KOSDAQ')
+        all_kr = kospi + kosdaq
+        print(f"  pykrx: {len(kospi)} KOSPI + {len(kosdaq)} KOSDAQ")
+        ohlcv_today = stock.get_market_ohlcv_by_ticker(today_str)
+        year_ago = (datetime.now() - timedelta(days=365)).strftime('%Y%m%d')
+        max_highs = pd.Series(dtype='float64')
+        sample_dates = pd.bdate_range(year_ago, today_str, freq='5D')
+        for sd in sample_dates:
             try:
-                url = f'https://finance.naver.com/sise/sise_new_high.naver?sosok={sosok}&page={page}'
-                r = requests.get(url, headers=headers, timeout=10)
-                r.encoding = 'euc-kr'
-                tables = pd.read_html(StringIO(r.text), flavor='html5lib')
-                found = None
-                for t in tables:
-                    if len(t) >= 3 and len(t.columns) >= 8:
-                        # Look for table with numeric data in columns
-                        try:
-                            num_check = pd.to_numeric(t.iloc[:,3].dropna(), errors='coerce')
-                            if num_check.notna().sum() >= 2:
-                                found = t; break
-                        except: pass
-                if found is None or len(found) < 2: break
-                # Clean NaN rows
-                found = found.dropna(how='all')
-                found = found[found.iloc[:,1].notna()]
-                all_stocks.append(found)
-                if len(found) < 20: break
-            except: break
-    if not all_stocks:
-        print("  Naver: scraping failed, using basket fallback")
-        return None
-    df = pd.concat(all_stocks, ignore_index=True)
-    highs = []
-    for _, row in df.iterrows():
-        try:
-            name = str(row.iloc[1]).strip()
-            price = float(str(row.iloc[3]).replace(',',''))
-            if name and price > 0 and len(name) > 1:
-                # Extract ticker code from link if available, otherwise use name
-                highs.append({'t': '', 'n': name, 'p': round(price, 0), 'pct': 0.0})
-        except: pass
-    print(f"  Naver: {len(highs)} KR stocks at 52-week new high")
-    return highs
+                d = stock.get_market_ohlcv_by_ticker(sd.strftime('%Y%m%d'))
+                if len(d) > 0 and '고가' in d.columns:
+                    h = d['고가']
+                    max_highs = max_highs.combine(h, max, fill_value=0) if len(max_highs) > 0 else h
+            except: pass
+        print(f"  pykrx: sampled {len(sample_dates)} dates")
+        if '고가' in ohlcv_today.columns:
+            max_highs = max_highs.combine(ohlcv_today['고가'], max, fill_value=0) if len(max_highs) > 0 else ohlcv_today['고가']
+        highs = []
+        for ticker in all_kr:
+            try:
+                if ticker not in ohlcv_today.index: continue
+                cur = float(ohlcv_today.loc[ticker, '종가'])
+                if cur <= 0: continue
+                h52 = float(max_highs.get(ticker, 0))
+                if h52 <= 0: continue
+                pct = (cur / h52 - 1) * 100
+                if pct >= -0.5:
+                    name = stock.get_market_ticker_name(ticker)
+                    highs.append({'t': ticker, 'n': name, 'p': round(cur, 0), 'pct': round(pct, 1)})
+            except: pass
+        highs.sort(key=lambda x: -x['pct'])
+        print(f"  pykrx: {len(highs)} KR stocks at 52-week high")
+        if highs: return highs
+    except Exception as e:
+        print(f"  pykrx failed: {e}")
+    # Method 2: Naver Finance
+    try:
+        import requests
+        from io import StringIO
+        print("  KR: trying Naver Finance...")
+        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'}
+        all_stocks = []
+        for sosok in [1, 2]:
+            for page in range(1, 30):
+                try:
+                    url = f'https://finance.naver.com/sise/sise_new_high.naver?sosok={sosok}&page={page}'
+                    r = requests.get(url, headers=headers, timeout=10)
+                    if r.status_code != 200: break
+                    r.encoding = 'euc-kr'
+                    tables = pd.read_html(StringIO(r.text), flavor='html5lib')
+                    found = None
+                    for t in tables:
+                        if len(t) >= 3 and len(t.columns) >= 8:
+                            try:
+                                num_check = pd.to_numeric(t.iloc[:,3].dropna(), errors='coerce')
+                                if num_check.notna().sum() >= 2: found = t; break
+                            except: pass
+                    if found is None or len(found) < 2: break
+                    found = found.dropna(how='all')
+                    found = found[found.iloc[:,1].notna()]
+                    all_stocks.append(found)
+                    if len(found) < 20: break
+                except: break
+        if all_stocks:
+            df = pd.concat(all_stocks, ignore_index=True)
+            highs = []
+            for _, row in df.iterrows():
+                try:
+                    name = str(row.iloc[1]).strip()
+                    price = float(str(row.iloc[3]).replace(',',''))
+                    if name and price > 0 and len(name) > 1:
+                        highs.append({'t': '', 'n': name, 'p': round(price, 0), 'pct': 0.0})
+                except: pass
+            print(f"  Naver: {len(highs)} KR stocks")
+            if highs: return highs
+    except Exception as e:
+        print(f"  Naver failed: {e}")
+    return None
 
 def fallback_kr_52w_highs(raw):
     """Compute 52-week highs from basket tickers as fallback"""
