@@ -407,7 +407,7 @@ def parse_raw_tickers(tickers):
 
 # Global regime data
 df_g, g_ok = parse_tickers(g_regime_map)
-daily_g = df_g[df_g.index.dayofweek < 5].dropna(how='all')
+daily_g = df_g.dropna(how='all')
 # Derived
 for a,b,nm in [('US_10Y','US_3M','YC_10Y3M'),('US_30Y','US_10Y','YC_30Y10Y'),('US_10Y','US_5Y','YC_10Y5Y')]:
     if a in daily_g.columns and b in daily_g.columns: daily_g[nm] = daily_g[a]-daily_g[b]
@@ -424,7 +424,7 @@ if 'Credit' in G_CAT_A and 'CreditSpread' in daily_g.columns: G_CAT_A['Credit'].
 
 # Korea regime data
 df_kr, kr_ok = parse_tickers(kr_regime_map)
-daily_kr = df_kr[df_kr.index.dayofweek < 5].dropna(how='all')
+daily_kr = df_kr.dropna(how='all')
 KR_CAT_A = {}
 for cat, tks in KR_UNI.items():
     assets = [n for n in tks.values() if n in daily_kr.columns]
@@ -435,14 +435,14 @@ g_int_tks = set(['SPY'])
 for bn, bi in G_BASK.items():
     for t in bi['t']: g_int_tks.add(t)
 df_gi, gi_ok = parse_raw_tickers(g_int_tks)
-daily_gi = df_gi[df_gi.index.dayofweek < 5].dropna(how='all')
+daily_gi = df_gi.dropna(how='all')
 
 # Korea internals data
 kr_int_tks = set(['^KS11'])
 for bn, bi in KR_BASK.items():
     for t in bi['t']: kr_int_tks.add(t)
 df_ki, ki_ok = parse_raw_tickers(kr_int_tks)
-daily_ki = df_ki[df_ki.index.dayofweek < 5].dropna(how='all')
+daily_ki = df_ki.dropna(how='all')
 
 print(f"OK g_regime={len(g_ok)} kr_regime={len(kr_ok)} g_int={len(gi_ok)} kr_int={len(ki_ok)}")
 
