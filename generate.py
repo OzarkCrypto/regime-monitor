@@ -728,8 +728,8 @@ html = f"""<!DOCTYPE html>
 :root{{--bg:#fafaf9;--s:#fff;--b:#e7e5e4;--bl:#f5f5f4;--t:#1c1917;--t2:#57534e;--t3:#a8a29e;--g:#16a34a;--gb:#f0fdf4;--r:#dc2626;--rb:#fef2f2;--x:#78716c;--xb:#f5f5f4;--f:'DM Sans',sans-serif;--m:'JetBrains Mono',monospace}}
 *{{margin:0;padding:0;box-sizing:border-box}}body{{font-family:var(--f);background:var(--bg);color:var(--t);font-size:13px;line-height:1.5}}
 .c{{max-width:1200px;margin:0 auto;padding:16px 14px}}
-header{{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:2px solid var(--t);margin-bottom:16px;flex-wrap:wrap;gap:8px}}
-header .hl{{display:flex;align-items:center;gap:10px}}header .hl img{{height:28px}}header h1{{font-family:var(--m);font-size:15px;font-weight:700;letter-spacing:-0.03em}}header .m{{font-size:11px;color:var(--t3);font-family:var(--m)}}
+header{{display:flex;flex-direction:column;align-items:center;padding-bottom:12px;border-bottom:2px solid var(--t);margin-bottom:16px;gap:6px}}
+header .logo{{height:44px;margin-bottom:2px}}header .hb{{display:flex;justify-content:space-between;align-items:baseline;width:100%}}header h1{{font-family:var(--m);font-size:15px;font-weight:700;letter-spacing:-0.03em}}header .m{{font-size:11px;color:var(--t3);font-family:var(--m)}}
 .tn{{display:flex;gap:0;margin-bottom:12px;border-radius:8px;overflow:hidden;border:2px solid var(--t)}}
 .tn button{{flex:1;font-family:var(--m);font-size:13px;font-weight:800;letter-spacing:.02em;padding:12px 20px;border:none;cursor:pointer;transition:all .15s}}
 .tn button.on{{background:var(--t);color:var(--bg)}}.tn button:not(.on){{background:var(--bg);color:var(--t3)}}
@@ -785,7 +785,7 @@ let S={{region:'global',page:'regime',model:'strategic',view:'regime',sort:'defa
 function R(){{return D[S.region]}}
 function render(){{
 const app=document.getElementById('app');const r=R();
-let h='<header><div class="hl"><img src="data:image/jpeg;base64,'+LOGO+'" alt="alphanonce"><h1>Regime Monitor</h1></div><div class="m">'+r.strategic.date+'</div></header>';
+let h='<header><img class="logo" src="data:image/jpeg;base64,'+LOGO+'" alt="alphanonce"><div class="hb"><h1>Regime Monitor</h1><div class="m">'+r.strategic.date+'</div></div></header>';
 h+='<div class="tn">';[['global','Global'],['korea','Korea']].forEach(([k,v])=>{{h+='<button class="'+(S.region===k?'on':'')+'" onclick="U(\\'region\\',\\''+k+'\\')">'+v+'</button>'}});h+='</div>';
 h+='<div class="sw">';[['regime','Macro Indicators'],['internals','Stock Market Internals'],['highs','52-week Highs']].forEach(([k,v])=>{{h+='<button class="'+(S.page===k?'on':'')+'" onclick="U(\\'page\\',\\''+k+'\\')">'+v+'</button>'}});h+='</div>';
 if(S.page==='regime')h+=pgRegime();else if(S.page==='internals')h+=pgInternals();else h+=pgHighs();
