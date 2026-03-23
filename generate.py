@@ -245,7 +245,7 @@ def scrape_us_52w_highs():
     return highs
 
 KRX_API_KEY = '31C1A64E11714282BD3C0A3D1E17FC00D5965CA1'
-KRX_API_BASE = 'http://data-dbg.krx.co.kr/svc/apis'
+KRX_API_BASE = 'https://data-dbg.krx.co.kr/svc/apis'
 
 def krx_api_fetch(endpoint, params):
     """Call KRX Open API and return JSON data."""
@@ -420,14 +420,11 @@ def scrape_kr_52w_highs():
         print(f"  Naver failed: {e}")
     return None
 
-def fallback_kr_52w_highs(raw):
-    """Compute 52-week highs from basket tickers as fallback"""
+def fallback_kr_52w_highs(kr_csv):
+    """Compute 52-week highs from KR CSV data as fallback"""
     highs = []
-    for t in raw.columns.get_level_values(0).unique():
-        t = str(t)
-        if '.KS' not in t and '.KQ' not in t: continue
+    for code, s in kr_csv.items():
         try:
-            s = raw[t]['Close'].squeeze()
             if not isinstance(s, pd.Series) or s.notna().sum() < 200: continue
             s = s.dropna()
             cur = float(s.iloc[-1])
@@ -436,15 +433,78 @@ def fallback_kr_52w_highs(raw):
             if h252 <= 0: continue
             pct = (cur/h252-1)*100
             if pct >= -2.0:
-                code = t.replace('.KS','').replace('.KQ','')
                 name = KR_NAMES_FALLBACK.get(code, code)
                 highs.append({'t':code,'n':name,'p':round(cur,0),'pct':round(pct,1)})
         except: pass
     highs.sort(key=lambda x: -x['pct'])
     return highs
 
+# ═══ KR CSV DATA + KRX API DAILY APPEND ═══
+import os, time as _time
+
+def kr_code(t):
+    """Extract 6-digit code from KR ticker: '005930.KS' → '005930'. None for non-KR."""
+    if '.' in t and t.split('.')[-1] in ('KS','KQ') and not t.startswith('^'):
+        return t.split('.')[0].zfill(6)
+    return None
+
+def load_and_update_kr_csv():
+    """Load KR stock CSV, update from KRX API if stale, return {code: Series}."""
+    csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'kr_full_daily.csv')
+    if not os.path.exists(csv_path):
+        print("  KR CSV not found, falling back to yfinance for KR stocks")
+        return {}
+    df = pd.read_csv(csv_path, index_col=0, parse_dates=True)
+    last_date = df.index.max()
+    today = pd.Timestamp.now().normalize()
+    # Fetch missing trading days from KRX API (KOSPI + KOSDAQ)
+    if last_date < today - pd.Timedelta(days=1):
+        print(f"  KR CSV last: {last_date.strftime('%Y-%m-%d')}, fetching from KRX API...")
+        dt = last_date + pd.Timedelta(days=1)
+        new_rows = []
+        while dt <= today:
+            dt_str = dt.strftime('%Y%m%d')
+            all_data = []
+            for ep in ['sto/stk_bydd_trd', 'sto/ksq_bydd_trd']:
+                try:
+                    data = krx_api_fetch(ep, {'basDd': dt_str})
+                    if data: all_data.extend(data)
+                except: pass
+            if all_data and len(all_data) > 100:
+                row = {}
+                for r in all_data:
+                    code = r['ISU_CD']
+                    if len(code) == 6 and code.isdigit():
+                        try:
+                            close = float(r['TDD_CLSPRC'].replace(',',''))
+                            if close > 0: row[code] = close
+                        except: pass
+                if row:
+                    new_rows.append((dt, row))
+                    print(f"    {dt_str}: {len(row)} stocks")
+            dt += pd.Timedelta(days=1)
+            _time.sleep(0.3)
+        if new_rows:
+            new_df = pd.DataFrame([r for _, r in new_rows], index=[d for d, _ in new_rows])
+            df = pd.concat([df, new_df]).sort_index()
+            df = df[~df.index.duplicated(keep='last')]
+            df.to_csv(csv_path)
+            print(f"  KR CSV updated: +{len(new_rows)} trading days (total {len(df)})")
+    else:
+        print(f"  KR CSV up to date (last: {last_date.strftime('%Y-%m-%d')})")
+    result = {}
+    for col in df.columns:
+        s = df[col].dropna()
+        if len(s) > 50:
+            result[col] = s
+    print(f"  KR CSV loaded: {len(result)} stocks, {len(df)} trading days")
+    return result
+
 # ═══ 1. DOWNLOAD ═══
 print(f"Regime Monitor v2: {START} -> {END}")
+
+# Phase 0: Load KR stock data from CSV + KRX API append
+KR_CSV = load_and_update_kr_csv()
 
 # Phase 1: Regime + Basket tickers (full history)
 all_tickers = set()
@@ -459,15 +519,30 @@ for bk in [G_BASK, KR_BASK]:
         for t in bi['t']: all_tickers.add(t)
 all_tickers.add('SPY'); all_tickers.add('^KS11')
 
-print(f"Downloading {len(all_tickers)} regime+basket tickers...")
-raw = yf.download(list(all_tickers), start=START, end=END, progress=False, group_by='ticker')
+# Separate: KR stocks from CSV, everything else from yfinance
+yf_tickers = set()
+kr_from_csv = 0
+for t in all_tickers:
+    code = kr_code(t)
+    if code and code in KR_CSV:
+        kr_from_csv += 1  # skip yfinance, use CSV
+    else:
+        yf_tickers.add(t)
+
+print(f"Downloading {len(yf_tickers)} tickers via yfinance + {kr_from_csv} KR stocks from CSV...")
+raw = yf.download(list(yf_tickers), start=START, end=END, progress=False, group_by='ticker')
 
 def parse_tickers(ticker_map):
     df = pd.DataFrame()
     ok = []
     for t, n in ticker_map.items():
         try:
-            if t in raw.columns.get_level_values(0):
+            code = kr_code(t)
+            if code and code in KR_CSV:
+                s = KR_CSV[code].copy(); s.name = n
+                if s.notna().sum() > 100:
+                    df = pd.concat([df, s], axis=1); ok.append(n)
+            elif t in raw.columns.get_level_values(0):
                 s = raw[t]['Close'].squeeze()
                 if isinstance(s, pd.Series) and s.notna().sum() > 100:
                     s.name = n; df = pd.concat([df, s], axis=1); ok.append(n)
@@ -480,7 +555,12 @@ def parse_raw_tickers(tickers):
     ok = []
     for t in sorted(tickers):
         try:
-            if t in raw.columns.get_level_values(0):
+            code = kr_code(t)
+            if code and code in KR_CSV:
+                s = KR_CSV[code].copy(); s.name = t
+                if s.notna().sum() > 100:
+                    df = pd.concat([df, s], axis=1); ok.append(t)
+            elif t in raw.columns.get_level_values(0):
                 s = raw[t]['Close'].squeeze()
                 if isinstance(s, pd.Series) and s.notna().sum() > 100:
                     s.name = t; df = pd.concat([df, s], axis=1); ok.append(t)
@@ -784,8 +864,8 @@ except Exception as e:
     kr_highs = None
 
 if kr_highs is None:
-    kr_highs = fallback_kr_52w_highs(raw)
-    print(f"  KR fallback: {len(kr_highs)} stocks from basket universe")
+    kr_highs = fallback_kr_52w_highs(KR_CSV)
+    print(f"  KR fallback: {len(kr_highs)} stocks from CSV universe")
 
 print(f"  Final: US={len(us_highs)} | KR={len(kr_highs)}")
 
