@@ -732,7 +732,7 @@ daily_kr = df_kr.dropna(how='all')
 if KR_BREADTH is not None:
     for col in ['KR_Pct200','KR_Pct50','KR_AD_Ratio','KR_Net52w']:
         if col in KR_BREADTH.columns:
-            daily_kr[col] = KR_BREADTH[col].reindex(daily_kr.index)
+            daily_kr[col] = KR_BREADTH[col].reindex(daily_kr.index).ffill().bfill()
             kr_ok.append(col)
 KR_CAT_A = {}
 for cat, tks in KR_UNI.items():
