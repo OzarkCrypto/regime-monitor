@@ -129,6 +129,58 @@ KR_BASK = {
 KR_BCAT = ['Tech','EV/Battery','Industrial','Geopolitics','Consumer','Transport',
             'Rate Sensitive','Financials','Healthcare','Energy','Defensive','Automation']
 
+# ═══ TICKER DISPLAY NAMES (en, kr) ═══
+TICKER_DISPLAY = {
+    '005930.KS':('Samsung','삼성전자'),'000660.KS':('SK Hynix','SK하이닉스'),
+    '042700.KQ':('Hanmi Semi','한미반도체'),'058470.KS':('LEENO','리노공업'),
+    '373220.KS':('LG Energy','LG에너지솔루션'),'006400.KS':('Samsung SDI','삼성SDI'),
+    '247540.KQ':('Ecopro BM','에코프로비엠'),'003670.KS':('POSCO Future M','포스코퓨처엠'),
+    '329180.KS':('HD HHI','HD현대중공업'),'010140.KS':('Samsung Heavy','삼성중공업'),
+    '042660.KS':('Hanwha Ocean','한화오션'),'012450.KS':('Hanwha Aero','한화에어로스페이스'),
+    '079550.KS':('LIG Nex1','LIG넥스원'),'047810.KS':('KAI','한국항공우주'),
+    '005380.KS':('Hyundai Motor','현대차'),'000270.KS':('Kia','기아'),
+    '012330.KS':('Hyundai Mobis','현대모비스'),'051910.KS':('LG Chem','LG화학'),
+    '011170.KS':('Lotte Chem','롯데케미칼'),'011780.KS':('Kumho Petro','금호석유화학'),
+    '005490.KS':('POSCO Hldgs','POSCO홀딩스'),'004020.KS':('Hyundai Steel','현대제철'),
+    '028260.KS':('Samsung C&T','삼성물산'),'000720.KS':('Hyundai E&C','현대건설'),
+    '105560.KS':('KB Financial','KB금융'),'055550.KS':('Shinhan','신한지주'),
+    '086790.KS':('Hana Financial','하나금융지주'),'316140.KS':('Woori Financial','우리금융지주'),
+    '207940.KS':('Samsung Bio','삼성바이오로직스'),'068270.KS':('Celltrion','셀트리온'),
+    '352820.KS':('HYBE','하이브'),'041510.KS':('SM Ent','SM'),
+    '035900.KS':('JYP Ent','JYP'),'004170.KS':('Shinsegae','신세계'),
+    '139480.KS':('E-Mart','이마트'),'097950.KS':('CJ CheilJedang','CJ제일제당'),
+    '017670.KS':('SK Telecom','SK텔레콤'),'030200.KS':('KT','KT'),
+    '015760.KS':('KEPCO','한국전력'),'036460.KS':('Korea Gas','한국가스공사'),
+    '034020.KS':('Doosan Enerbility','두산에너빌리티'),'052690.KS':('KEPCO E&C','한전기술'),
+    '035420.KS':('NAVER','네이버'),'035720.KS':('Kakao','카카오'),
+    '259960.KS':('Krafton','크래프톤'),'251270.KS':('Netmarble','넷마블'),
+    '454910.KS':('Doosan Robotics','두산로보틱스'),'277810.KQ':('Rainbow Robotics','레인보우로보틱스'),
+    '006800.KS':('Mirae Asset','미래에셋증권'),'071050.KS':('Korea Invest','한국금융지주'),
+    '005940.KS':('NH Invest','NH투자증권'),'000810.KS':('Samsung Fire','삼성화재'),
+    '005830.KS':('DB Insurance','DB손해보험'),'088350.KS':('Hanwha Life','한화생명'),
+    '003230.KS':('Samyang Foods','삼양식품'),'007310.KS':('Ottogi','오뚜기'),
+    '004370.KS':('Nongshim','농심'),'090430.KS':('Amorepacific','아모레퍼시픽'),
+    '051900.KS':('LG H&H','LG생활건강'),'192820.KQ':('Cosmax','코스맥스'),
+    '000120.KS':('CJ Logistics','CJ대한통운'),'086280.KS':('Hyundai Glovis','현대글로비스'),
+    '003490.KS':('Korean Air','대한항공'),'089590.KS':('Jeju Air','제주항공'),
+    '008770.KS':('Hotel Shilla','호텔신라'),'034230.KS':('Paradise','파라다이스'),
+    '035250.KS':('Kangwon Land','강원랜드'),'036930.KQ':('Jusung Eng','주성엔지니어링'),
+    '240810.KS':('Wonik IPS','원익IPS'),'066970.KS':('L&F','엘앤에프'),
+    '278280.KQ':('Chunbo','천보'),'^KS11':('KOSPI','코스피'),'^KQ11':('KOSDAQ','코스닥'),
+}
+
+def ticker_name(t):
+    """Get display name tuple (en, kr) for a ticker."""
+    if t in TICKER_DISPLAY: return TICKER_DISPLAY[t]
+    return (t, '')
+
+# Build code -> english name map from TICKER_DISPLAY (for 52w highs)
+CODE_TO_EN = {}
+for _t, (_en, _kr) in TICKER_DISPLAY.items():
+    if '.' in _t and not _t.startswith('^'):
+        _c = _t.split('.')[0].zfill(6)
+        CODE_TO_EN[_c] = _en
+
 # ═══ 52-WEEK HIGH: BROAD UNIVERSE ═══
 # Korean stock name map: ticker code -> Korean name (~250 stocks covering KOSPI/KOSDAQ major)
 KR_NAMES_FALLBACK = {
@@ -316,7 +368,7 @@ def krx_api_52w_highs():
         if h52 <= 0: continue
         pct = (info['p'] / h52 - 1) * 100
         if pct >= -0.5:
-            highs.append({'t': code, 'n': info['n'], 'p': round(info['p'], 0), 'pct': round(pct, 1)})
+            highs.append({'t': code, 'n': info['n'], 'en': CODE_TO_EN.get(code, ''), 'p': round(info['p'], 0), 'pct': round(pct, 1)})
     highs.sort(key=lambda x: -x['pct'])
     print(f"  KRX API: {len(highs)} stocks at 52-week high")
     return highs if highs else None
@@ -369,7 +421,7 @@ def scrape_kr_52w_highs():
                 pct = (cur / h52 - 1) * 100
                 if pct >= -0.5:
                     name = stock.get_market_ticker_name(ticker)
-                    highs.append({'t': ticker, 'n': name, 'p': round(cur, 0), 'pct': round(pct, 1)})
+                    highs.append({'t': ticker, 'n': name, 'en': CODE_TO_EN.get(ticker, ''), 'p': round(cur, 0), 'pct': round(pct, 1)})
             except: pass
         highs.sort(key=lambda x: -x['pct'])
         print(f"  pykrx: {len(highs)} KR stocks at 52-week high")
@@ -412,7 +464,7 @@ def scrape_kr_52w_highs():
                     name = str(row.iloc[1]).strip()
                     price = float(str(row.iloc[3]).replace(',',''))
                     if name and price > 0 and len(name) > 1:
-                        highs.append({'t': '', 'n': name, 'p': round(price, 0), 'pct': 0.0})
+                        highs.append({'t': '', 'n': name, 'en': '', 'p': round(price, 0), 'pct': 0.0})
                 except: pass
             print(f"  Naver: {len(highs)} KR stocks")
             if highs: return highs
@@ -434,7 +486,8 @@ def fallback_kr_52w_highs(kr_csv):
             pct = (cur/h252-1)*100
             if pct >= -2.0:
                 name = KR_NAMES_FALLBACK.get(code, code)
-                highs.append({'t':code,'n':name,'p':round(cur,0),'pct':round(pct,1)})
+                en = CODE_TO_EN.get(code, '')
+                highs.append({'t':code,'n':name,'en':en,'p':round(cur,0),'pct':round(pct,1)})
         except: pass
     highs.sort(key=lambda x: -x['pct'])
     return highs
@@ -505,6 +558,93 @@ print(f"Regime Monitor v2: {START} -> {END}")
 
 # Phase 0: Load KR stock data from CSV + KRX API append
 KR_CSV = load_and_update_kr_csv()
+
+# Phase 0.5: Compute KR broad market breadth from full CSV (2000+ stocks)
+def compute_kr_breadth(kr_csv):
+    """Compute market breadth indicators from full KR stock universe."""
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    tl_path = os.path.join(base_dir, 'data', 'kr_ticker_list.csv')
+    if not os.path.exists(tl_path) or not kr_csv:
+        print("  KR breadth: ticker list or CSV not available, skipping")
+        return None
+    tl = pd.read_csv(tl_path)
+    # Filter to common stocks (exclude ETF/ETN/preferred/REIT/SPAC)
+    ETF_PFX = ['KODEX','TIGER','KBSTAR','ARIRANG','SOL ','HANARO','KOSEF',
+        'ACE ','TIMEFOLIO','PLUS ','히어로','파워 ','마이다스',
+        'TRUE','RISE ','FOCUS','WOORI','1Q ','TREX','KINDEX','QV ']
+    ETF_CTN = ['ETN','레버리지','인버스','선물','합성)','액티브','패시브',
+        'S&P','나스닥100','MSCI','블룸버그']
+    def is_common(name):
+        n = str(name)
+        for p in ETF_PFX:
+            if n.startswith(p): return False
+        for c in ETF_CTN:
+            if c in n: return False
+        if n.endswith('우') or n.endswith('우B') or n.endswith('우C') or n.endswith('우D'): return False
+        if n.endswith('리츠'): return False
+        if '스팩' in n or 'SPAC' in n: return False
+        return True
+    common = tl[tl['name'].apply(is_common)]
+    kospi_codes = set(str(c).zfill(6) for c in common[common['market']=='KOSPI']['code'])
+    kosdaq_codes = set(str(c).zfill(6) for c in common[common['market']=='KOSDAQ']['code'])
+    all_codes = kospi_codes | kosdaq_codes
+    # Build DataFrame from CSV dict
+    frames = {}
+    for code, s in kr_csv.items():
+        if code in all_codes and len(s) > 100:
+            frames[code] = s
+    if not frames:
+        print("  KR breadth: no valid stocks, skipping")
+        return None
+    df = pd.DataFrame(frames)
+    print(f"  KR breadth: computing from {len(df.columns)} common stocks ({len([c for c in df.columns if c in kospi_codes])} KOSPI + {len([c for c in df.columns if c in kosdaq_codes])} KOSDAQ)")
+    # Moving averages
+    ma200 = df.rolling(200, min_periods=150).mean()
+    ma50 = df.rolling(50, min_periods=30).mean()
+    # % above 200d MA (all)
+    v200 = df.notna() & ma200.notna()
+    pct_200 = ((df[v200] > ma200[v200]).sum(axis=1) / v200.sum(axis=1) * 100).round(1)
+    # % above 50d MA (all)
+    v50 = df.notna() & ma50.notna()
+    pct_50 = ((df[v50] > ma50[v50]).sum(axis=1) / v50.sum(axis=1) * 100).round(1)
+    # KOSPI only breadth
+    ki_cols = [c for c in df.columns if c in kospi_codes]
+    ki_v200 = df[ki_cols].notna() & ma200[ki_cols].notna()
+    pct_200_kospi = ((df[ki_cols][ki_v200] > ma200[ki_cols][ki_v200]).sum(axis=1) / ki_v200.sum(axis=1) * 100).round(1)
+    # KOSDAQ only breadth
+    kq_cols = [c for c in df.columns if c in kosdaq_codes]
+    kq_v200 = df[kq_cols].notna() & ma200[kq_cols].notna()
+    pct_200_kosdaq = ((df[kq_cols][kq_v200] > ma200[kq_cols][kq_v200]).sum(axis=1) / kq_v200.sum(axis=1) * 100).round(1)
+    # Advance / Decline
+    daily_ret = df.pct_change()
+    advances = (daily_ret > 0).sum(axis=1)
+    declines = (daily_ret < 0).sum(axis=1)
+    ad_ratio = (advances / declines.replace(0, 1)).round(2)
+    ad_net = advances - declines
+    ad_line = ad_net.cumsum()
+    # Net new 52w highs
+    hi252 = df.rolling(252, min_periods=200).max()
+    lo252 = df.rolling(252, min_periods=200).min()
+    v52 = df.notna() & hi252.notna()
+    n_hi = ((df[v52] / hi252[v52] - 1).abs() < 0.02).sum(axis=1)
+    n_lo = ((df[v52] / lo252[v52] - 1).abs() < 0.02).sum(axis=1)
+    net_52w = n_hi - n_lo
+    result = pd.DataFrame({
+        'KR_Pct200': pct_200,
+        'KR_Pct50': pct_50,
+        'KR_Pct200_KOSPI': pct_200_kospi,
+        'KR_Pct200_KOSDAQ': pct_200_kosdaq,
+        'KR_AD_Ratio': ad_ratio,
+        'KR_AD_Net': ad_net,
+        'KR_AD_Line': ad_line,
+        'KR_Net52w': net_52w,
+    })
+    result.attrs['n_stocks'] = len(df.columns)
+    last = result.iloc[-1]
+    print(f"  KR breadth latest: 200d={last['KR_Pct200']:.1f}% | 50d={last['KR_Pct50']:.1f}% | A/D={last['KR_AD_Ratio']:.2f} | net52w={last['KR_Net52w']:.0f}")
+    return result
+
+KR_BREADTH = compute_kr_breadth(KR_CSV)
 
 # Phase 1: Regime + Basket tickers (full history)
 all_tickers = set()
@@ -588,10 +728,21 @@ if 'Credit' in G_CAT_A and 'CreditSpread' in daily_g.columns: G_CAT_A['Credit'].
 # Korea regime data
 df_kr, kr_ok = parse_tickers(kr_regime_map)
 daily_kr = df_kr.dropna(how='all')
+# Inject broad market breadth into KR regime
+if KR_BREADTH is not None:
+    for col in ['KR_Pct200','KR_Pct50','KR_AD_Ratio','KR_Net52w']:
+        if col in KR_BREADTH.columns:
+            daily_kr[col] = KR_BREADTH[col].reindex(daily_kr.index)
+            kr_ok.append(col)
 KR_CAT_A = {}
 for cat, tks in KR_UNI.items():
     assets = [n for n in tks.values() if n in daily_kr.columns]
     if assets: KR_CAT_A[cat] = assets
+# Add breadth category
+kr_breadth_cols = [c for c in ['KR_Pct200','KR_Pct50','KR_AD_Ratio','KR_Net52w'] if c in daily_kr.columns]
+if kr_breadth_cols:
+    KR_CAT_A['KR Breadth'] = kr_breadth_cols
+    if 'KR Breadth' not in KR_CAT_ORD: KR_CAT_ORD.append('KR Breadth')
 
 # Global internals data
 g_int_tks = set(['SPY'])
@@ -758,7 +909,8 @@ def run_internals(daily_int, baskets, cat_order, bench_ticker, lookback, vol_win
                 n_counted += 1; total_counted200 += 1
                 if above200: n_above += 1; total_above200 += 1
             if z is not None:
-                stocks.append({'t':t,'z':round(z,2),'rz':round(z-bench_z,2),'p':round(p,2) if p else None,'a200':above200})
+                dn = ticker_name(t)
+                stocks.append({'t':t,'en':dn[0],'kr':dn[1],'z':round(z,2),'rz':round(z-bench_z,2),'p':round(p,2) if p else None,'a200':above200})
         pct200 = round(n_above/n_counted*100) if n_counted>0 else None
         baskets_out.append({'name':bname,'cat':binfo['cat'],'z':round(avg_z,2),'rel':round(rel_z,2),
             'n':len(tickers),'n_ok':len(scores),'pct200':pct200,
@@ -875,6 +1027,24 @@ data = {
     'highs_us': us_highs[:200],
     'highs_kr': kr_highs[:200],
 }
+# Add KR breadth snapshot
+if KR_BREADTH is not None and len(KR_BREADTH) > 0:
+    last = KR_BREADTH.iloc[-1]
+    data['kr_breadth'] = {
+        'pct200': round(float(last.get('KR_Pct200', 0)), 1),
+        'pct50': round(float(last.get('KR_Pct50', 0)), 1),
+        'pct200_kospi': round(float(last.get('KR_Pct200_KOSPI', 0)), 1),
+        'pct200_kosdaq': round(float(last.get('KR_Pct200_KOSDAQ', 0)), 1),
+        'ad_ratio': round(float(last.get('KR_AD_Ratio', 0)), 2),
+        'ad_net': int(last.get('KR_AD_Net', 0)),
+        'net_52w': int(last.get('KR_Net52w', 0)),
+        'n_stocks': KR_BREADTH.attrs.get('n_stocks', 0),
+        # Historical for sparkline (last 60 trading days)
+        'hist_pct200': [round(float(x), 1) for x in KR_BREADTH['KR_Pct200'].dropna().tail(60).values],
+        'hist_pct50': [round(float(x), 1) for x in KR_BREADTH['KR_Pct50'].dropna().tail(60).values],
+        'hist_net52w': [int(x) for x in KR_BREADTH['KR_Net52w'].dropna().tail(60).values],
+        'hist_ad_net': [int(x) for x in KR_BREADTH['KR_AD_Net'].dropna().tail(60).values],
+    }
 data_str = json.dumps(data, separators=(',',':'))
 print(f"Data JSON: {len(data_str)/1024:.0f} KB")
 
@@ -970,19 +1140,40 @@ function pgInternals(){{
 const ik=S.model==='tactical'?'int_tactical':'int_strategic';const I=R()[ik];const bs=I.baskets;const co=I.cat_order;
 let h='<div class="sw">';['strategic','tactical'].forEach(m=>{{h+='<button class="'+(S.model===m?'on':'')+'" onclick="U(\\'model\\',\\''+m+'\\')">'+m[0].toUpperCase()+m.slice(1)+'</button>'}});h+='</div>';
 const p=I.params;h+='<div class="md">'+S.model[0].toUpperCase()+S.model.slice(1)+' \\u2014 '+p.lookback+'d lookback \\u00b7 '+p.vol_window+'d vol \\u00b7 '+bs.length+' baskets \\u00b7 Bench z: '+(I.spy_z>=0?'+':'')+I.spy_z.toFixed(2)+(I.pct200!=null?' \\u00b7 200d breadth: '+I.pct200+'%':'')+'</div>';
+if(S.region==='korea'&&D.kr_breadth){{const B=D.kr_breadth;
+h+='<div style="margin-bottom:14px;padding:16px;border-radius:10px;background:var(--s);border:2px solid var(--b)">';
+h+='<div style="font-family:var(--m);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--t);margin-bottom:10px">Broad Market Breadth \\u00b7 '+B.n_stocks+' Stocks</div>';
+h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:10px">';
+const bc=v=>v>=60?'var(--g)':v<=40?'var(--r)':'var(--x)';
+const ac=v=>v>1.5?'var(--g)':v<0.7?'var(--r)':'var(--x)';
+const nc=v=>v>20?'var(--g)':v<-20?'var(--r)':'var(--x)';
+h+='<div style="padding:8px;border-radius:6px;background:var(--bl)"><div style="font-family:var(--m);font-size:8px;color:var(--t3)">% above 200d MA</div><div style="font-family:var(--m);font-size:22px;font-weight:800;color:'+bc(B.pct200)+'">'+B.pct200+'%</div><div style="font-family:var(--m);font-size:8px;color:var(--t3)">KOSPI '+B.pct200_kospi+'% \\u00b7 KOSDAQ '+B.pct200_kosdaq+'%</div></div>';
+h+='<div style="padding:8px;border-radius:6px;background:var(--bl)"><div style="font-family:var(--m);font-size:8px;color:var(--t3)">% above 50d MA</div><div style="font-family:var(--m);font-size:22px;font-weight:800;color:'+bc(B.pct50)+'">'+B.pct50+'%</div></div>';
+h+='<div style="padding:8px;border-radius:6px;background:var(--bl)"><div style="font-family:var(--m);font-size:8px;color:var(--t3)">Advance / Decline</div><div style="font-family:var(--m);font-size:22px;font-weight:800;color:'+ac(B.ad_ratio)+'">'+B.ad_ratio+'</div><div style="font-family:var(--m);font-size:8px;color:var(--t3)">net '+(B.ad_net>=0?'+':'')+B.ad_net+'</div></div>';
+h+='<div style="padding:8px;border-radius:6px;background:var(--bl)"><div style="font-family:var(--m);font-size:8px;color:var(--t3)">Net 52w Highs</div><div style="font-family:var(--m);font-size:22px;font-weight:800;color:'+nc(B.net_52w)+'">'+(B.net_52w>=0?'+':'')+B.net_52w+'</div></div>';
+h+='</div>';
+const spk=(arr,w,ht,col)=>{{if(!arr||!arr.length)return'';const mn=Math.min(...arr),mx=Math.max(...arr),rg=mx-mn||1;let pts=arr.map((v,i)=>[i/(arr.length-1)*w,(1-(v-mn)/rg)*ht]);let d2="M"+pts.map(p2=>p2[0]+","+p2[1]).join("L");return'<svg width="'+w+'" height="'+ht+'" style="display:block"><path d="'+d2+'" fill="none" stroke="'+col+'" stroke-width="1.5"/><circle cx="'+pts[pts.length-1][0]+'" cy="'+pts[pts.length-1][1]+'" r="2" fill="'+col+'"/></svg>'}};
+h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">';
+h+='<div style="padding:6px"><div style="font-family:var(--m);font-size:8px;color:var(--t3);margin-bottom:3px">% above 200d (60d)</div>'+spk(B.hist_pct200,200,40,bc(B.pct200))+'</div>';
+h+='<div style="padding:6px"><div style="font-family:var(--m);font-size:8px;color:var(--t3);margin-bottom:3px">% above 50d (60d)</div>'+spk(B.hist_pct50,200,40,bc(B.pct50))+'</div>';
+h+='<div style="padding:6px"><div style="font-family:var(--m);font-size:8px;color:var(--t3);margin-bottom:3px">Net 52w Highs (60d)</div>'+spk(B.hist_net52w,200,40,nc(B.net_52w))+'</div>';
+h+='<div style="padding:6px"><div style="font-family:var(--m);font-size:8px;color:var(--t3);margin-bottom:3px">A/D Net (60d)</div>'+spk(B.hist_ad_net,200,40,'var(--t2)')+'</div>';
+h+='</div></div>';
+}}
+
 const cp=I.catchphrase;
 h+='<div class="sig"><div><div class="sh">Cycle Assessment</div><div class="sl">'+cp.cycle.join('<br>')+'</div></div><div><div class="sh">Thematic Rotation</div><div class="sl">'+cp.themes.join('<br>')+'</div></div></div>';
 h+='<div class="sc">Sort: <button class="'+(S.sort==='rel'||S.sort==='default'?'on':'')+'" onclick="U(\\'sort\\',\\'rel\\')">Rel \\u2193</button><button class="'+(S.sort==='abs'?'on':'')+'" onclick="U(\\'sort\\',\\'abs\\')">Abs \\u2193</button><button class="'+(S.sort==='cat'?'on':'')+'" onclick="U(\\'sort\\',\\'cat\\')">Category</button></div>';
 if(S.sort==='cat'){{co.forEach(cat=>{{const cbs=bs.filter(b=>b.cat===cat);if(!cbs.length)return;h+='<div class="bcat"><h3>'+cat+' ('+cbs.length+')</h3><div class="bgrid">';cbs.sort((a,b)=>b.rel-a.rel);cbs.forEach(b=>{{h+=mkBC(b)}});h+='</div></div>'}})}}
 else{{const sorted=S.sort==='abs'?[...bs].sort((a,b)=>Math.abs(b.z)-Math.abs(a.z)):[...bs].sort((a,b)=>b.rel-a.rel);h+='<div class="bgrid">';sorted.forEach(b=>{{h+=mkBC(b)}});h+='</div>'}}
 return h}}
-function mkBC(b){{const zc=b.rel>0.5?'pos':b.rel<-0.5?'neg':'neu';let h='<div class="bc" onclick="this.classList.toggle(\\'open\\')"><div class="bn"><span>'+b.name+'</span><span class="al '+(b.rel>0.3?'bu':b.rel<-0.3?'be':'si')+'">'+( b.rel>0?'OUT':'UNDER')+'</span></div><div class="bz '+zc+'">'+(b.rel>=0?'+':'')+b.rel.toFixed(2)+'</div><div class="bsub">'+b.cat+(b.pct200!=null?' \\u00b7 '+b.pct200+'% >200d':'')+'</div><div class="bst">';b.stocks.forEach(s=>{{const sc=s.rz>0.3?'var(--g)':s.rz<-0.3?'var(--r)':'var(--x)';const a2=s.a200===true?'\\u25b2':s.a200===false?'\\u25bc':'';h+='<div class="bs"><span class="st">'+s.t+'</span><span>'+a2+(s.p?fP(s.p,s.t):'')+'</span><span class="sz" style="color:'+sc+'">'+(s.rz>=0?'+':'')+s.rz.toFixed(2)+'</span></div>'}});h+='</div></div>';return h}}
+function mkBC(b){{const zc=b.rel>0.5?'pos':b.rel<-0.5?'neg':'neu';let h='<div class="bc" onclick="this.classList.toggle(\\'open\\')"><div class="bn"><span>'+b.name+'</span><span class="al '+(b.rel>0.3?'bu':b.rel<-0.3?'be':'si')+'">'+( b.rel>0?'OUT':'UNDER')+'</span></div><div class="bz '+zc+'">'+(b.rel>=0?'+':'')+b.rel.toFixed(2)+'</div><div class="bsub">'+b.cat+(b.pct200!=null?' \\u00b7 '+b.pct200+'% >200d':'')+'</div><div class="bst">';b.stocks.forEach(s=>{{const sc=s.rz>0.3?'var(--g)':s.rz<-0.3?'var(--r)':'var(--x)';const a2=s.a200===true?'\\u25b2':s.a200===false?'\\u25bc':'';h+='<div class="bs"><span class="st">'+(s.en||s.t)+(s.kr?' <span style="opacity:.5">'+s.kr+'</span>':'')+'</span><span>'+a2+(s.p?fP(s.p,s.t):'')+'</span><span class="sz" style="color:'+sc+'">'+(s.rz>=0?'+':'')+s.rz.toFixed(2)+'</span></div>'}});h+='</div></div>';return h}}
 function pgHighs(){{
 const hk=S.region==='korea'?'highs_kr':'highs_us';const hs=D[hk];const isKr=S.region==='korea';
 let h='<div class="md">'+(isKr?'KOSPI + KOSDAQ \\u00b7 52\\u00b7\\u00b7\\u00b7 \\u00b7 Naver Finance':'NYSE + NASDAQ + AMEX \\u00b7 52-week New High \\u00b7 Finviz')+' \\u00b7 '+hs.length+' stocks</div>';
 if(hs.length===0){{h+='<div style="padding:40px;text-align:center;color:var(--t3);font-family:var(--m)">No 52-week highs found (scraping may have failed)</div>';return h}}
 h+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:5px">';
-hs.forEach(s=>{{h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:6px;background:var(--s);border:1px solid var(--b);border-left:3px solid var(--g)"><div style="min-width:0;flex:1"><div style="font-family:var(--m);font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(isKr?s.n:s.t)+'</div><div style="font-family:var(--m);font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(isKr?(s.t||''):s.n)+'</div>'+(s.sector?'<div style="font-family:var(--m);font-size:8px;color:var(--t3)">'+s.sector+'</div>':'')+'</div><div style="text-align:right;flex-shrink:0;margin-left:8px"><div style="font-family:var(--m);font-size:13px;font-weight:800">'+(isKr?s.p.toLocaleString():fP(s.p,s.t))+'</div><div style="font-family:var(--m);font-size:8px;font-weight:700;color:var(--g)">\\u2605 NEW HIGH</div></div></div>'}});
+hs.forEach(s=>{{h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:6px;background:var(--s);border:1px solid var(--b);border-left:3px solid var(--g)"><div style="min-width:0;flex:1"><div style="font-family:var(--m);font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(isKr?(s.en||s.n):s.t)+'</div><div style="font-family:var(--m);font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(isKr?(s.en?s.n+(s.t?' ('+s.t+')':''):(s.t||'')):s.n)+'</div>'+(s.sector?'<div style="font-family:var(--m);font-size:8px;color:var(--t3)">'+s.sector+'</div>':'')+'</div><div style="text-align:right;flex-shrink:0;margin-left:8px"><div style="font-family:var(--m);font-size:13px;font-weight:800">'+(isKr?s.p.toLocaleString():fP(s.p,s.t))+'</div><div style="font-family:var(--m);font-size:8px;font-weight:700;color:var(--g)">\\u2605 NEW HIGH</div></div></div>'}});
 h+='</div>';return h}}
 function showT(el){{const t=document.getElementById('tip');if(!t)return;const r=el.getBoundingClientRect();const p=el.parentElement.getBoundingClientRect();t.innerHTML='<b>'+el.dataset.label+'</b><br><span style="opacity:.7;font-size:8px">'+el.dataset.start+' \\u2192 '+el.dataset.end+'</span>';t.style.display='block';t.style.left=(r.left+r.width/2-p.left)+'px';t.style.top='-44px'}}
 function hideT(){{const t=document.getElementById('tip');if(t)t.style.display='none'}}
