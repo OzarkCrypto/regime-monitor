@@ -15,6 +15,7 @@ jobs:
         python-version: '3.11'
     - run: pip install yfinance pandas numpy scipy requests html5lib lxml
     - run: python generate.py
+      timeout-minutes: 30
     - run: |
         git config --local user.email "action@github.com"
         git config --local user.name "Regime Bot"
